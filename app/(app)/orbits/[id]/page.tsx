@@ -56,7 +56,7 @@ export default function SingleOrbit() {
               Solaris
             </h4>
             <span className="mx-4 inline-block h-1 w-1 rounded-full bg-zinc-400"></span>
-            <span className="mr-2 text-xs text-zinc-500">
+            <span className="mr-2 text-xs font-medium text-zinc-500">
               Created 2 days ago
             </span>
             <div className="my-2">
@@ -113,25 +113,39 @@ export default function SingleOrbit() {
                 key={index}
                 className="rounded-xl py-14 transition-all duration-100 ease-linear"
               >
-                <div className="item my-2 flex items-center">
-                  <div className="my-2 flex items-center">
-                    <img
+                <div className="flex items-center justify-between">
+                  <div className="item my-2 flex items-center">
+                    <div className="my-2 flex items-center">
+                      {/* <img
                       className="mr-2 inline-block size-[26px] rounded-full ring-2 ring-white dark:ring-neutral-900"
                       src="https://images.unsplash.com/photo-1531927557220-a9e23c1e4794?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80"
                       alt="Avatar"
-                    />
-                    <p className="text-sm font-semibold text-zinc-700">
-                      Anastasia Jokovic
-                    </p>
-                  </div>
-                  <span className="mx-3 inline-flex items-center gap-x-1 rounded-full bg-sky-100 px-2 py-1 text-xs font-medium text-sky-800 dark:bg-sky-500/10 dark:text-sky-500">
-                    <Lightbulb className="h-4 w-4" />
-                    Idea
-                  </span>
-                  <div className="flex items-center text-xs">
-                    <span className="mr-2 text-zinc-600">
-                      Created 2 days ago
+                    /> */}
+                      <p className="text-sm font-semibold text-zinc-700">
+                        Anastasia Jokovic
+                      </p>
+                    </div>
+                    <span className="mx-3 inline-flex items-center gap-x-1 rounded-full bg-sky-100 px-2 py-1 text-xs font-medium text-sky-800 dark:bg-sky-500/10 dark:text-sky-500">
+                      <Lightbulb className="h-4 w-4" />
+                      Idea
                     </span>
+                    <div className="flex items-center text-xs">
+                      <span className="mr-2 font-medium text-zinc-500">
+                        Created 2 days ago
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center text-xs">
+                    <a
+                      href=" https://somewebsite.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <span className="font-medium text-zinc-500">
+                        From Ghana 🏳️‍🌈
+                      </span>
+                    </a>
                   </div>
                 </div>
 
