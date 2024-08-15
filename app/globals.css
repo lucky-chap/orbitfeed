@@ -1,4 +1,44 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-  
+
+/* ::-moz-selection {
+  color: #000;
+  background: #99f6e4;
+}
+
+::selection {
+  color: #000;
+  background: #99f6e4;
+}
+.stroked {
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1px;
+  color: rgb(177, 177, 177);
+  -webkit-font-smoothing: antialiased;
+} */
+
+#sheet {
+  width: 95vw !important;
+  max-width: 95vw !important;
+  overflow-y: scroll !important;
+}
+
+@media (min-width: 640px) {
+  #sheet {
+    width: 70vw !important;
+    max-width: 70vw !important;
+    overflow-y: scroll !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  #sheet {
+    width: 30vw !important;
+    max-width: 30vw !important;
+    overflow-y: scroll !important;
+  }
+}
+
+@media (min-width: 1280px) {
+}
