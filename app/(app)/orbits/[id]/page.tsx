@@ -3,15 +3,20 @@
 import React from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { api } from "@/convex/_generated/api"
 import brick from "@/public/images/white-brick-wall.jpg"
+import { useMutation, useQuery } from "convex/react"
 import {
   ChevronLeft,
+  Code,
   Lightbulb,
   Link2,
   Paperclip,
   Search,
   Settings,
+  Trash,
 } from "lucide-react"
+import TimeAgo from "react-timeago"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -19,9 +24,15 @@ import { Input } from "@/components/ui/input"
 import AvatarGroup from "@/components/avatar-group"
 import { OrbitSheet } from "@/components/orbit-sheet"
 import Active from "@/components/pills/active"
+import Paused from "@/components/pills/paused"
+import Stopped from "@/components/pills/stopped"
 import { SettingsMenu } from "@/components/settings"
 
-export default function SingleOrbit() {
+export default function SingleOrbit({ params }: { params: { id: string } }) {
+  const orbit = useQuery(api.app.orbits.fetchSingleOrbit, {
+    id: params.id as any,
+  })
+  console.log("Single orbit: ", orbit)
   return (
     <div className="">
       {/* <h4 className="flex items-center">
@@ -46,63 +57,54 @@ export default function SingleOrbit() {
             </a>
           </div>
 
-          {/* <SettingsMenu /> */}
-          <OrbitSheet />
+          <SettingsMenu
+            orbitId={orbit?._id}
+            name={orbit?.name as string}
+            website={orbit?.website as string}
+            status={orbit?.status as string}
+          />
+          {/* <OrbitSheet /> */}
         </div>
         {/* header */}
-        <div className="my-20 w-full">
-          <div className="flex flex-wrap items-center">
-            <h4 className="text-2xl font-medium text-zinc-600 transition-all duration-100 ease-linear">
-              Solaris
-            </h4>
-            <span className="mx-4 inline-block h-1 w-1 rounded-full bg-zinc-400"></span>
-            <span className="mr-2 text-xs font-medium text-zinc-500">
-              Created 2 days ago
-            </span>
-            <div className="my-2">
-              <Active />
+        <div className="my-20 flex w-full justify-between">
+          <div className="">
+            <div className="flex flex-wrap items-center">
+              <h4 className="text-2xl font-medium text-zinc-600 transition-all duration-100 ease-linear">
+                {orbit?.name}
+              </h4>
+              <span className="mx-4 inline-block h-1 w-1 rounded-full bg-zinc-400"></span>
+              <span className="mr-4 text-xs font-medium text-zinc-500">
+                Created <TimeAgo date={orbit?._creationTime || Date.now()} />
+              </span>
+              <div className="my-2">
+                {orbit?.status === "Active" && <Active />}
+                {orbit?.status === "Paused" && <Paused />}
+                {orbit?.status === "Stopped" && <Stopped />}
+              </div>
             </div>
-          </div>
-          <div className="flex items-center justify-between">
-            {/* <AvatarGroup /> */}
-            <span className="flex items-center text-xs font-bold text-zinc-600">
-              <a
-                href="https://metafy.gg"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center"
-              >
-                <Link2 size={20} className="mr-1 text-zinc-600" />
-                https://metafy.gg
-              </a>
-            </span>
-            {/* feedback svg */}
             <div className="flex items-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="gray"
-                aria-hidden="true"
-                className="mr-2 h-6 stroke-zinc-400"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.282 48.282 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"
-                ></path>
-              </svg>
-              <span>12</span>
+              {/* <AvatarGroup /> */}
+              <span className="flex items-center text-xs font-bold text-zinc-600">
+                <a
+                  href={orbit?.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center"
+                >
+                  <Link2 size={20} className="mr-1 text-zinc-600" />
+                  <span>{orbit?.website}</span>
+                </a>
+              </span>
+              <span className="ml-4 text-xs font-medium text-zinc-500">
+                Created <TimeAgo date={orbit?._creationTime || Date.now()} />
+              </span>
             </div>
           </div>
-          {/* description */}
-          {/* <p className="text-base font-medium italic text-zinc-600">
-            Use these Tailwind CSS form and form layout components to build
-            things like settings screens in your application. These form
-            components are designed and built by the Tailwind CSS team, and
-            include a variety of different styles and layouts.
-          </p> */}
+
+          <span className="flex items-center text-xs font-bold text-zinc-600">
+            <Code size={20} className="mr-1 text-zinc-600" />
+            <span>Embed</span>
+          </span>
         </div>
         {/* feedback section */}
         <div className="divide-y divide-gray-300/30 px-36">

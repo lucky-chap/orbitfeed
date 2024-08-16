@@ -7,15 +7,17 @@ import { api } from "@/convex/_generated/api"
 import { userId } from "@/convex/auth"
 import brick from "@/public/images/white-brick-wall.jpg"
 import { usePaginatedQuery, useQuery } from "convex/react"
-import { House, Search } from "lucide-react"
+import { House, Loader2, Search } from "lucide-react"
 import TimeAgo from "react-timeago"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import AvatarGroup from "@/components/avatar-group"
+import Empty from "@/components/empty"
 import Active from "@/components/pills/active"
 import Paused from "@/components/pills/paused"
+import Stopped from "@/components/pills/stopped"
 
 export default function Orbit() {
   const user = useQuery(api.user.viewer)
@@ -60,7 +62,7 @@ export default function Orbit() {
         {results.map((orbit, index) => (
           <div key={index} className="flex items-start justify-between py-7">
             <div className="flex flex-col">
-              <Link href={`/orbits/${orbit.name.toLowerCase()}-${orbit._id}`}>
+              <Link href={`/orbits/${orbit._id}`}>
                 <h4 className="text-base font-semibold text-zinc-700 transition-all duration-100 ease-linear hover:underline">
                   {orbit.name}
                 </h4>
@@ -78,12 +80,14 @@ export default function Orbit() {
                 <span className="mx-2 inline-block h-1 w-1 rounded-full bg-zinc-400"></span>
                 {/* <span className="mr-2">{orbit._creationTime}</span> */}
                 <span className="mr-2">
-                  <TimeAgo date={orbit._creationTime} />
+                  <TimeAgo
+                    date={orbit == undefined ? Date.now() : orbit._creationTime}
+                  />
                 </span>
                 <div>
                   {orbit.status === "Active" && <Active />}
                   {orbit.status === "Paused" && <Paused />}
-                  {orbit.status === "Stopped" && <Active />}
+                  {orbit.status === "Stopped" && <Stopped />}
                 </div>
               </div>
             </div>
@@ -111,7 +115,52 @@ export default function Orbit() {
             </div>
           </div>
         ))}
+
+        {paginatedLoading && (
+          <div className="flex h-full min-h-[70vh] items-center justify-center">
+            <Loader2 className="h-7 w-7 animate-spin text-blue-500" />
+          </div>
+        )}
+
+        {status === "LoadingMore" && (
+          <div className="flex h-full min-h-[70vh] items-center justify-center">
+            <Loader2 className="h-7 w-7 animate-spin text-blue-500" />
+          </div>
+        )}
+
+        {status === "CanLoadMore" && (
+          <div className="">
+            <Button
+              // variant={"ghost"}
+              onClick={() => loadMore(5)}
+              className="mr-2 mt-10 rounded-md bg-blue-500 px-5 py-2 font-medium text-white transition-all duration-100 ease-linear hover:bg-blue-600"
+            >
+              {paginatedLoading ? "Loading..." : "Load More"}
+              {paginatedLoading ? (
+                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Loader2 className="ml-2 h-4 w-4" />
+              )}
+            </Button>
+          </div>
+        )}
+
+        {!results && paginatedLoading && (
+          <div className="flex h-full min-h-[70vh] items-center justify-center">
+            <Loader2 className="h-7 w-7 animate-spin" />
+          </div>
+        )}
       </div>
+      {results?.length === 0 && (
+        <div className="mx-auto flex max-w-2xl items-center justify-center py-6">
+          <Empty
+            heading="You have no orbits yet"
+            subheading="Click the button below to create an orbit"
+            icon={true}
+            image={false}
+          />
+        </div>
+      )}
     </div>
   )
 }

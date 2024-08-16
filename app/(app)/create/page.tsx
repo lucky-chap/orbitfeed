@@ -150,6 +150,8 @@ export default function CreateOrbit() {
                         id="feedback"
                         name="feedback"
                         type="checkbox"
+                        defaultChecked={true}
+                        defaultValue={1}
                         className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
                         checked
                         disabled
