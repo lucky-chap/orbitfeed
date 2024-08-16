@@ -1,8 +1,9 @@
 "use client"
 
-import React from "react"
+import React, { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { api } from "@/convex/_generated/api"
 import brick from "@/public/images/white-brick-wall.jpg"
 import { useMutation, useQuery } from "convex/react"
@@ -21,6 +22,7 @@ import TimeAgo from "react-timeago"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { toast } from "@/components/ui/use-toast"
 import AvatarGroup from "@/components/avatar-group"
 import { OrbitSheet } from "@/components/orbit-sheet"
 import Active from "@/components/pills/active"
@@ -29,10 +31,37 @@ import Stopped from "@/components/pills/stopped"
 import { SettingsMenu } from "@/components/settings"
 
 export default function SingleOrbit({ params }: { params: { id: string } }) {
+  const router = useRouter()
+  const [deleting, setDeleting] = useState(false)
   const orbit = useQuery(api.app.orbits.fetchSingleOrbit, {
     id: params.id as any,
   })
   console.log("Single orbit: ", orbit)
+  const deleteMutation = useMutation(api.app.orbits.deleteOrbit)
+
+  const handleDelete = async () => {
+    if (orbit?._id) {
+      setDeleting(true)
+      const result = await deleteMutation({
+        orbitId: orbit._id,
+      })
+      if (result === "deleted") {
+        setDeleting(false)
+        router.push("/orbits")
+        toast({
+          title: "Deleted!",
+          description: "Orbit has been deleted",
+        })
+      } else {
+        setDeleting(false)
+        toast({
+          variant: "destructive",
+          title: "Error!",
+          description: "Orbit could not be deleted",
+        })
+      }
+    }
+  }
   return (
     <div className="">
       {/* <h4 className="flex items-center">
@@ -62,6 +91,7 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
             name={orbit?.name as string}
             website={orbit?.website as string}
             status={orbit?.status as string}
+            handleDelete={handleDelete}
           />
           {/* <OrbitSheet /> */}
         </div>
@@ -95,16 +125,18 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
                   <span>{orbit?.website}</span>
                 </a>
               </span>
-              <span className="ml-4 text-xs font-medium text-zinc-500">
-                Created <TimeAgo date={orbit?._creationTime || Date.now()} />
-              </span>
+              {/* <Button variant={"link"} className="ml-2">
+                <span className="text-xs font-medium text-zinc-500">
+                  Delete
+                </span>
+              </Button> */}
             </div>
           </div>
 
-          <span className="flex items-center text-xs font-bold text-zinc-600">
+          <Button variant={"ghost"}>
             <Code size={20} className="mr-1 text-zinc-600" />
-            <span>Embed</span>
-          </span>
+            <span className="text-xs font-bold">Embed</span>
+          </Button>
         </div>
         {/* feedback section */}
         <div className="divide-y divide-gray-300/30 px-36">

@@ -87,11 +87,11 @@ export const updateOrbit = mutation({
   },
 })
 
-// Delete a project & all of its feedback
+// Delete a orbit & all of its feedback
 // 1. First delete the project
 // 2. Query all the feedback for the project
 // 3. Delete all the feedback.
-export const deleteProject = mutation({
+export const deleteOrbit = mutation({
   args: {
     orbitId: v.id("orbits"),
   },
@@ -106,6 +106,7 @@ export const deleteProject = mutation({
         feedbacks.map(async (feedback) => {
           await ctx.db.delete(feedback._id)
         })
+        return "deleted"
       }
       // since null is always returned (I think), I want to return a
       // string to indicate that the project has been deleted.

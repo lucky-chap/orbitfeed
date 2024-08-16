@@ -74,11 +74,13 @@ export function SettingsMenu({
   name,
   website,
   status,
+  handleDelete,
 }: {
   orbitId: any
   name: string
   website: string
   status: string
+  handleDelete: () => void
 }) {
   const [open, setOpen] = React.useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
@@ -110,7 +112,7 @@ export function SettingsMenu({
           </div>
           <DrawerFooter className="px-0 pt-12">
             <DrawerClose asChild>
-              <Button variant="outline" className="px-0">
+              <Button variant="outline" className="px-0" onClick={handleDelete}>
                 Delete orbit
               </Button>
             </DrawerClose>
