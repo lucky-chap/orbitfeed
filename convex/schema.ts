@@ -13,10 +13,10 @@ const schema = defineSchema({
   feedback: defineTable({
     orbitId: v.id("orbits"),
     by: v.string(),
-    text: v.string(),
+    content: v.string(),
     type: v.string(),
     location: v.string(),
-    image: v.optional(v.string()),
+    image: v.string(),
   }),
 })
 

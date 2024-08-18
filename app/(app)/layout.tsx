@@ -50,7 +50,7 @@ export default function Home({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-zinc-50">
       <div className="grid grid-cols-[250px_1fr]">
-        <div className="flex flex-col p-4 py-4">
+        <div className="sticky top-0 flex h-[100vh] flex-col p-4 py-4">
           <Logo />
           <div className="flex flex-col">
             {/* <h4 className="text-zinc-100 font-medium">Activity</h4> */}

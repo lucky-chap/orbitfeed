@@ -1,19 +1,15 @@
 "use client"
 
 import React from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { api } from "@/convex/_generated/api"
-import { userId } from "@/convex/auth"
-import brick from "@/public/images/white-brick-wall.jpg"
 import { usePaginatedQuery, useQuery } from "convex/react"
-import { House, Loader2, Search } from "lucide-react"
+import { Loader2, Plus } from "lucide-react"
 import TimeAgo from "react-timeago"
 
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import AvatarGroup from "@/components/avatar-group"
+import CodeDialog from "@/components/code-dialog"
 import Empty from "@/components/empty"
 import Active from "@/components/pills/active"
 import Paused from "@/components/pills/paused"
@@ -32,7 +28,7 @@ export default function Orbit() {
     {
       userId: user?._id,
     },
-    { initialNumItems: 5 }
+    { initialNumItems: 10 }
   )
 
   console.log("Results: ", results)
@@ -92,26 +88,7 @@ export default function Orbit() {
               </div>
             </div>
             <div className="flex items-center justify-between">
-              {/* <AvatarGroup /> */}
-              {/* feedback svg */}
-              <div className="flex items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="gray"
-                  aria-hidden="true"
-                  className="mr-2 h-6 stroke-zinc-400"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.282 48.282 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"
-                  ></path>
-                </svg>
-                <span>12</span>
-              </div>
+              <CodeDialog orbitId={orbit?._id as string} />
             </div>
           </div>
         ))}
@@ -132,7 +109,7 @@ export default function Orbit() {
           <div className="">
             <Button
               // variant={"ghost"}
-              onClick={() => loadMore(5)}
+              onClick={() => loadMore(10)}
               className="mr-2 mt-10 rounded-md bg-blue-500 px-5 py-2 font-medium text-white transition-all duration-100 ease-linear hover:bg-blue-600"
             >
               {paginatedLoading ? "Loading..." : "Load More"}
@@ -152,13 +129,12 @@ export default function Orbit() {
         )}
       </div>
       {results?.length === 0 && (
-        <div className="mx-auto flex max-w-2xl items-center justify-center py-6">
-          <Empty
-            heading="You have no orbits yet"
-            subheading="Click the button below to create an orbit"
-            icon={true}
-            image={false}
-          />
+        <div className="mt-56 flex w-full items-center justify-center">
+          {/* <p className="text-center">You have no orbits.</p> */}
+          <Button variant={"secondary"} className="ml-2">
+            <Plus size={14} className="mr-2" />
+            Create new orbit
+          </Button>
         </div>
       )}
     </div>

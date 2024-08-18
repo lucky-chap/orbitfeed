@@ -1,4 +1,4 @@
-import { Auth, paginationOptsValidator } from "convex/server"
+import { paginationOptsValidator } from "convex/server"
 import { v } from "convex/values"
 
 import { Id } from "../_generated/dataModel"
@@ -16,6 +16,10 @@ export const fetchOrbits = query({
     userId: v.any(),
   },
   handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx)
+    if (userId === null) {
+      throw new Error("Client is not authenticated!")
+    }
     const orbits = await ctx.db
       .query("orbits")
       .filter((q) => q.eq(q.field("userId"), args.userId))
@@ -36,6 +40,19 @@ export const fetchSingleOrbit = query({
     if (userId === null) {
       throw new Error("Client is not authenticated!")
     }
+    const { id } = args
+    if (!id) return null
+    const orbit = await ctx.db.get(id)
+    return orbit
+  },
+})
+
+// fetch single orbit by id on a route handler (no auth)
+export const fetchSingleOrbitNoAuth = query({
+  args: {
+    id: v.optional(v.id("orbits")),
+  },
+  handler: async (ctx, args) => {
     const { id } = args
     if (!id) return null
     const orbit = await ctx.db.get(id)
@@ -96,6 +113,10 @@ export const deleteOrbit = mutation({
     orbitId: v.id("orbits"),
   },
   handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx)
+    if (userId === null) {
+      throw new Error("Client is not authenticated!")
+    }
     const deletedOrbit = await ctx.db.delete(args.orbitId)
     if (deletedOrbit !== null) {
       const feedbacks = await ctx.db

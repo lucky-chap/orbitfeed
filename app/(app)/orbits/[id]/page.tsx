@@ -6,12 +6,13 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { api } from "@/convex/_generated/api"
 import brick from "@/public/images/white-brick-wall.jpg"
-import { useMutation, useQuery } from "convex/react"
+import { useMutation, usePaginatedQuery, useQuery } from "convex/react"
 import {
   ChevronLeft,
   Code,
   Lightbulb,
   Link2,
+  Loader2,
   Paperclip,
   Search,
   Settings,
@@ -24,6 +25,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/use-toast"
 import AvatarGroup from "@/components/avatar-group"
+import CodeDialog from "@/components/code-dialog"
+import Empty from "@/components/empty"
 import { OrbitSheet } from "@/components/orbit-sheet"
 import Active from "@/components/pills/active"
 import Paused from "@/components/pills/paused"
@@ -36,7 +39,21 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
   const orbit = useQuery(api.app.orbits.fetchSingleOrbit, {
     id: params.id as any,
   })
+  const {
+    results,
+    status,
+    loadMore,
+    isLoading: paginatedLoading,
+  } = usePaginatedQuery(
+    api.app.feedback.fetchFeedbackForOrbit,
+    {
+      orbitId: params.id as any,
+    },
+    { initialNumItems: 10 }
+  )
+
   console.log("Single orbit: ", orbit)
+  console.log("Feedback for orbit: ", results)
   const deleteMutation = useMutation(api.app.orbits.deleteOrbit)
 
   const handleDelete = async () => {
@@ -133,79 +150,120 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
             </div>
           </div>
 
-          <Button variant={"ghost"}>
-            <Code size={20} className="mr-1 text-zinc-600" />
-            <span className="text-xs font-bold">Embed</span>
-          </Button>
+          <CodeDialog orbitId={orbit?._id as string} />
         </div>
         {/* feedback section */}
-        <div className="divide-y divide-gray-300/30 px-36">
-          {Array(4)
-            .fill("")
-            .map((_, index) => (
-              <div
-                key={index}
-                className="rounded-xl py-14 transition-all duration-100 ease-linear"
-              >
-                <div className="flex items-center justify-between">
-                  <div className="item my-2 flex items-center">
-                    <div className="my-2 flex items-center">
-                      {/* <img
+        <div className="w-full divide-y divide-gray-300/30 px-36">
+          {results?.map((feedback, index) => (
+            <div
+              key={index}
+              className="rounded-xl py-14 transition-all duration-100 ease-linear"
+            >
+              <div className="flex items-center justify-between">
+                <div className="item my-2 flex items-center">
+                  <div className="my-2 flex items-center">
+                    {/* <img
                       className="mr-2 inline-block size-[26px] rounded-full ring-2 ring-white dark:ring-neutral-900"
                       src="https://images.unsplash.com/photo-1531927557220-a9e23c1e4794?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80"
                       alt="Avatar"
                     /> */}
-                      <p className="text-sm font-semibold text-zinc-700">
-                        Anastasia Jokovic
-                      </p>
-                    </div>
-                    <span className="mx-3 inline-flex items-center gap-x-1 rounded-full bg-sky-100 px-2 py-1 text-xs font-medium text-sky-800 dark:bg-sky-500/10 dark:text-sky-500">
-                      <Lightbulb className="h-4 w-4" />
-                      Idea
-                    </span>
-                    <div className="flex items-center text-xs">
-                      <span className="mr-2 font-medium text-zinc-500">
-                        Created 2 days ago
-                      </span>
-                    </div>
+                    <p className="text-sm font-semibold text-zinc-700">
+                      {feedback.by}
+                    </p>
                   </div>
-
+                  <span className="mx-3 inline-flex items-center gap-x-1 rounded-full bg-sky-100 px-2 py-1 text-xs font-medium text-sky-800 dark:bg-sky-500/10 dark:text-sky-500">
+                    <Lightbulb className="h-4 w-4" />
+                    {feedback.type}
+                  </span>
                   <div className="flex items-center text-xs">
-                    <a
-                      href=" https://somewebsite.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <span className="font-medium text-zinc-500">
-                        From Ghana 🏳️‍🌈
-                      </span>
-                    </a>
+                    <span className="mr-2 font-medium text-zinc-500">
+                      {" "}
+                      <TimeAgo date={feedback?._creationTime || Date.now()} />
+                    </span>
                   </div>
                 </div>
 
-                <p className="text-base text-zinc-600">
-                  Use these Tailwind CSS form and form layout components to
-                  build things like settings screens in your application. These
-                  form components are designed and built by the Tailwind CSS
-                  team, and include a variety of different styles and layouts.
-                </p>
+                <div className="flex items-center text-xs">
+                  <a
+                    href=" https://somewebsite.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span className="font-medium text-zinc-500">
+                      {feedback.location} 🏳️‍🌈
+                    </span>
+                  </a>
+                </div>
+              </div>
 
-                <p className="flex items-center pt-4 text-xs font-semibold italic text-blue-500">
-                  <Paperclip size={13} className="mr-2" />
-                  Download file
-                </p>
+              <p className="text-base text-zinc-600">{feedback.content}</p>
 
-                <div className="flex items-start justify-between">
-                  {/* <Image
+              <div className="mt-4 flex items-center justify-between">
+                {feedback.image.length > 0 && (
+                  <Button variant={"secondary"} className="text-xs">
+                    <Paperclip size={13} className="mr-2" />
+                    Download
+                  </Button>
+                )}
+
+                <Button variant={"ghost"} className="text-xs">
+                  <Trash size={13} />
+                </Button>
+              </div>
+
+              <div className="flex items-start justify-between">
+                {/* <Image
               src={brick}
               alt="brick wall"
               height={100}
               width={100}
               className="rounded pr-2"
             /> */}
-                </div>
               </div>
-            ))}
+            </div>
+          ))}
+        </div>
+        <div className="flex w-full justify-center py-6">
+          {paginatedLoading && (
+            <div className="mt-56 flex h-full items-center justify-center">
+              <Loader2 className="h-7 w-7 animate-spin text-blue-500" />
+            </div>
+          )}
+
+          {status === "LoadingMore" && (
+            <div className="mt-56 flex h-full items-center justify-center">
+              <Loader2 className="h-7 w-7 animate-spin text-blue-500" />
+            </div>
+          )}
+
+          {status === "CanLoadMore" && (
+            <div className="">
+              <Button
+                // variant={"ghost"}
+                onClick={() => loadMore(10)}
+                className="mr-2 mt-10 rounded-md bg-blue-500 px-5 py-2 font-medium text-white transition-all duration-100 ease-linear hover:bg-blue-600"
+              >
+                {paginatedLoading ? "Loading..." : "Load More"}
+                {paginatedLoading ? (
+                  <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Loader2 className="ml-2 h-4 w-4" />
+                )}
+              </Button>
+            </div>
+          )}
+
+          {!results && paginatedLoading && (
+            <div className="flex h-full min-h-[70vh] items-center justify-center">
+              <Loader2 className="h-7 w-7 animate-spin" />
+            </div>
+          )}
+
+          {results?.length === 0 && (
+            <div className="mt-56">
+              <p className="text-center">No feedback for this orbit.</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

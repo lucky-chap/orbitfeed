@@ -295,7 +295,11 @@ function ProfileForm({
         </div>
 
         <Button type="submit" className="mt-9 bg-blue-500 hover:bg-blue-600">
-          Save changes
+          {loading ? (
+            <LoaderCircle className="animate-spin duration-700" />
+          ) : (
+            "Save changes"
+          )}
         </Button>
       </form>
     </Form>

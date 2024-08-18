@@ -1,4 +1,4 @@
-import { Auth } from "convex/server"
+import { paginationOptsValidator } from "convex/server"
 import { v } from "convex/values"
 
 import { mutation, query } from "../_generated/server"
@@ -12,6 +12,27 @@ import { mutation, query } from "../_generated/server"
 // fetch the first 10 feedback for an orbit
 export const fetchFeedbackForOrbit = query({
   args: {
+    paginationOpts: paginationOptsValidator,
+    orbitId: v.id("orbits"),
+  },
+  handler: async (ctx, args) => {
+    const { orbitId } = args
+    const feedback = await ctx.db
+      .query("feedback")
+      .filter((q) => q.eq(q.field("orbitId"), orbitId))
+      .order("desc")
+      .paginate(args.paginationOpts)
+
+    // remember to paginate the results
+    // return both the feedback and the length
+
+    return feedback
+  },
+})
+
+// fetch the first 10 feedback for an orbit (no auth)
+export const fetchFeedbackForOrbitNoAuth = query({
+  args: {
     orbitId: v.id("orbits"),
   },
   handler: async (ctx, args) => {
@@ -22,9 +43,13 @@ export const fetchFeedbackForOrbit = query({
       .order("desc")
       .collect()
 
-    //   remember to paginate the results
+    // remember to paginate the results
+    // return both the feedback and the length
 
-    return feedback
+    return {
+      feedback,
+      length: feedback.length,
+    }
   },
 })
 
@@ -57,24 +82,48 @@ export const fetchSingleFeedback = query({
   },
 })
 
-// Create new feedback for project
+// Create new feedback for orbit
 export const createFeedbackForOrbit = mutation({
   args: {
     orbitId: v.id("orbits"),
     by: v.string(),
-    text: v.string(),
+    content: v.string(),
     location: v.string(),
     type: v.string(),
-    image: v.optional(v.string()),
+    image: v.string(),
   },
-  handler: async (ctx, { orbitId, by, text, location, type, image }) => {
+  handler: async (ctx, { orbitId, by, content, location, type, image }) => {
     const feedbackId = await ctx.db.insert("feedback", {
       orbitId,
       by,
-      text,
+      content,
       location,
       type,
       image,
+    })
+
+    return feedbackId
+  },
+})
+
+// Create new feedback for orbit (no auth)
+export const createFeedbackForOrbitNoAuth = mutation({
+  args: {
+    orbitId: v.id("orbits"),
+    by: v.string(),
+    content: v.string(),
+    location: v.string(),
+    type: v.string(),
+    image: v.string(),
+  },
+  handler: async (ctx, { orbitId, by, content, location, type, image }) => {
+    const feedbackId = await ctx.db.insert("feedback", {
+      orbitId,
+      by: by,
+      content: content,
+      location: location,
+      type: type,
+      image: image,
     })
 
     return feedbackId
