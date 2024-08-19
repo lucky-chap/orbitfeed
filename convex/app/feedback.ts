@@ -2,6 +2,7 @@ import { paginationOptsValidator } from "convex/server"
 import { v } from "convex/values"
 
 import { mutation, query } from "../_generated/server"
+import { auth } from "../auth"
 
 // I could nest feedback in the project object
 // but I want to keep the project object clean
@@ -9,7 +10,6 @@ import { mutation, query } from "../_generated/server"
 // Even Convex advices so over here:
 // https://docs.convex.dev/database/document-ids#trading-off-deeply-nested-documents-vs-relationships
 
-// fetch the first 10 feedback for an orbit
 export const fetchFeedbackForOrbit = query({
   args: {
     paginationOpts: paginationOptsValidator,
@@ -127,5 +127,27 @@ export const createFeedbackForOrbitNoAuth = mutation({
     })
 
     return feedbackId
+  },
+})
+
+// Delete a orbit & all of its feedback
+// 1. First delete the orbit
+// 2. Query all the feedback for the orbit
+// 3. Delete all the feedback.
+export const deleteFeedback = mutation({
+  args: {
+    feedbackId: v.id("feedback"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx)
+    if (userId === null) {
+      throw new Error("Client is not authenticated!")
+    }
+    const deletedFeedback = await ctx.db.delete(args.feedbackId)
+    if (deletedFeedback !== null) {
+      return "deleted"
+    } else {
+      return null
+    }
   },
 })

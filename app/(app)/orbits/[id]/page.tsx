@@ -29,7 +29,11 @@ import CodeDialog from "@/components/code-dialog"
 import Empty from "@/components/empty"
 import { OrbitSheet } from "@/components/orbit-sheet"
 import Active from "@/components/pills/active"
+import Idea from "@/components/pills/idea"
+import Issue from "@/components/pills/issue"
+import Other from "@/components/pills/other"
 import Paused from "@/components/pills/paused"
+import Praise from "@/components/pills/praise"
 import Stopped from "@/components/pills/stopped"
 import { SettingsMenu } from "@/components/settings"
 
@@ -54,12 +58,13 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
 
   console.log("Single orbit: ", orbit)
   console.log("Feedback for orbit: ", results)
-  const deleteMutation = useMutation(api.app.orbits.deleteOrbit)
+  const deleteOrbitMutation = useMutation(api.app.orbits.deleteOrbit)
+  const deleteFeedbackMutation = useMutation(api.app.feedback.deleteFeedback)
 
-  const handleDelete = async () => {
+  const handleDeleteOrbit = async () => {
     if (orbit?._id) {
       setDeleting(true)
-      const result = await deleteMutation({
+      const result = await deleteOrbitMutation({
         orbitId: orbit._id,
       })
       if (result === "deleted") {
@@ -79,6 +84,30 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
       }
     }
   }
+
+  const handleDeleteFeedback = async (id: any) => {
+    if (orbit?._id) {
+      setDeleting(true)
+      const result = await deleteFeedbackMutation({
+        feedbackId: id,
+      })
+      if (result === "deleted") {
+        setDeleting(false)
+        toast({
+          title: "Deleted!",
+          description: "Feedback has been deleted",
+        })
+      } else {
+        setDeleting(false)
+        toast({
+          variant: "destructive",
+          title: "Error!",
+          description: "Feedback could not be deleted",
+        })
+      }
+    }
+  }
+
   return (
     <div className="">
       {/* <h4 className="flex items-center">
@@ -108,7 +137,7 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
             name={orbit?.name as string}
             website={orbit?.website as string}
             status={orbit?.status as string}
-            handleDelete={handleDelete}
+            handleDeleteOrbit={handleDeleteOrbit}
           />
           {/* <OrbitSheet /> */}
         </div>
@@ -171,9 +200,11 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
                       {feedback.by}
                     </p>
                   </div>
-                  <span className="mx-3 inline-flex items-center gap-x-1 rounded-full bg-sky-100 px-2 py-1 text-xs font-medium text-sky-800 dark:bg-sky-500/10 dark:text-sky-500">
-                    <Lightbulb className="h-4 w-4" />
-                    {feedback.type}
+                  <span className="mx-3">
+                    {feedback.type === "Idea" && <Idea />}
+                    {feedback.type === "Praise" && <Praise />}
+                    {feedback.type === "Issue" && <Issue />}
+                    {feedback.type === "Other" && <Other />}
                   </span>
                   <div className="flex items-center text-xs">
                     <span className="mr-2 font-medium text-zinc-500">
@@ -207,7 +238,14 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
                 )}
 
                 <Button variant={"ghost"} className="text-xs">
-                  <Trash size={13} />
+                  {deleting ? (
+                    <Loader2 className="animate-spin" size={13} />
+                  ) : (
+                    <Trash
+                      size={13}
+                      onClick={() => handleDeleteFeedback(feedback._id)}
+                    />
+                  )}
                 </Button>
               </div>
 

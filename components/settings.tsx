@@ -74,13 +74,13 @@ export function SettingsMenu({
   name,
   website,
   status,
-  handleDelete,
+  handleDeleteOrbit,
 }: {
   orbitId: any
   name: string
   website: string
   status: string
-  handleDelete: () => void
+  handleDeleteOrbit: () => void
 }) {
   const [open, setOpen] = React.useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
@@ -112,7 +112,11 @@ export function SettingsMenu({
           </div>
           <DrawerFooter className="px-0 pt-12">
             <DrawerClose asChild>
-              <Button variant="outline" className="px-0" onClick={handleDelete}>
+              <Button
+                variant="outline"
+                className="px-0"
+                onClick={handleDeleteOrbit}
+              >
                 Delete orbit
               </Button>
             </DrawerClose>
@@ -193,7 +197,7 @@ function ProfileForm({
       if (result === "updated") {
         setLoading(false)
         toast({
-          variant: "success",
+          variant: "default",
           title: "Orbit updated.",
           description: "Your orbit was updated successfully",
         })

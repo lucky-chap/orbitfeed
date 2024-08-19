@@ -5,7 +5,6 @@ import { Id } from "../_generated/dataModel"
 import { internalMutation, mutation, query } from "../_generated/server"
 import { auth } from "../auth"
 
-// fetch the first 10 project projects
 // add pagination later
 // write another fetch function that fetches the first created 6 projects
 // this functin would be used when the user is not on a pro plan. so always
@@ -105,8 +104,8 @@ export const updateOrbit = mutation({
 })
 
 // Delete a orbit & all of its feedback
-// 1. First delete the project
-// 2. Query all the feedback for the project
+// 1. First delete the orbit
+// 2. Query all the feedback for the orbit
 // 3. Delete all the feedback.
 export const deleteOrbit = mutation({
   args: {
