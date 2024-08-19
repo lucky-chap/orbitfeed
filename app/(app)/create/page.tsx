@@ -53,7 +53,7 @@ export default function CreateOrbit() {
       if (orbitId != null) {
         setLoading(false)
         toast({
-          variant: "success",
+          variant: "default",
           title: "New orbit created.",
           description: "Find it in /orbits",
         })
@@ -168,6 +168,59 @@ export default function CreateOrbit() {
                         Get notified when someones gives feedback on a project.
                       </p>
                     </div>
+                  </div>
+                </div>
+              </fieldset>
+              {/* push notifications */}
+              <fieldset className="pl-16">
+                <legend className="text-sm font-semibold leading-6 text-gray-900">
+                  Frequency
+                </legend>
+                <p className="mt-1 text-sm leading-6 text-gray-600">
+                  Choose how often you'd like to receive notifications.
+                </p>
+                <div className="mt-6 space-y-6">
+                  <div className="flex items-center gap-x-3">
+                    <input
+                      id="push-everything"
+                      name="push-notifications"
+                      type="radio"
+                      className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                    />
+                    <label
+                      htmlFor="push-everything"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Everyday
+                    </label>
+                  </div>
+                  <div className="flex items-center gap-x-3">
+                    <input
+                      id="push-email"
+                      name="push-notifications"
+                      type="radio"
+                      className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                    />
+                    <label
+                      htmlFor="push-email"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Once every 3 days
+                    </label>
+                  </div>
+                  <div className="flex items-center gap-x-3">
+                    <input
+                      id="push-nothing"
+                      name="push-notifications"
+                      type="radio"
+                      className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                    />
+                    <label
+                      htmlFor="push-nothing"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Once a week
+                    </label>
                   </div>
                 </div>
               </fieldset>

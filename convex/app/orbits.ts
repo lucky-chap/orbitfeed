@@ -1,11 +1,43 @@
-import { paginationOptsValidator } from "convex/server"
+import { GenericQueryCtx, paginationOptsValidator } from "convex/server"
 import { v } from "convex/values"
 
-import { Id } from "../_generated/dataModel"
-import { internalMutation, mutation, query } from "../_generated/server"
+import { DataModel, Id } from "../_generated/dataModel"
+import {
+  internalMutation,
+  mutation,
+  MutationCtx,
+  query,
+} from "../_generated/server"
 import { auth } from "../auth"
 
-// add pagination later
+// async function checkUserId(ctx: GenericQueryCtx<DataModel>) {
+//   const userId = await auth.getUserId(ctx)
+//   if (userId === null) {
+//     throw new Error("Client is not authenticated!")
+//   }
+// }
+
+export const searchOrbits = query({
+  args: {
+    searchTerm: v.string(),
+    paginationOpts: paginationOptsValidator,
+    userId: v.any(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await auth.getUserId(ctx)
+    if (userId === null) {
+      throw new Error("Client is not authenticated!")
+    }
+    const searchResults = await ctx.db
+      .query("orbits")
+      .withSearchIndex("search_body", (q) => q.search("name", args.searchTerm))
+      .filter((q) => q.eq(q.field("userId"), args.userId))
+      .paginate(args.paginationOpts)
+
+    return searchResults
+  },
+})
+
 // write another fetch function that fetches the first created 6 projects
 // this functin would be used when the user is not on a pro plan. so always
 // in client whether the user is on a pro plan or not.

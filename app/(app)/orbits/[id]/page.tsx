@@ -20,6 +20,7 @@ import {
 } from "lucide-react"
 import TimeAgo from "react-timeago"
 
+import { ACTIVE, IDEA, ISSUE, OTHER, PAUSED, PRAISE } from "@/lib/constants"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -153,9 +154,8 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
                 Created <TimeAgo date={orbit?._creationTime || Date.now()} />
               </span>
               <div className="my-2">
-                {orbit?.status === "Active" && <Active />}
-                {orbit?.status === "Paused" && <Paused />}
-                {orbit?.status === "Stopped" && <Stopped />}
+                {orbit?.status === ACTIVE && <Active />}
+                {orbit?.status === PAUSED && <Paused />}
               </div>
             </div>
             <div className="flex items-center">
@@ -201,10 +201,10 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
                     </p>
                   </div>
                   <span className="mx-3">
-                    {feedback.type === "Idea" && <Idea />}
-                    {feedback.type === "Praise" && <Praise />}
-                    {feedback.type === "Issue" && <Issue />}
-                    {feedback.type === "Other" && <Other />}
+                    {feedback.type === IDEA && <Idea />}
+                    {feedback.type === PRAISE && <Praise />}
+                    {feedback.type === ISSUE && <Issue />}
+                    {feedback.type === OTHER && <Other />}
                   </span>
                   <div className="flex items-center text-xs">
                     <span className="mr-2 font-medium text-zinc-500">

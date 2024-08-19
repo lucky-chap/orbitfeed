@@ -5,7 +5,9 @@ import Link from "next/link"
 import { CreditCard, House, LogOut, Plus, Settings, User } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import Logo from "@/components/logo"
+import Signout from "@/components/signout"
 
 const links = [
   {
@@ -38,12 +40,12 @@ const links = [
     icon: Settings,
     active: false,
   },
-  {
-    title: "Logout",
-    href: "/logout",
-    icon: LogOut,
-    active: false,
-  },
+  // {
+  //   title: "Logout",
+  //   href: "/logout",
+  //   icon: LogOut,
+  //   active: false,
+  // },
 ]
 
 export default function Home({ children }: { children: React.ReactNode }) {
@@ -52,7 +54,7 @@ export default function Home({ children }: { children: React.ReactNode }) {
       <div className="grid grid-cols-[250px_1fr]">
         <div className="sticky top-0 flex h-[100vh] flex-col p-4 py-4">
           <Logo />
-          <div className="flex flex-col">
+          <div className="flex h-full flex-col justify-between">
             {/* <h4 className="text-zinc-100 font-medium">Activity</h4> */}
             <ul className="mt-6">
               {links.map((link, index) => (
@@ -69,6 +71,7 @@ export default function Home({ children }: { children: React.ReactNode }) {
                 </Link>
               ))}
             </ul>
+            <Signout />
           </div>
         </div>
         <div className="min-h-screen border-l bg-white px-10 py-4 shadow-sm">

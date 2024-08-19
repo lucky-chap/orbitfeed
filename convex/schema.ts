@@ -9,6 +9,10 @@ const schema = defineSchema({
     name: v.string(),
     website: v.string(),
     status: v.string(),
+  }).searchIndex("search_body", {
+    // https://docs.convex.dev/search/text-search
+    searchField: "name",
+    // filterFields: ["website"],
   }),
   feedback: defineTable({
     orbitId: v.id("orbits"),
