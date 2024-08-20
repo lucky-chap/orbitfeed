@@ -45,6 +45,7 @@ export const fetchOrbits = query({
   args: {
     paginationOpts: paginationOptsValidator,
     userId: v.any(),
+    user_email: v.any(),
   },
   handler: async (ctx, args) => {
     const userId = await auth.getUserId(ctx)
@@ -53,6 +54,7 @@ export const fetchOrbits = query({
     }
     const orbits = await ctx.db
       .query("orbits")
+      .withIndex("creator", (q) => q.eq("userEmail", args.user_email))
       .filter((q) => q.eq(q.field("userId"), args.userId))
       .order("desc")
       .paginate(args.paginationOpts)
@@ -96,17 +98,30 @@ export const createOrbit = mutation({
   args: {
     name: v.string(),
     website: v.string(),
+    userEmail: v.string(),
+    notificationFrequency: v.string(),
   },
-  handler: async (ctx, { name, website }) => {
+  handler: async (
+    ctx,
+    {
+      name,
+      website,
+      userEmail,
+
+      notificationFrequency,
+    }
+  ) => {
     const userId = await auth.getUserId(ctx)
     if (userId === null) {
       throw new Error("Client is not authenticated!")
     }
     const orbitId = await ctx.db.insert("orbits", {
       userId,
+      userEmail,
       name,
       website,
       status: "Active",
+      notificationFrequency,
     })
 
     return orbitId

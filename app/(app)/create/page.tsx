@@ -5,11 +5,12 @@ import Link from "next/link"
 import { api } from "@/convex/_generated/api"
 import { useAuthActions } from "@convex-dev/auth/react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation } from "convex/react"
+import { useMutation, useQuery } from "convex/react"
 import { Camera, Image, LoaderCircle, UserIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
+import { EVERYDAY, ONCE_EVERY_3_DAYS, ONEC_A_WEEK } from "@/lib/constants"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -29,11 +30,17 @@ const FormSchema = z.object({
   website: z.string().url({
     message: "Please enter a valid website",
   }),
+  // notification_frequency: z.enum([EVERYDAY, ONCE_EVERY_3_DAYS, ONEC_A_WEEK], {
+  //   required_error: "Notification frequency must be specified.",
+  // }),
 })
 
 export default function CreateOrbit() {
+  const user = useQuery(api.user.viewer)
+
   const createNewOrbit = useMutation(api.app.orbits.createOrbit)
   const [loading, setLoading] = useState(false)
+  const [notificationFrequency, setNotificationFrequency] = useState("")
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -48,7 +55,9 @@ export default function CreateOrbit() {
     try {
       const orbitId = await createNewOrbit({
         name: data.name,
+        userEmail: user?.email as string,
         website: data.website,
+        notificationFrequency: notificationFrequency,
       })
       if (orbitId != null) {
         setLoading(false)
@@ -57,6 +66,7 @@ export default function CreateOrbit() {
           title: "New orbit created.",
           description: "Find it in /orbits",
         })
+        form.reset()
       } else {
         setLoading(false)
         toast({
@@ -77,6 +87,8 @@ export default function CreateOrbit() {
       }
     }
   }
+
+  // console.log("NOtiFICATION FREQUENCY: ", notificationFrequency)
 
   return (
     <Form {...form}>
@@ -150,7 +162,6 @@ export default function CreateOrbit() {
                         id="feedback"
                         name="feedback"
                         type="checkbox"
-                        defaultChecked={true}
                         defaultValue={1}
                         className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
                         checked
@@ -172,6 +183,7 @@ export default function CreateOrbit() {
                 </div>
               </fieldset>
               {/* push notifications */}
+
               <fieldset className="pl-16">
                 <legend className="text-sm font-semibold leading-6 text-gray-900">
                   Frequency
@@ -179,12 +191,17 @@ export default function CreateOrbit() {
                 <p className="mt-1 text-sm leading-6 text-gray-600">
                   Choose how often you'd like to receive notifications.
                 </p>
+
                 <div className="mt-6 space-y-6">
                   <div className="flex items-center gap-x-3">
                     <input
                       id="push-everything"
                       name="push-notifications"
                       type="radio"
+                      defaultValue={EVERYDAY}
+                      onChange={(e) => {
+                        setNotificationFrequency(e.target.value)
+                      }}
                       className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                     />
                     <label
@@ -196,13 +213,17 @@ export default function CreateOrbit() {
                   </div>
                   <div className="flex items-center gap-x-3">
                     <input
-                      id="push-email"
+                      id="push-every-3-days"
                       name="push-notifications"
                       type="radio"
+                      defaultValue={ONCE_EVERY_3_DAYS}
+                      onChange={(e) => {
+                        setNotificationFrequency(e.target.value)
+                      }}
                       className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                     />
                     <label
-                      htmlFor="push-email"
+                      htmlFor="push-every-3-days"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
                       Once every 3 days
@@ -210,16 +231,20 @@ export default function CreateOrbit() {
                   </div>
                   <div className="flex items-center gap-x-3">
                     <input
-                      id="push-nothing"
+                      id="push-push-once-a-week"
                       name="push-notifications"
                       type="radio"
+                      defaultValue={ONEC_A_WEEK}
+                      onChange={(e) => {
+                        setNotificationFrequency(e.target.value)
+                      }}
                       className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                     />
                     <label
-                      htmlFor="push-nothing"
+                      htmlFor="push-push-once-a-week"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Once a week
+                      Once a week (every Monday)
                     </label>
                   </div>
                 </div>
@@ -235,7 +260,8 @@ export default function CreateOrbit() {
             </Button>
           </Link>
           <Button
-            type="submit"
+            onClick={() => form.handleSubmit(onSubmit)}
+            disabled={loading || notificationFrequency.trim().length === 0}
             className="w-full bg-blue-500 hover:bg-blue-600"
           >
             {loading ? (

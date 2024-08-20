@@ -48,6 +48,7 @@ export default function Orbit() {
     api.app.orbits.fetchOrbits,
     {
       userId: user?._id,
+      user_email: user?.email,
     },
     { initialNumItems: 10 }
   )
@@ -169,10 +170,12 @@ export default function Orbit() {
       {status === "Exhausted" && results?.length === 0 && (
         <div className="mt-56 flex w-full items-center justify-center">
           {/* <p className="text-center">You have no orbits.</p> */}
-          <Button variant={"secondary"} className="ml-2">
-            <Plus size={14} className="mr-2" />
-            Create new orbit
-          </Button>
+          <Link href={"/create"}>
+            <Button variant={"secondary"} className="ml-2">
+              <Plus size={14} className="mr-2" />
+              Create new orbit
+            </Button>
+          </Link>
         </div>
       )}
 

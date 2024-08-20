@@ -41,7 +41,7 @@ export default function Login() {
       await signIn("resend", data)
       setLoading(false)
       toast({
-        variant: "success",
+        variant: "default",
         title: "Magic link sent",
         description: "Check your email for a magic link to sign in.",
       })

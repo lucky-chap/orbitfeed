@@ -6,14 +6,19 @@ const schema = defineSchema({
   ...authTables,
   orbits: defineTable({
     userId: v.id("users"),
+    userEmail: v.string(),
     name: v.string(),
     website: v.string(),
     status: v.string(),
-  }).searchIndex("search_body", {
-    // https://docs.convex.dev/search/text-search
-    searchField: "name",
-    // filterFields: ["website"],
-  }),
+    notificationFrequency: v.string(),
+  })
+    // using indexes for search
+    // https://docs.convex.dev/database/indexes/indexes-and-query-perf
+    .index("creator", ["userEmail"])
+    .searchIndex("search_body", {
+      // https://docs.convex.dev/search/text-search
+      searchField: "name",
+    }),
   feedback: defineTable({
     orbitId: v.id("orbits"),
     by: v.string(),

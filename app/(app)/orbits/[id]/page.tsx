@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { api } from "@/convex/_generated/api"
 import brick from "@/public/images/white-brick-wall.jpg"
 import { useMutation, usePaginatedQuery, useQuery } from "convex/react"
+import { saveAs } from "file-saver"
 import {
   ChevronLeft,
   Code,
@@ -109,6 +110,12 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
     }
   }
 
+  const handleDownloadFile = async (author: string, url: string) => {
+    const response = await fetch(url)
+    const blob = await response.blob()
+    saveAs(blob, `${author}-feedback-image.jpg`)
+  }
+
   return (
     <div className="">
       {/* <h4 className="flex items-center">
@@ -197,7 +204,9 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
                       alt="Avatar"
                     /> */}
                     <p className="text-sm font-semibold text-zinc-700">
-                      {feedback.by}
+                      {feedback.by.trim().length === 0
+                        ? "Anonymous"
+                        : feedback.by}
                     </p>
                   </div>
                   <span className="mx-3">
@@ -231,10 +240,23 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
 
               <div className="mt-4 flex items-center justify-between">
                 {feedback.image.length > 0 && (
-                  <Button variant={"secondary"} className="text-xs">
+                  <Button
+                    variant={"secondary"}
+                    className="text-xs"
+                    onClick={() =>
+                      handleDownloadFile(
+                        feedback.by.trim().length === 0
+                          ? "anonymous"
+                          : feedback.by.toLowerCase(),
+                        feedback.image
+                      )
+                    }
+                  >
                     <Paperclip size={13} className="mr-2" />
                     Download
                   </Button>
+                  // <a href={feedback.image} download>
+                  // </a>
                 )}
 
                 <Button variant={"ghost"} className="text-xs">
