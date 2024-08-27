@@ -1,6 +1,6 @@
-import { authTables } from "@convex-dev/auth/server"
-import { defineSchema, defineTable } from "convex/server"
-import { v } from "convex/values"
+import { authTables } from "@convex-dev/auth/server";
+import { defineSchema, defineTable } from "convex/server";
+import { v } from "convex/values";
 
 const schema = defineSchema({
   ...authTables,
@@ -27,6 +27,18 @@ const schema = defineSchema({
     location: v.string(),
     image: v.string(),
   }),
-})
+  proUsers: defineTable({
+    userId: v.id("users"),
+    email: v.string(),
+    // stripeCustomerId: v.string(),
+    // stripeSubscriptionId: v.string(),
+    // stripeSubscriptionStatus: v.string(),
+    // stripeSubscriptionPlan: v.string(),
+    // stripeSubscriptionPrice: v.string(),
+    // stripeSubscriptionNextPayment: v.string(),
+    // stripeSubscriptionPeriodEnd: v.string(),
+    // stripeSubscriptionPeriodStart: v.string(),
+  }),
+});
 
-export default schema
+export default schema;

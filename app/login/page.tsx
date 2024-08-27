@@ -1,11 +1,12 @@
-"use client"
+"use client";
 
-import React, { useState } from "react"
-import { useAuthActions } from "@convex-dev/auth/react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { LoaderCircle } from "lucide-react"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+import React, { useState } from "react";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import { LoaderCircle } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 import {
   Form,
@@ -14,46 +15,46 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { toast } from "@/components/ui/use-toast"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/use-toast";
 
 const FormSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email",
   }),
-})
+});
 
 export default function Login() {
-  const { signIn } = useAuthActions()
-  const [loading, setLoading] = useState(false)
+  const { signIn } = useAuthActions();
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       email: "",
     },
-  })
+  });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    setLoading(true)
+    setLoading(true);
     try {
-      await signIn("resend", data)
-      setLoading(false)
+      await signIn("resend", data);
+      setLoading(false);
       toast({
         variant: "default",
         title: "Magic link sent",
         description: "Check your email for a magic link to sign in.",
-      })
+      });
     } catch (error) {
-      setLoading(false)
+      setLoading(false);
       if (error instanceof Error) {
-        console.error(error)
+        console.error(error);
         toast({
           variant: "destructive",
           title: "An error occurred",
           description: "Please try again later.",
-        })
+        });
       }
     }
   }
@@ -130,8 +131,46 @@ export default function Login() {
                   )}
                 </button>
               </div>
+
+              {/* <div className="mt-10">
+                <button
+                  onClick={() => void signIn("github")}
+                  disabled={loading}
+                  className="flex w-full justify-center rounded-md bg-black px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                >
+                  {loading ? (
+                    <LoaderCircle className="animate-spin duration-700" />
+                  ) : (
+                    <p className="flex items-center">
+                      <GitHubLogoIcon fontSize={20} className="mr-2" />
+                      Login with GitHub
+                    </p>
+                  )}
+                </button>
+              </div> */}
             </form>
           </Form>
+
+          <div className="mt-10">
+            <button
+              onClick={() =>
+                void signIn("github", {
+                  redirectTo: "/orbits",
+                })
+              }
+              disabled={loading}
+              className="flex w-full justify-center rounded-md bg-black px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            >
+              {loading ? (
+                <LoaderCircle className="animate-spin duration-700" />
+              ) : (
+                <p className="flex items-center">
+                  <GitHubLogoIcon fontSize={20} className="mr-2" />
+                  Login with GitHub
+                </p>
+              )}
+            </button>
+          </div>
 
           <p className="mt-10 text-center text-sm text-gray-500">
             Not a member?{" "}
@@ -145,5 +184,5 @@ export default function Login() {
         </div>
       </div>
     </>
-  )
+  );
 }

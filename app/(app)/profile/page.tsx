@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import woman from "@/public/images/white-brick-wall.jpg";
 import { Label } from "@radix-ui/react-label";
 import { useQuery } from "convex/react";
 import { LoaderCircle, Pencil } from "lucide-react";

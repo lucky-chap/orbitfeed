@@ -1,8 +1,16 @@
 "use client";
 
-import { CheckIcon } from "lucide-react";
+import { useEffect } from "react";
+import { api } from "@/convex/_generated/api";
+import { loadStripe } from "@stripe/stripe-js";
+import { useQuery } from "convex/react";
+import { CheckIcon, Plus, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string
+);
 
 const freeFeatures = [
   "Receive feedback for your project",
@@ -18,6 +26,40 @@ const paidFeatures = [
 ];
 
 export default function Billing() {
+  const user = useQuery(api.user.viewer);
+
+  console.log(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+
+  const handleCheckout = async () => {
+    try {
+      const stripe = await stripePromise;
+      if (!stripe) {
+        return;
+      }
+
+      const { session } = await (
+        await fetch("/api/checkout", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            quantity: 1,
+            unit_amount: 200, // $2.00
+            userId: user?._id,
+            email: user?.email,
+          }),
+        })
+      ).json();
+
+      await stripe.redirectToCheckout({
+        sessionId: session.id,
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="bg-white sm:py-12">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -128,13 +170,16 @@ export default function Billing() {
                 </p>
                 <p className="mt-6 flex items-baseline justify-center gap-x-2">
                   <span className="text-5xl font-bold tracking-tight text-gray-900">
-                    $10.00
+                    $2.00
                   </span>
                   <span className="text-sm font-semibold leading-6 tracking-wide text-gray-600">
                     USD
                   </span>
                 </p>
-                <Button className="mt-10 block w-full rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                <Button
+                  className="mt-10 block w-full rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  onClick={() => handleCheckout()}
+                >
                   Upgrade
                 </Button>
                 <p className="mt-6 text-xs leading-5 text-gray-600">

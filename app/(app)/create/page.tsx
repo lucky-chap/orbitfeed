@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import React, { useState } from "react"
-import Link from "next/link"
-import { api } from "@/convex/_generated/api"
-import { useAuthActions } from "@convex-dev/auth/react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation, useQuery } from "convex/react"
-import { Camera, Image, LoaderCircle, UserIcon } from "lucide-react"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+import React, { useState } from "react";
+import Link from "next/link";
+import { api } from "@/convex/_generated/api";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery } from "convex/react";
+import { Camera, Image, LoaderCircle, UserIcon } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { EVERYDAY, ONCE_EVERY_3_DAYS, ONEC_A_WEEK } from "@/lib/constants"
-import { Button } from "@/components/ui/button"
+import { EVERYDAY, ONEC_A_WEEK, THRICE_A_WEEK } from "@/lib/constants";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -19,9 +19,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { toast } from "@/components/ui/use-toast"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/use-toast";
 
 const FormSchema = z.object({
   name: z.string().min(4, {
@@ -33,14 +33,14 @@ const FormSchema = z.object({
   // notification_frequency: z.enum([EVERYDAY, ONCE_EVERY_3_DAYS, ONEC_A_WEEK], {
   //   required_error: "Notification frequency must be specified.",
   // }),
-})
+});
 
 export default function CreateOrbit() {
-  const user = useQuery(api.user.viewer)
+  const user = useQuery(api.user.viewer);
 
-  const createNewOrbit = useMutation(api.app.orbits.createOrbit)
-  const [loading, setLoading] = useState(false)
-  const [notificationFrequency, setNotificationFrequency] = useState("")
+  const createNewOrbit = useMutation(api.app.orbits.createOrbit);
+  const [loading, setLoading] = useState(false);
+  const [notificationFrequency, setNotificationFrequency] = useState("");
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -48,42 +48,42 @@ export default function CreateOrbit() {
       name: "",
       website: "",
     },
-  })
+  });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    setLoading(true)
+    setLoading(true);
     try {
       const orbitId = await createNewOrbit({
         name: data.name,
         userEmail: user?.email as string,
         website: data.website,
         notificationFrequency: notificationFrequency,
-      })
+      });
       if (orbitId != null) {
-        setLoading(false)
+        setLoading(false);
         toast({
           variant: "default",
           title: "New orbit created.",
           description: "Find it in /orbits",
-        })
-        form.reset()
+        });
+        form.reset();
       } else {
-        setLoading(false)
+        setLoading(false);
         toast({
           variant: "destructive",
           title: "An error occurred",
           description: "Your orbit was not created.",
-        })
+        });
       }
     } catch (error) {
-      setLoading(false)
+      setLoading(false);
       if (error instanceof Error) {
-        console.error(error)
+        console.error(error);
         toast({
           variant: "destructive",
           title: "An error occurred",
           description: "Orbit creation failed.",
-        })
+        });
       }
     }
   }
@@ -198,9 +198,9 @@ export default function CreateOrbit() {
                       id="push-everything"
                       name="push-notifications"
                       type="radio"
-                      defaultValue={EVERYDAY}
+                      defaultValue={ONEC_A_WEEK}
                       onChange={(e) => {
-                        setNotificationFrequency(e.target.value)
+                        setNotificationFrequency(e.target.value);
                       }}
                       className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                     />
@@ -208,7 +208,7 @@ export default function CreateOrbit() {
                       htmlFor="push-everything"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Everyday
+                      Once a week
                     </label>
                   </div>
                   <div className="flex items-center gap-x-3">
@@ -216,9 +216,9 @@ export default function CreateOrbit() {
                       id="push-every-3-days"
                       name="push-notifications"
                       type="radio"
-                      defaultValue={ONCE_EVERY_3_DAYS}
+                      defaultValue={THRICE_A_WEEK}
                       onChange={(e) => {
-                        setNotificationFrequency(e.target.value)
+                        setNotificationFrequency(e.target.value);
                       }}
                       className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                     />
@@ -226,10 +226,10 @@ export default function CreateOrbit() {
                       htmlFor="push-every-3-days"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Once every 3 days
+                      Thrice a week
                     </label>
                   </div>
-                  <div className="flex items-center gap-x-3">
+                  {/* <div className="flex items-center gap-x-3">
                     <input
                       id="push-push-once-a-week"
                       name="push-notifications"
@@ -246,7 +246,7 @@ export default function CreateOrbit() {
                     >
                       Once a week (every Monday)
                     </label>
-                  </div>
+                  </div> */}
                 </div>
               </fieldset>
             </div>
@@ -273,5 +273,5 @@ export default function CreateOrbit() {
         </div>
       </form>
     </Form>
-  )
+  );
 }

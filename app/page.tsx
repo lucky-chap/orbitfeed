@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import React from "react"
-import Link from "next/link"
-import { useAuthActions } from "@convex-dev/auth/react"
-import { GitHubLogoIcon } from "@radix-ui/react-icons"
+import React from "react";
+import Link from "next/link";
+import { useAuthActions } from "@convex-dev/auth/react";
+import { GitHubLogoIcon } from "@radix-ui/react-icons";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
-  const { signIn } = useAuthActions()
+  const { signIn } = useAuthActions();
   return (
     <div>
       <p>I'm home</p>
@@ -16,7 +16,11 @@ export default function Home() {
         <Link href="/orbits">Go to Orbits</Link>
       </Button>
       <Button
-        onClick={() => void signIn("github")}
+        onClick={() =>
+          void signIn("github", {
+            redirectTo: "/orbits",
+          })
+        }
         className="bg-blue-500 text-white hover:bg-blue-600"
       >
         <GitHubLogoIcon className="mr-2 h-6 w-6" />
@@ -26,5 +30,5 @@ export default function Home() {
         <Link href="/private">Go to Private Page</Link>
       </Button>
     </div>
-  )
+  );
 }
