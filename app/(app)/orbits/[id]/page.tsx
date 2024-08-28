@@ -1,13 +1,12 @@
-"use client"
+"use client";
 
-import React, { useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { api } from "@/convex/_generated/api"
-import brick from "@/public/images/white-brick-wall.jpg"
-import { useMutation, usePaginatedQuery, useQuery } from "convex/react"
-import { saveAs } from "file-saver"
+import React, { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { api } from "@/convex/_generated/api";
+import { useMutation, usePaginatedQuery, useQuery } from "convex/react";
+import { saveAs } from "file-saver";
 import {
   ChevronLeft,
   Code,
@@ -18,33 +17,33 @@ import {
   Search,
   Settings,
   Trash,
-} from "lucide-react"
-import TimeAgo from "react-timeago"
+} from "lucide-react";
+import TimeAgo from "react-timeago";
 
-import { ACTIVE, IDEA, ISSUE, OTHER, PAUSED, PRAISE } from "@/lib/constants"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { toast } from "@/components/ui/use-toast"
-import AvatarGroup from "@/components/avatar-group"
-import CodeDialog from "@/components/code-dialog"
-import Empty from "@/components/empty"
-import { OrbitSheet } from "@/components/orbit-sheet"
-import Active from "@/components/pills/active"
-import Idea from "@/components/pills/idea"
-import Issue from "@/components/pills/issue"
-import Other from "@/components/pills/other"
-import Paused from "@/components/pills/paused"
-import Praise from "@/components/pills/praise"
-import Stopped from "@/components/pills/stopped"
-import { SettingsMenu } from "@/components/settings"
+import { ACTIVE, IDEA, ISSUE, OTHER, PAUSED, PRAISE } from "@/lib/constants";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/use-toast";
+import AvatarGroup from "@/components/avatar-group";
+import CodeDialog from "@/components/code-dialog";
+import Empty from "@/components/empty";
+import { OrbitSheet } from "@/components/orbit-sheet";
+import Active from "@/components/pills/active";
+import Idea from "@/components/pills/idea";
+import Issue from "@/components/pills/issue";
+import Other from "@/components/pills/other";
+import Paused from "@/components/pills/paused";
+import Praise from "@/components/pills/praise";
+import Stopped from "@/components/pills/stopped";
+import { SettingsMenu } from "@/components/settings";
 
 export default function SingleOrbit({ params }: { params: { id: string } }) {
-  const router = useRouter()
-  const [deleting, setDeleting] = useState(false)
+  const router = useRouter();
+  const [deleting, setDeleting] = useState(false);
   const orbit = useQuery(api.app.orbits.fetchSingleOrbit, {
     id: params.id as any,
-  })
+  });
   const {
     results,
     status,
@@ -56,65 +55,65 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
       orbitId: params.id as any,
     },
     { initialNumItems: 10 }
-  )
+  );
 
-  console.log("Single orbit: ", orbit)
-  console.log("Feedback for orbit: ", results)
-  const deleteOrbitMutation = useMutation(api.app.orbits.deleteOrbit)
-  const deleteFeedbackMutation = useMutation(api.app.feedback.deleteFeedback)
+  console.log("Single orbit: ", orbit);
+  console.log("Feedback for orbit: ", results);
+  const deleteOrbitMutation = useMutation(api.app.orbits.deleteOrbit);
+  const deleteFeedbackMutation = useMutation(api.app.feedback.deleteFeedback);
 
   const handleDeleteOrbit = async () => {
     if (orbit?._id) {
-      setDeleting(true)
+      setDeleting(true);
       const result = await deleteOrbitMutation({
         orbitId: orbit._id,
-      })
+      });
       if (result === "deleted") {
-        setDeleting(false)
-        router.push("/orbits")
+        setDeleting(false);
+        router.push("/orbits");
         toast({
           title: "Deleted!",
           description: "Orbit has been deleted",
-        })
+        });
       } else {
-        setDeleting(false)
+        setDeleting(false);
         toast({
           variant: "destructive",
           title: "Error!",
           description: "Orbit could not be deleted",
-        })
+        });
       }
     }
-  }
+  };
 
   const handleDeleteFeedback = async (id: any) => {
     if (orbit?._id) {
-      setDeleting(true)
+      setDeleting(true);
       const result = await deleteFeedbackMutation({
         feedbackId: id,
-      })
+      });
       if (result === "deleted") {
-        setDeleting(false)
+        setDeleting(false);
         toast({
           title: "Deleted!",
           description: "Feedback has been deleted",
-        })
+        });
       } else {
-        setDeleting(false)
+        setDeleting(false);
         toast({
           variant: "destructive",
           title: "Error!",
           description: "Feedback could not be deleted",
-        })
+        });
       }
     }
-  }
+  };
 
   const handleDownloadFile = async (author: string, url: string) => {
-    const response = await fetch(url)
-    const blob = await response.blob()
-    saveAs(blob, `${author}-feedback-image.jpg`)
-  }
+    const response = await fetch(url);
+    const blob = await response.blob();
+    saveAs(blob, `${author}-feedback-image.jpg`);
+  };
 
   return (
     <div className="">
@@ -327,5 +326,5 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
         </div>
       </div>
     </div>
-  )
+  );
 }

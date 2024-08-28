@@ -90,6 +90,7 @@ export async function POST(request: Request) {
         if (update.success) {
           userUpdated = true;
           // send email to user
+          // TODO: use an action to do this
           const res = await resend.emails.send({
             // change the "from" to custom domain
             from: "Quirk <noreply@quirk.lol>",

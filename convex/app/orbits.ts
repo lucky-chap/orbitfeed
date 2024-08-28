@@ -1,14 +1,9 @@
-import { GenericQueryCtx, paginationOptsValidator } from "convex/server"
-import { v } from "convex/values"
+import { paginationOptsValidator } from "convex/server";
+import { v } from "convex/values";
 
-import { DataModel, Id } from "../_generated/dataModel"
-import {
-  internalMutation,
-  mutation,
-  MutationCtx,
-  query,
-} from "../_generated/server"
-import { auth } from "../auth"
+import { mutation, query } from "../_generated/server";
+import { auth } from "../auth";
+import { checkUserId } from "../helpers";
 
 // async function checkUserId(ctx: GenericQueryCtx<DataModel>) {
 //   const userId = await auth.getUserId(ctx)
@@ -24,19 +19,16 @@ export const searchOrbits = query({
     userId: v.any(),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx)
-    if (userId === null) {
-      throw new Error("Client is not authenticated!")
-    }
+    await checkUserId(ctx);
     const searchResults = await ctx.db
       .query("orbits")
       .withSearchIndex("search_body", (q) => q.search("name", args.searchTerm))
       .filter((q) => q.eq(q.field("userId"), args.userId))
-      .paginate(args.paginationOpts)
+      .paginate(args.paginationOpts);
 
-    return searchResults
+    return searchResults;
   },
-})
+});
 
 // write another fetch function that fetches the first created 6 projects
 // this functin would be used when the user is not on a pro plan. so always
@@ -48,20 +40,17 @@ export const fetchOrbits = query({
     user_email: v.any(),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx)
-    if (userId === null) {
-      throw new Error("Client is not authenticated!")
-    }
+    await checkUserId(ctx);
     const orbits = await ctx.db
       .query("orbits")
       .withIndex("creator", (q) => q.eq("userEmail", args.user_email))
       .filter((q) => q.eq(q.field("userId"), args.userId))
       .order("desc")
-      .paginate(args.paginationOpts)
+      .paginate(args.paginationOpts);
 
-    return orbits
+    return orbits;
   },
-})
+});
 
 // fetch single orbit by id
 export const fetchSingleOrbit = query({
@@ -69,16 +58,13 @@ export const fetchSingleOrbit = query({
     id: v.optional(v.id("orbits")),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx)
-    if (userId === null) {
-      throw new Error("Client is not authenticated!")
-    }
-    const { id } = args
-    if (!id) return null
-    const orbit = await ctx.db.get(id)
-    return orbit
+    await checkUserId(ctx);
+    const { id } = args;
+    if (!id) return null;
+    const orbit = await ctx.db.get(id);
+    return orbit;
   },
-})
+});
 
 // fetch single orbit by id on a route handler (no auth)
 export const fetchSingleOrbitNoAuth = query({
@@ -86,12 +72,12 @@ export const fetchSingleOrbitNoAuth = query({
     id: v.optional(v.id("orbits")),
   },
   handler: async (ctx, args) => {
-    const { id } = args
-    if (!id) return null
-    const orbit = await ctx.db.get(id)
-    return orbit
+    const { id } = args;
+    if (!id) return null;
+    const orbit = await ctx.db.get(id);
+    return orbit;
   },
-})
+});
 
 // Create a new orbit
 export const createOrbit = mutation({
@@ -111,10 +97,7 @@ export const createOrbit = mutation({
       notificationFrequency,
     }
   ) => {
-    const userId = await auth.getUserId(ctx)
-    if (userId === null) {
-      throw new Error("Client is not authenticated!")
-    }
+    const userId = await checkUserId(ctx);
     const orbitId = await ctx.db.insert("orbits", {
       userId,
       userEmail,
@@ -122,11 +105,11 @@ export const createOrbit = mutation({
       website,
       status: "Active",
       notificationFrequency,
-    })
+    });
 
-    return orbitId
+    return orbitId;
   },
-})
+});
 
 // Update an orbit
 export const updateOrbit = mutation({
@@ -137,18 +120,15 @@ export const updateOrbit = mutation({
     status: v.string(),
   },
   handler: async (ctx, { orbitId, name, website, status }) => {
-    const userId = await auth.getUserId(ctx)
-    if (userId === null) {
-      throw new Error("Client is not authenticated!")
-    }
+    await checkUserId(ctx);
     await ctx.db.patch(orbitId, {
       name,
       website,
       status,
-    })
-    return "updated"
+    });
+    return "updated";
   },
-})
+});
 
 // Delete a orbit & all of its feedback
 // 1. First delete the orbit
@@ -159,27 +139,24 @@ export const deleteOrbit = mutation({
     orbitId: v.id("orbits"),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx)
-    if (userId === null) {
-      throw new Error("Client is not authenticated!")
-    }
-    const deletedOrbit = await ctx.db.delete(args.orbitId)
+    await checkUserId(ctx);
+    const deletedOrbit = await ctx.db.delete(args.orbitId);
     if (deletedOrbit !== null) {
       const feedbacks = await ctx.db
         .query("feedback")
         .filter((q) => q.eq(q.field("orbitId"), args.orbitId))
-        .collect()
+        .collect();
       if (feedbacks !== null) {
         feedbacks.map(async (feedback) => {
-          await ctx.db.delete(feedback._id)
-        })
-        return "deleted"
+          await ctx.db.delete(feedback._id);
+        });
+        return "deleted";
       }
       // since null is always returned (I think), I want to return a
       // string to indicate that the project has been deleted.
-      return "deleted"
+      return "deleted";
     } else {
-      return null
+      return null;
     }
   },
-})
+});

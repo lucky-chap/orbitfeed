@@ -30,14 +30,12 @@ const schema = defineSchema({
   proUsers: defineTable({
     userId: v.id("users"),
     email: v.string(),
-    // stripeCustomerId: v.string(),
-    // stripeSubscriptionId: v.string(),
-    // stripeSubscriptionStatus: v.string(),
-    // stripeSubscriptionPlan: v.string(),
-    // stripeSubscriptionPrice: v.string(),
-    // stripeSubscriptionNextPayment: v.string(),
-    // stripeSubscriptionPeriodEnd: v.string(),
-    // stripeSubscriptionPeriodStart: v.string(),
+  }),
+  // tracking emails sent and feedback length
+  emails: defineTable({
+    orbitId: v.id("orbits"),
+    lastSent: v.number(),
+    lastFeedbackLength: v.number(),
   }),
 });
 
