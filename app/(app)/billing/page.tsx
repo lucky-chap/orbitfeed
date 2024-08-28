@@ -2,9 +2,10 @@
 
 import { useEffect } from "react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { loadStripe } from "@stripe/stripe-js";
-import { useQuery } from "convex/react";
-import { CheckIcon, Plus, Sparkles } from "lucide-react";
+import { usePaginatedQuery, useQuery } from "convex/react";
+import { CheckIcon, Loader2, Plus, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -28,7 +29,25 @@ const paidFeatures = [
 export default function Billing() {
   const user = useQuery(api.user.viewer);
 
-  console.log(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+  const { results, status, loadMore, isLoading } = usePaginatedQuery(
+    api.proUsers.checkIfUserIsPro,
+    {
+      // ideally, we'd want to use the orb_ck1 as the userId instead, but since convex validates the
+      // values, this would likely cause a 500 internal server error and we wouldn't want our users to
+      // see that would we?
+      userId: user?._id as Id<"users">,
+      email: user?.email as string,
+    },
+    { initialNumItems: 1 }
+  );
+
+  console.log("Results: ", results);
+  console.log(
+    "id same?: ",
+    results[0] !== undefined && results[0].userId === user?._id
+  );
+
+  // console.log(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
   const handleCheckout = async () => {
     try {
@@ -82,7 +101,7 @@ export default function Billing() {
               Free access to basic features. No credit card required.
             </p>
             <div className="mt-10 flex items-center gap-x-4">
-              <h4 className="flex-none text-sm font-semibold leading-6 text-indigo-600">
+              <h4 className="flex-none text-sm font-semibold leading-6 text-blue-600">
                 What&apos;s included
               </h4>
               <div className="h-px flex-auto bg-gray-100" />
@@ -95,7 +114,7 @@ export default function Billing() {
                 <li key={feature} className="flex gap-x-3">
                   <CheckIcon
                     aria-hidden="true"
-                    className="h-6 w-5 flex-none text-indigo-600"
+                    className="h-6 w-5 flex-none text-blue-600"
                   />
                   {feature}
                 </li>
@@ -118,7 +137,7 @@ export default function Billing() {
                 </p>
                 <Button
                   disabled
-                  className="mt-10 block w-full rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  className="mt-10 block w-full rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                 >
                   Active
                 </Button>
@@ -142,7 +161,7 @@ export default function Billing() {
               Pay once, own it forever. Credit card required.
             </p>
             <div className="mt-10 flex items-center gap-x-4">
-              <h4 className="flex-none text-sm font-semibold leading-6 text-indigo-600">
+              <h4 className="flex-none text-sm font-semibold leading-6 text-blue-600">
                 What&apos;s included
               </h4>
               <div className="h-px flex-auto bg-gray-100" />
@@ -155,7 +174,7 @@ export default function Billing() {
                 <li key={feature} className="flex gap-x-3">
                   <CheckIcon
                     aria-hidden="true"
-                    className="h-6 w-5 flex-none text-indigo-600"
+                    className="h-6 w-5 flex-none text-blue-600"
                   />
                   {feature}
                 </li>
@@ -177,10 +196,27 @@ export default function Billing() {
                   </span>
                 </p>
                 <Button
-                  className="mt-10 block w-full rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  className="mt-10 flex w-full items-center rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
                   onClick={() => handleCheckout()}
+                  disabled={
+                    isLoading ||
+                    (results[0] !== undefined &&
+                      results[0].userId === user?._id)
+                  }
                 >
-                  Upgrade
+                  {isLoading && (
+                    <Loader2
+                      className="animate-spin self-center text-white"
+                      size={22}
+                    />
+                  )}
+
+                  {results[0] !== undefined && results[0].userId === user?._id
+                    ? "On Pro Plan"
+                    : "Buy Pro Plan"}
+                  {/* {results[0] !== undefined &&
+                    results[0].userId !== user?._id &&
+                    "Buy Pro Plan"} */}
                 </Button>
                 <p className="mt-6 text-xs leading-5 text-gray-600">
                   Buy OrbitFeed and get access to tons of features and future

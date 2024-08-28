@@ -1,3 +1,7 @@
+// demo api route for testing emails
+
+"use server";
+
 import { NextRequest, NextResponse } from "next/server";
 import ThankYouEmail from "@/emails/thank-you";
 import { Resend } from "resend";
@@ -12,10 +16,10 @@ export async function POST(req: NextRequest) {
   //   ).emailAddresses[0].emailAddress;
   const res = await resend.emails.send({
     // change the "from" to custom domain
-    from: "Quirk <noreply@orbitfeed.lol>",
+    from: "Quirk <noreply@quirk.lol>",
     to: "hunchodotdev@gmail.com",
     subject: "Thank You!",
-    react: ThankYouEmail({}),
+    react: ThankYouEmail({ name: "Bam" }),
   });
 
   return NextResponse.json({ res }, { status: 200 });
