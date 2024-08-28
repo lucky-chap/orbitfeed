@@ -1,8 +1,9 @@
-import { paginationOptsValidator } from "convex/server"
-import { v } from "convex/values"
+import { paginationOptsValidator } from "convex/server";
+import { v } from "convex/values";
 
-import { mutation, query } from "../_generated/server"
-import { auth } from "../auth"
+import { mutation, query } from "../_generated/server";
+import { auth } from "../auth";
+import { checkUserId } from "../helpers";
 
 // I could nest feedback in the project object
 // but I want to keep the project object clean
@@ -16,32 +17,34 @@ export const fetchFeedbackForOrbit = query({
     orbitId: v.id("orbits"),
   },
   handler: async (ctx, args) => {
-    const { orbitId } = args
+    const { orbitId } = args;
+    await checkUserId(ctx);
     const feedback = await ctx.db
       .query("feedback")
       .filter((q) => q.eq(q.field("orbitId"), orbitId))
       .order("desc")
-      .paginate(args.paginationOpts)
+      .paginate(args.paginationOpts);
 
     // remember to paginate the results
     // return both the feedback and the length
 
-    return feedback
+    return feedback;
   },
-})
+});
 
-// fetch the first 10 feedback for an orbit (no auth)
+// used on the api route. no auth needed here
 export const fetchFeedbackForOrbitNoAuth = query({
   args: {
     orbitId: v.id("orbits"),
   },
   handler: async (ctx, args) => {
-    const { orbitId } = args
+    const { orbitId } = args;
+
     const feedback = await ctx.db
       .query("feedback")
       .filter((q) => q.eq(q.field("orbitId"), orbitId))
       .order("desc")
-      .collect()
+      .collect();
 
     // remember to paginate the results
     // return both the feedback and the length
@@ -49,25 +52,25 @@ export const fetchFeedbackForOrbitNoAuth = query({
     return {
       feedback,
       length: feedback.length,
-    }
+    };
   },
-})
+});
 
 export const getFeedbackLength = query({
   args: {
     orbitId: v.id("orbits"),
   },
   handler: async (ctx, args) => {
-    const { orbitId } = args
+    const { orbitId } = args;
     const feedback = await ctx.db
       .query("feedback")
       .filter((q) => q.eq(q.field("orbitId"), orbitId))
       .order("desc")
-      .collect()
+      .collect();
 
-    return feedback.length
+    return feedback.length;
   },
-})
+});
 
 // fetch single feedback by id
 export const fetchSingleFeedback = query({
@@ -75,12 +78,12 @@ export const fetchSingleFeedback = query({
     id: v.optional(v.id("feedback")),
   },
   handler: async (ctx, args) => {
-    const { id } = args
-    if (!id) return null
-    const feedback = await ctx.db.get(id)
-    return feedback
+    const { id } = args;
+    if (!id) return null;
+    const feedback = await ctx.db.get(id);
+    return feedback;
   },
-})
+});
 
 // Create new feedback for orbit
 export const createFeedbackForOrbit = mutation({
@@ -100,11 +103,11 @@ export const createFeedbackForOrbit = mutation({
       location,
       type,
       image,
-    })
+    });
 
-    return feedbackId
+    return feedbackId;
   },
-})
+});
 
 // Create new feedback for orbit (no auth)
 export const createFeedbackForOrbitNoAuth = mutation({
@@ -124,11 +127,11 @@ export const createFeedbackForOrbitNoAuth = mutation({
       location: location,
       type: type,
       image: image,
-    })
+    });
 
-    return feedbackId
+    return feedbackId;
   },
-})
+});
 
 // Delete a orbit & all of its feedback
 // 1. First delete the orbit
@@ -139,15 +142,12 @@ export const deleteFeedback = mutation({
     feedbackId: v.id("feedback"),
   },
   handler: async (ctx, args) => {
-    const userId = await auth.getUserId(ctx)
-    if (userId === null) {
-      throw new Error("Client is not authenticated!")
-    }
-    const deletedFeedback = await ctx.db.delete(args.feedbackId)
+    await checkUserId(ctx);
+    const deletedFeedback = await ctx.db.delete(args.feedbackId);
     if (deletedFeedback !== null) {
-      return "deleted"
+      return "deleted";
     } else {
-      return null
+      return null;
     }
   },
-})
+});
