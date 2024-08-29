@@ -25,6 +25,7 @@ const schema = defineSchema({
     content: v.string(),
     type: v.string(),
     location: v.string(),
+    country_code: v.string(),
     image: v.string(),
   }),
   proUsers: defineTable({

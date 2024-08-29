@@ -92,15 +92,20 @@ export const createFeedbackForOrbit = mutation({
     by: v.string(),
     content: v.string(),
     location: v.string(),
+    country_code: v.string(),
     type: v.string(),
     image: v.string(),
   },
-  handler: async (ctx, { orbitId, by, content, location, type, image }) => {
+  handler: async (
+    ctx,
+    { orbitId, by, content, location, country_code, type, image }
+  ) => {
     const feedbackId = await ctx.db.insert("feedback", {
       orbitId,
       by,
       content,
       location,
+      country_code,
       type,
       image,
     });
@@ -116,15 +121,20 @@ export const createFeedbackForOrbitNoAuth = mutation({
     by: v.string(),
     content: v.string(),
     location: v.string(),
+    country_code: v.string(),
     type: v.string(),
     image: v.string(),
   },
-  handler: async (ctx, { orbitId, by, content, location, type, image }) => {
+  handler: async (
+    ctx,
+    { orbitId, by, content, location, country_code, type, image }
+  ) => {
     const feedbackId = await ctx.db.insert("feedback", {
       orbitId,
       by: by,
       content: content,
       location: location,
+      country_code: country_code,
       type: type,
       image: image,
     });
@@ -133,10 +143,8 @@ export const createFeedbackForOrbitNoAuth = mutation({
   },
 });
 
-// Delete a orbit & all of its feedback
-// 1. First delete the orbit
-// 2. Query all the feedback for the orbit
-// 3. Delete all the feedback.
+// TODO: make this an internal mutation to be used
+// by other mutations
 export const deleteFeedback = mutation({
   args: {
     feedbackId: v.id("feedback"),
