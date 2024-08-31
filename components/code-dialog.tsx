@@ -56,7 +56,7 @@ export default function CodeDialog({ orbitId }: { orbitId: string }) {
   const handleUseCopy = () => {
     if (orbitId) {
       navigator.clipboard.writeText(
-        `<FeedbackWidget userId=${user?._id} userEmail=${user?.email} orbitId=${orbitId} />`
+        `<FeedbackWidget userId='${user?._id}' userEmail='${user?.email}' orbitId='${orbitId}' />`
       );
       setUseCopied(true);
       setTimeout(() => {
@@ -68,9 +68,9 @@ export default function CodeDialog({ orbitId }: { orbitId: string }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={"outline"}>
-          <Code size={20} className="mr-1 text-zinc-600" />
-          <span className="text-xs font-bold">Embed</span>
+        <Button variant="outline" className="h-7 p-2 text-xs">
+          <Code size={14} className="mr-1 text-zinc-600" />
+          <span className="text-xs font-medium">Embed</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
@@ -175,8 +175,11 @@ export default function CodeDialog({ orbitId }: { orbitId: string }) {
                       <span className="hidden rounded bg-zinc-200 px-2 py-[2px] text-zinc-400 md:block">
                         {orbitId?.substring(0, 10) + "..."}
                       </span>
-                      <p className="ml-1 text-purple-300">/</p>{" "}
-                      <ChevronRight className="-ml-1 h-4 w-4" />
+                      <span className="inline-flex pl-3 text-zinc-400">
+                        ...
+                      </span>
+                      {/* <p className="ml-1 text-purple-300">/</p>{" "} */}
+                      {/* <ChevronRight className="-ml-1 h-4 w-4" /> */}
                     </code>
                   </pre>
                 </CardContent>

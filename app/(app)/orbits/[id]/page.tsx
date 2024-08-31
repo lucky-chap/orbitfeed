@@ -91,11 +91,12 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
     }
   };
 
-  const handleDeleteFeedback = async (id: any) => {
+  const handleDeleteFeedback = async (id: any, storageId?: any) => {
     if (orbit?._id) {
       setDeleting(true);
       const result = await deleteFeedbackMutation({
         feedbackId: id as Id<"feedback">,
+        storageId: storageId as Id<"_storage">,
       });
       if (result === "deleted") {
         setDeleting(false);
@@ -225,7 +226,12 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
                     key={feedback._id}
                     feedbackId={feedback._id}
                     imageUrl={feedback.image}
-                    deleteFeedback={() => handleDeleteFeedback(feedback._id)}
+                    deleteFeedback={() =>
+                      handleDeleteFeedback(
+                        feedback._id,
+                        feedback.image_storage_id
+                      )
+                    }
                   />
                 </div>
 

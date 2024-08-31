@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 
 import { Id } from "../_generated/dataModel";
-import { mutation } from "../_generated/server";
+import { internalMutation, mutation } from "../_generated/server";
 import { checkUserId } from "../helpers";
 
 export const generateUploadUrl = mutation({
@@ -79,5 +79,20 @@ export const serveFile = mutation({
     }
 
     // return await ctx.storage.serveFile(args.projectId);
+  },
+});
+
+export const deleteFile = internalMutation({
+  args: {
+    storageId: v.id("_storage"),
+  },
+  handler: async (ctx, args) => {
+    await checkUserId(ctx);
+    const deleted = await ctx.storage.delete(args.storageId);
+    if (deleted !== null) {
+      return "deleted";
+    } else {
+      return null;
+    }
   },
 });

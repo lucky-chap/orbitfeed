@@ -192,11 +192,21 @@ export const updateFeedbackImage = mutation({
 export const deleteFeedback = mutation({
   args: {
     feedbackId: v.id("feedback"),
+    storageId: v.optional(v.id("_storage")),
   },
   handler: async (ctx, args) => {
     await checkUserId(ctx);
     const deletedFeedback = await ctx.db.delete(args.feedbackId);
     if (deletedFeedback !== null) {
+      if (args.storageId !== undefined) {
+        const deleted = await ctx.storage.delete(args.storageId);
+        if (deleted !== null) {
+          return "deleted";
+        } else {
+          return null;
+        }
+      }
+
       return "deleted";
     } else {
       return null;
