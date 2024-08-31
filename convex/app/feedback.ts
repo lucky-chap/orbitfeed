@@ -1,7 +1,13 @@
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 
-import { mutation, query } from "../_generated/server";
+import { internal } from "../_generated/api";
+import {
+  action,
+  internalMutation,
+  mutation,
+  query,
+} from "../_generated/server";
 import { auth } from "../auth";
 import { checkUserId } from "../helpers";
 
@@ -189,25 +195,74 @@ export const updateFeedbackImage = mutation({
 
 // TODO: make this an internal mutation to be used
 // by other mutations
-export const deleteFeedback = mutation({
+// export const deleteFeedback = mutation({
+//   args: {
+//     feedbackId: v.id("feedback"),
+//     storageId: v.optional(v.id("_storage")),
+//   },
+//   handler: async (ctx, args) => {
+//     await checkUserId(ctx);
+//     const deletedFeedback = await ctx.db.delete(args.feedbackId);
+//     if (deletedFeedback !== null) {
+//       if (args.storageId !== undefined) {
+//         const deleted = await ctx.storage.delete(args.storageId);
+//         if (deleted !== null) {
+//           return "deleted";
+//         } else {
+//           return null;
+//         }
+//       }
+
+//       return "deleted";
+//     } else {
+//       return null;
+//     }
+//   },
+// });
+
+export const deleteFeedback = internalMutation({
   args: {
     feedbackId: v.id("feedback"),
-    storageId: v.optional(v.id("_storage")),
   },
   handler: async (ctx, args) => {
     await checkUserId(ctx);
     const deletedFeedback = await ctx.db.delete(args.feedbackId);
     if (deletedFeedback !== null) {
+      return "deleted";
+    } else {
+      return null;
+    }
+  },
+});
+
+export const deleteFeedbackAndFile = action({
+  args: {
+    feedbackId: v.id("feedback"),
+    storageId: v.optional(v.id("_storage")),
+  },
+  handler: async (ctx, args) => {
+    const deleteFeedbackResult = await ctx.runMutation(
+      internal.app.feedback.deleteFeedback,
+      {
+        feedbackId: args.feedbackId,
+      }
+    );
+    if (deleteFeedbackResult !== null) {
       if (args.storageId !== undefined) {
-        const deleted = await ctx.storage.delete(args.storageId);
-        if (deleted !== null) {
+        const deletedFileResult = await ctx.runMutation(
+          internal.app.files.deleteFile,
+          {
+            storageId: args.storageId,
+          }
+        );
+        if (deletedFileResult !== null) {
           return "deleted";
         } else {
           return null;
         }
+      } else {
+        return "deleted";
       }
-
-      return "deleted";
     } else {
       return null;
     }

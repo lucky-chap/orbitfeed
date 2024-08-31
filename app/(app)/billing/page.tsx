@@ -14,15 +14,15 @@ const stripePromise = loadStripe(
 );
 
 const freeFeatures = [
-  "Receive feedback for your project",
+  "Receive up to 4 feedback for each orbit",
   "Future updates once a year",
   "Free entry to annual conference",
 ];
 
 const paidFeatures = [
   "Everything in Free Plan",
-  "Unlimited orbits & feedback",
-  "Free future updates",
+  "Unlimited feedback for each orbit",
+  "Monthly updates",
   "24/7 Customer Support",
 ];
 

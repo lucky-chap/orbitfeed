@@ -55,9 +55,8 @@ const links = [
 ];
 
 const features = [
-  "Receive feedback for your project",
+  "Unlimited feedback for each orbit",
   "Free entry to annual conference",
-  "Unlimited orbits & feedback",
   "Free future updates",
   "24/7 Customer Support",
 ];

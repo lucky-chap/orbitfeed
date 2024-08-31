@@ -6,7 +6,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useMutation, usePaginatedQuery, useQuery } from "convex/react";
+import {
+  useAction,
+  useMutation,
+  usePaginatedQuery,
+  useQuery,
+} from "convex/react";
 import { saveAs } from "file-saver";
 import {
   ChevronLeft,
@@ -65,7 +70,9 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
   // console.log("Single orbit: ", orbit);
   // console.log("Feedback for orbit: ", results);
   const deleteOrbitMutation = useMutation(api.app.orbits.deleteOrbit);
-  const deleteFeedbackMutation = useMutation(api.app.feedback.deleteFeedback);
+  const deleteFeedbackAction = useAction(
+    api.app.feedback.deleteFeedbackAndFile
+  );
 
   const handleDeleteOrbit = async () => {
     if (orbit?._id) {
@@ -94,7 +101,7 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
   const handleDeleteFeedback = async (id: any, storageId?: any) => {
     if (orbit?._id) {
       setDeleting(true);
-      const result = await deleteFeedbackMutation({
+      const result = await deleteFeedbackAction({
         feedbackId: id as Id<"feedback">,
         storageId: storageId as Id<"_storage">,
       });

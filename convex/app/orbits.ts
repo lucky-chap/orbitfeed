@@ -131,9 +131,6 @@ export const updateOrbit = mutation({
 });
 
 // Delete a orbit & all of its feedback
-// 1. First delete the orbit
-// 2. Query all the feedback for the orbit
-// 3. Delete all the feedback.
 export const deleteOrbit = mutation({
   args: {
     orbitId: v.id("orbits"),
@@ -152,8 +149,6 @@ export const deleteOrbit = mutation({
         });
         return "deleted";
       }
-      // since null is always returned (I think), I want to return a
-      // string to indicate that the project has been deleted.
       return "deleted";
     } else {
       return null;
