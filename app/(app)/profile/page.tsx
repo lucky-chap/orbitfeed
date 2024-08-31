@@ -2,8 +2,10 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { useAuthActions } from "@convex-dev/auth/react";
 import { Label } from "@radix-ui/react-label";
 import { useQuery } from "convex/react";
 import { LoaderCircle, Pencil } from "lucide-react";
@@ -18,8 +20,8 @@ export default function Profile() {
     userId: user?._id as Id<"users">,
   });
 
-  const [name, setName] = useState(user?.name);
-  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { signOut } = useAuthActions();
 
   return (
     <div className="bg-blue-00 mx-auto flex h-full max-w-xl flex-col items-center justify-center pl-0 text-center">
@@ -113,6 +115,10 @@ export default function Profile() {
         // disabled={loading || user?.name === name}
         variant={"destructive"}
         className="mt-10 w-full"
+        onClick={() => {
+          void signOut();
+          router.push("/");
+        }}
       >
         {/* {loading ? (
           <LoaderCircle className="animate-spin duration-700" />

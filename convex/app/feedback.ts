@@ -94,11 +94,23 @@ export const createFeedbackForOrbit = mutation({
     location: v.string(),
     country_code: v.string(),
     type: v.string(),
+    route: v.string(),
     image: v.string(),
+    image_storage_id: v.optional(v.id("_storage")),
   },
   handler: async (
     ctx,
-    { orbitId, by, content, location, country_code, type, image }
+    {
+      orbitId,
+      by,
+      content,
+      location,
+      country_code,
+      type,
+      route,
+      image,
+      image_storage_id,
+    }
   ) => {
     const feedbackId = await ctx.db.insert("feedback", {
       orbitId,
@@ -107,7 +119,9 @@ export const createFeedbackForOrbit = mutation({
       location,
       country_code,
       type,
+      route,
       image,
+      image_storage_id,
     });
 
     return feedbackId;
@@ -123,11 +137,23 @@ export const createFeedbackForOrbitNoAuth = mutation({
     location: v.string(),
     country_code: v.string(),
     type: v.string(),
+    route: v.string(),
     image: v.string(),
+    image_storage_id: v.optional(v.id("_storage")),
   },
   handler: async (
     ctx,
-    { orbitId, by, content, location, country_code, type, image }
+    {
+      orbitId,
+      by,
+      content,
+      location,
+      country_code,
+      type,
+      route,
+      image,
+      image_storage_id,
+    }
   ) => {
     const feedbackId = await ctx.db.insert("feedback", {
       orbitId,
@@ -136,10 +162,28 @@ export const createFeedbackForOrbitNoAuth = mutation({
       location: location,
       country_code: country_code,
       type: type,
+      route: route,
       image: image,
+      image_storage_id: image_storage_id,
     });
 
     return feedbackId;
+  },
+});
+
+// update image for feedback
+export const updateFeedbackImage = mutation({
+  args: {
+    feedbackId: v.id("feedback"),
+    image: v.string(),
+  },
+  handler: async (ctx, args) => {
+    // await checkUserId(ctx);
+    await ctx.db.patch(args.feedbackId, {
+      image: args.image,
+    });
+
+    return "feedback_updated";
   },
 });
 

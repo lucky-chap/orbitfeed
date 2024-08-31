@@ -26,7 +26,13 @@ const schema = defineSchema({
     type: v.string(),
     location: v.string(),
     country_code: v.string(),
+    route: v.string(),
     image: v.string(),
+    image_storage_id: v.optional(v.id("_storage")),
+  }),
+  feedbackImages: defineTable({
+    storageId: v.id("_storage"),
+    feedbackId: v.id("feedback"),
   }),
   proUsers: defineTable({
     userId: v.id("users"),

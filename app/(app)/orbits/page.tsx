@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import React, { useState } from "react"
-import Link from "next/link"
-import { api } from "@/convex/_generated/api"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { usePaginatedQuery, useQuery } from "convex/react"
-import { House, Loader2, Plus } from "lucide-react"
-import { useForm } from "react-hook-form"
-import TimeAgo from "react-timeago"
-import { z } from "zod"
+import React, { useState } from "react";
+import Link from "next/link";
+import { api } from "@/convex/_generated/api";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { usePaginatedQuery, useQuery } from "convex/react";
+import { House, Loader2, Plus } from "lucide-react";
+import { useForm } from "react-hook-form";
+import TimeAgo from "react-timeago";
+import { z } from "zod";
 
-import { ACTIVE, PAUSED } from "@/lib/constants"
-import { Button } from "@/components/ui/button"
+import { ACTIVE, PAUSED } from "@/lib/constants";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -20,24 +20,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import CodeDialog from "@/components/code-dialog"
-import Empty from "@/components/empty"
-import Active from "@/components/pills/active"
-import Paused from "@/components/pills/paused"
-import Stopped from "@/components/pills/stopped"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import CodeDialog from "@/components/code-dialog";
+import Empty from "@/components/empty";
+import Active from "@/components/pills/active";
+import Paused from "@/components/pills/paused";
+import Stopped from "@/components/pills/stopped";
 
 const FormSchema = z.object({
   search_term: z.string().min(2, {
     message: "",
   }),
-})
+});
 
 export default function Orbit() {
-  const user = useQuery(api.user.viewer)
+  const user = useQuery(api.user.viewer);
 
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState("");
 
   const {
     results,
@@ -51,7 +51,7 @@ export default function Orbit() {
       user_email: user?.email,
     },
     { initialNumItems: 10 }
-  )
+  );
 
   // console.log("Results: ", results)
   // console.log("Userid: ", user?._id)
@@ -68,9 +68,9 @@ export default function Orbit() {
       searchTerm: searchTerm,
     },
     { initialNumItems: 10 }
-  )
+  );
 
-  console.log("Search results: ", searchResults)
+  console.log("Search results: ", searchResults);
 
   return (
     <div className="">
@@ -265,5 +265,5 @@ export default function Orbit() {
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -1,7 +1,7 @@
-import React, { useState } from "react"
-import { api } from "@/convex/_generated/api"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation } from "convex/react"
+import React, { useState } from "react";
+import { api } from "@/convex/_generated/api";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "convex/react";
 import {
   Camera,
   Image,
@@ -9,13 +9,13 @@ import {
   LoaderCircle,
   Settings,
   UserIcon,
-} from "lucide-react"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+} from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-import { cn } from "@/lib/utils"
-import { useMediaQuery } from "@/hooks/use-media-query"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -23,7 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerClose,
@@ -33,9 +33,9 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/drawer";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -44,7 +44,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 
 import {
   Form,
@@ -54,8 +54,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form"
-import { toast } from "./ui/use-toast"
+} from "./ui/form";
+import { toast } from "./ui/use-toast";
 
 const FormSchema = z.object({
   name: z.string().min(4, {
@@ -67,7 +67,7 @@ const FormSchema = z.object({
   status: z.string({
     message: "Please choose a status",
   }),
-})
+});
 
 export function SettingsMenu({
   orbitId,
@@ -76,14 +76,14 @@ export function SettingsMenu({
   status,
   handleDeleteOrbit,
 }: {
-  orbitId: any
-  name: string
-  website: string
-  status: string
-  handleDeleteOrbit: () => void
+  orbitId: any;
+  name: string;
+  website: string;
+  status: string;
+  handleDeleteOrbit: () => void;
 }) {
-  const [open, setOpen] = React.useState(false)
-  const isDesktop = useMediaQuery("(min-width: 768px)")
+  const [open, setOpen] = React.useState(false);
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   if (isDesktop) {
     return (
@@ -123,7 +123,7 @@ export function SettingsMenu({
           </DrawerFooter>
         </DialogContent>
       </Dialog>
-    )
+    );
   }
 
   return (
@@ -158,7 +158,7 @@ export function SettingsMenu({
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
-  )
+  );
 }
 
 // function ProfileForm({ className,  }: React.ComponentProps<"form">) {
@@ -168,13 +168,13 @@ function ProfileForm({
   website,
   status,
 }: {
-  orbitId: any
-  name: string
-  website: string
-  status: string
+  orbitId: any;
+  name: string;
+  website: string;
+  status: string;
 }) {
-  const updateOrbit = useMutation(api.app.orbits.updateOrbit)
-  const [loading, setLoading] = useState(false)
+  const updateOrbit = useMutation(api.app.orbits.updateOrbit);
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -183,41 +183,41 @@ function ProfileForm({
       website: website,
       status: status,
     },
-  })
+  });
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    setLoading(true)
-    console.log("Current status: ", data.status)
+    setLoading(true);
+    console.log("Current status: ", data.status);
     try {
       const result = await updateOrbit({
         orbitId: orbitId,
         name: data.name,
         website: data.website,
         status: data.status,
-      })
+      });
       if (result === "updated") {
-        setLoading(false)
+        setLoading(false);
         toast({
           variant: "default",
           title: "Orbit updated.",
           description: "Your orbit was updated successfully",
-        })
+        });
       } else {
-        setLoading(false)
+        setLoading(false);
         toast({
           variant: "destructive",
           title: "An error occurred",
           description: "Your orbit was not updated.",
-        })
+        });
       }
     } catch (error) {
-      setLoading(false)
+      setLoading(false);
       if (error instanceof Error) {
-        console.error(error)
+        console.error(error);
         toast({
           variant: "destructive",
           title: "An error occurred",
           description: "Orbit update failed.",
-        })
+        });
       }
     }
   }
@@ -307,5 +307,5 @@ function ProfileForm({
         </Button>
       </form>
     </Form>
-  )
+  );
 }

@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   Badge,
   ChevronLeft,
@@ -9,10 +9,10 @@ import {
   Code,
   Code2,
   Copy,
-} from "lucide-react"
+} from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   Dialog,
   DialogClose,
@@ -22,50 +22,47 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { toast } from "@/components/ui/use-toast"
+} from "@/components/ui/dialog";
 
 export default function CodeDialog({ orbitId }: { orbitId: string }) {
-  const [npmCopied, setNPMCopied] = useState(false)
-  const [importCopied, setImportCopied] = useState(false)
-  const [useCopied, setUseCopied] = useState(false)
+  const [npmCopied, setNPMCopied] = useState(false);
+  const [importCopied, setImportCopied] = useState(false);
+  const [useCopied, setUseCopied] = useState(false);
 
   const handleNPMCopy = () => {
     if (orbitId) {
-      navigator.clipboard.writeText("npm install OrbitFeedjs")
-      setNPMCopied(true)
+      navigator.clipboard.writeText("npm install OrbitFeedjs");
+      setNPMCopied(true);
       setTimeout(() => {
-        setNPMCopied(false)
-      }, 1000)
+        setNPMCopied(false);
+      }, 1000);
     }
-  }
+  };
 
   const handleImportCopy = () => {
     if (orbitId) {
-      navigator.clipboard.writeText("import FeedbackWidget from 'OrbitFeedjs'")
-      setImportCopied(true)
+      navigator.clipboard.writeText("import FeedbackWidget from 'OrbitFeedjs'");
+      setImportCopied(true);
       setTimeout(() => {
-        setImportCopied(false)
-      }, 1000)
+        setImportCopied(false);
+      }, 1000);
     }
-  }
+  };
 
   const handleUseCopy = () => {
     if (orbitId) {
-      navigator.clipboard.writeText(`<FeedbackWidget orbitId=${orbitId} />`)
-      setUseCopied(true)
+      navigator.clipboard.writeText(`<FeedbackWidget orbitId=${orbitId} />`);
+      setUseCopied(true);
       setTimeout(() => {
-        setUseCopied(false)
-      }, 1000)
+        setUseCopied(false);
+      }, 1000);
     }
-  }
+  };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={"secondary"}>
+        <Button variant={"outline"}>
           <Code size={20} className="mr-1 text-zinc-600" />
           <span className="text-xs font-bold">Embed</span>
         </Button>
@@ -213,5 +210,5 @@ export default function CodeDialog({ orbitId }: { orbitId: string }) {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

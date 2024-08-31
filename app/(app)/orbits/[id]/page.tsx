@@ -1,15 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { useMutation, usePaginatedQuery, useQuery } from "convex/react";
 import { saveAs } from "file-saver";
 import {
   ChevronLeft,
   Code,
+  Cog,
   Lightbulb,
   Link2,
   Loader2,
@@ -18,6 +20,7 @@ import {
   Settings,
   Trash,
 } from "lucide-react";
+import ReactCountryFlag from "react-country-flag";
 import TimeAgo from "react-timeago";
 
 import { ACTIVE, IDEA, ISSUE, OTHER, PAUSED, PRAISE } from "@/lib/constants";
@@ -28,7 +31,7 @@ import { toast } from "@/components/ui/use-toast";
 import AvatarGroup from "@/components/avatar-group";
 import CodeDialog from "@/components/code-dialog";
 import Empty from "@/components/empty";
-import { OrbitSheet } from "@/components/orbit-sheet";
+import { FeedbackSettings } from "@/components/feedback-settings";
 import Active from "@/components/pills/active";
 import Idea from "@/components/pills/idea";
 import Issue from "@/components/pills/issue";
@@ -44,6 +47,8 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
   const orbit = useQuery(api.app.orbits.fetchSingleOrbit, {
     id: params.id as any,
   });
+
+  // handleFileServe();
   const {
     results,
     status,
@@ -57,8 +62,8 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
     { initialNumItems: 10 }
   );
 
-  console.log("Single orbit: ", orbit);
-  console.log("Feedback for orbit: ", results);
+  // console.log("Single orbit: ", orbit);
+  // console.log("Feedback for orbit: ", results);
   const deleteOrbitMutation = useMutation(api.app.orbits.deleteOrbit);
   const deleteFeedbackMutation = useMutation(api.app.feedback.deleteFeedback);
 
@@ -90,7 +95,7 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
     if (orbit?._id) {
       setDeleting(true);
       const result = await deleteFeedbackMutation({
-        feedbackId: id,
+        feedbackId: id as Id<"feedback">,
       });
       if (result === "deleted") {
         setDeleting(false);
@@ -109,12 +114,6 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
     }
   };
 
-  const handleDownloadFile = async (author: string, url: string) => {
-    const response = await fetch(url);
-    const blob = await response.blob();
-    saveAs(blob, `${author}-feedback-image.jpg`);
-  };
-
   return (
     <div className="">
       {/* <h4 className="flex items-center">
@@ -129,15 +128,15 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
             </Button>
           </Link>
 
-          <div className="flex items-center text-xs">
+          {/* <div className="flex items-center text-xs">
             <a
               href=" https://somewebsite.com"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <span className="text-zinc-500">Last feedback from Ghana 🏳️‍🌈</span>
+              <span className="text-zinc-500">Last feedback from somewhere 🏳️‍🌈</span>
             </a>
-          </div>
+          </div> */}
 
           <SettingsMenu
             orbitId={orbit?._id}
@@ -188,99 +187,81 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
           <CodeDialog orbitId={orbit?._id as string} />
         </div>
         {/* feedback section */}
-        <div className="w-full divide-y divide-gray-300/30 px-36">
-          {results?.map((feedback, index) => (
-            <div
-              key={index}
-              className="rounded-xl py-14 transition-all duration-100 ease-linear"
-            >
-              <div className="flex items-center justify-between">
-                <div className="item my-2 flex items-center">
-                  <div className="my-2 flex items-center">
-                    {/* <img
-                      className="mr-2 inline-block size-[26px] rounded-full ring-2 ring-white dark:ring-neutral-900"
-                      src="https://images.unsplash.com/photo-1531927557220-a9e23c1e4794?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80"
-                      alt="Avatar"
-                    /> */}
-                    <p className="text-sm font-semibold text-zinc-700">
-                      {feedback.by.trim().length === 0
-                        ? "Anonymous"
-                        : feedback.by}
-                    </p>
-                  </div>
-                  <span className="mx-3">
-                    {feedback.type === IDEA && <Idea />}
-                    {feedback.type === PRAISE && <Praise />}
-                    {feedback.type === ISSUE && <Issue />}
-                    {feedback.type === OTHER && <Other />}
-                  </span>
-                  <div className="flex items-center text-xs">
-                    <span className="mr-2 font-medium text-zinc-500">
-                      {" "}
-                      <TimeAgo date={feedback?._creationTime || Date.now()} />
+        <div className="w-full divide-y divide-gray-300/0 px-36">
+          {results?.map((feedback, index) => {
+            return (
+              <div
+                key={index}
+                className="rounded-xl py-6 transition-all duration-100 ease-linear"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="item my-2 flex items-center">
+                    <div className="my-2 flex items-center">
+                      {/* <img
+                        className="mr-2 inline-block size-[26px] rounded-full ring-2 ring-white dark:ring-neutral-900"
+                        src="https://images.unsplash.com/photo-1531927557220-a9e23c1e4794?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80"
+                        alt="Avatar"
+                      /> */}
+                      <p className="text-sm font-semibold text-zinc-700">
+                        {feedback.by.trim().length === 0
+                          ? "Anonymous"
+                          : feedback.by}
+                      </p>
+                    </div>
+                    <span className="mx-3">
+                      {feedback.type === IDEA && <Idea />}
+                      {feedback.type === PRAISE && <Praise />}
+                      {feedback.type === ISSUE && <Issue />}
+                      {feedback.type === OTHER && <Other />}
                     </span>
+                    <div className="flex items-center text-xs">
+                      <span className="mr-2 font-medium text-zinc-500">
+                        {" "}
+                        <TimeAgo date={feedback?._creationTime || Date.now()} />
+                      </span>
+                    </div>
                   </div>
+                  <FeedbackSettings
+                    key={feedback._id}
+                    feedbackId={feedback._id}
+                    imageUrl={feedback.image}
+                    deleteFeedback={() => handleDeleteFeedback(feedback._id)}
+                  />
                 </div>
 
-                <div className="flex items-center text-xs">
+                <div className="mb-2 flex items-center text-xs">
                   <a
                     href=" https://somewebsite.com"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    <span className="font-medium text-zinc-500">
-                      {feedback.location} 🏳️‍🌈
+                    <span className="flex items-center font-medium text-zinc-500">
+                      {feedback.location}{" "}
+                      <ReactCountryFlag
+                        countryCode={feedback.country_code}
+                        svg
+                        className="ml-1 text-base"
+                      />
                     </span>
                   </a>
                 </div>
+
+                <p className="text-base text-zinc-600">{feedback.content}</p>
+
+                <div className="mt-4 flex items-center justify-between self-end"></div>
+
+                <div className="flex items-start justify-between">
+                  {/* <Image
+                src={brick}
+                alt="brick wall"
+                height={100}
+                width={100}
+                className="rounded pr-2"
+              /> */}
+                </div>
               </div>
-
-              <p className="text-base text-zinc-600">{feedback.content}</p>
-
-              <div className="mt-4 flex items-center justify-between">
-                {feedback.image.length > 0 && (
-                  <Button
-                    variant={"secondary"}
-                    className="text-xs"
-                    onClick={() =>
-                      handleDownloadFile(
-                        feedback.by.trim().length === 0
-                          ? "anonymous"
-                          : feedback.by.toLowerCase(),
-                        feedback.image
-                      )
-                    }
-                  >
-                    <Paperclip size={13} className="mr-2" />
-                    Download
-                  </Button>
-                  // <a href={feedback.image} download>
-                  // </a>
-                )}
-
-                <Button variant={"ghost"} className="text-xs">
-                  {deleting ? (
-                    <Loader2 className="animate-spin" size={13} />
-                  ) : (
-                    <Trash
-                      size={13}
-                      onClick={() => handleDeleteFeedback(feedback._id)}
-                    />
-                  )}
-                </Button>
-              </div>
-
-              <div className="flex items-start justify-between">
-                {/* <Image
-              src={brick}
-              alt="brick wall"
-              height={100}
-              width={100}
-              className="rounded pr-2"
-            /> */}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
         <div className="flex w-full justify-center py-6">
           {paginatedLoading && (

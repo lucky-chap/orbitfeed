@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { loadStripe } from "@stripe/stripe-js";
-import { usePaginatedQuery, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import { CheckIcon, Loader2, Plus, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -29,22 +29,27 @@ const paidFeatures = [
 export default function Billing() {
   const user = useQuery(api.user.viewer);
 
-  const { results, status, loadMore, isLoading } = usePaginatedQuery(
-    api.proUsers.checkIfUserIsPro,
-    {
-      // ideally, we'd want to use the orb_ck1 as the userId instead, but since convex validates the
-      // values, this would likely cause a 500 internal server error and we wouldn't want our users to
-      // see that would we?
-      userId: user?._id as Id<"users">,
-      email: user?.email as string,
-    },
-    { initialNumItems: 1 }
-  );
+  // const { results, status, loadMore, proUser == undefined } = usePaginatedQuery(
+  //   api.proUsers.checkIfUserIsPro,
+  //   {
+  //     // ideally, we'd want to use the orb_ck1 as the userId instead, but since convex validates the
+  //     // values, this would likely cause a 500 internal server error and we wouldn't want our users to
+  //     // see that would we?
+  //     userId: user?._id as Id<"users">,
+  //     email: user?.email as string,
+  //   },
+  //   { initialNumItems: 1 }
+  // );
 
-  console.log("Results: ", results);
+  const proUser = useQuery(api.proUsers.checkIfUserIsPro, {
+    userId: user?._id as Id<"users">,
+    email: user?.email as string,
+  });
+
+  console.log("Pro User: ", proUser);
   console.log(
     "id same?: ",
-    results[0] !== undefined && results[0].userId === user?._id
+    proUser !== undefined && proUser?.userId === user?._id
   );
 
   // console.log(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
@@ -197,26 +202,19 @@ export default function Billing() {
                 </p>
                 <Button
                   className="mt-10 flex w-full items-center rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                  onClick={() => handleCheckout()}
-                  disabled={
-                    isLoading ||
-                    (results[0] !== undefined &&
-                      results[0].userId === user?._id)
+                  onClick={
+                    proUser == null || proUser == undefined
+                      ? undefined
+                      : () => handleCheckout()
                   }
+                  // disabled={proUser !== null}
+                  disabled={proUser !== null && proUser !== undefined}
                 >
-                  {isLoading && (
-                    <Loader2
-                      className="animate-spin self-center text-white"
-                      size={22}
-                    />
-                  )}
-
-                  {results[0] !== undefined && results[0].userId === user?._id
-                    ? "On Pro Plan"
-                    : "Buy Pro Plan"}
-                  {/* {results[0] !== undefined &&
-                    results[0].userId !== user?._id &&
-                    "Buy Pro Plan"} */}
+                  {proUser?.userId === user?._id &&
+                    proUser !== undefined &&
+                    "On Pro Plan"}
+                  {proUser === undefined && proUser == null && "Checking..."}
+                  {proUser !== undefined && proUser === null && "Buy Pro Plan"}
                 </Button>
                 <p className="mt-6 text-xs leading-5 text-gray-600">
                   Buy OrbitFeed and get access to tons of features and future
