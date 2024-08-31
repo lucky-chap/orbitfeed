@@ -15,13 +15,13 @@ const stripePromise = loadStripe(
 
 const freeFeatures = [
   "Receive feedback for your project",
-  "Email notifications (once a week)",
+  "Future updates once a year",
   "Free entry to annual conference",
 ];
 
 const paidFeatures = [
   "Everything in Free Plan",
-  "Email notifications (once every 3 days)",
+  "Unlimited orbits & feedback",
   "Free future updates",
   "24/7 Customer Support",
 ];

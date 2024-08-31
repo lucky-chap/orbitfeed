@@ -3,6 +3,8 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { fetchMutation, fetchQuery } from "convex/nextjs";
 
+import { PAUSED } from "@/lib/constants";
+
 // Hack for TypeScript before 5.2
 const Response = NextResponse;
 
@@ -14,8 +16,17 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  // const user = await fetchQuery(api.user.viewer);
+  // NB: For some weird reason, user appears to be null,
+  // so i cannot retreive the id and the email.
+  // A workaround is to have the client send it from its side,
+  // making things easier over here: TODO: fix this weird error?
+
+  // console.log("User on feedback POST route: ", user);
   const data = await request.json();
   const {
+    userId,
+    userEmail,
     orbitId,
     by,
     content,
@@ -26,6 +37,11 @@ export async function POST(request: NextRequest) {
     image,
     image_storage_id,
   } = data;
+
+  const proUser = await fetchQuery(api.proUsers.checkIfUserIsPro, {
+    userId: userId as Id<"users">,
+    email: userEmail as string,
+  });
 
   // check if orbit exists before creating feedback
   const orbit = await fetchQuery(api.app.orbits.fetchSingleOrbitNoAuth, {
@@ -44,21 +60,16 @@ export async function POST(request: NextRequest) {
     orbitId,
   });
 
-  if (res.feedback && res.length == 10) {
+  // if (res.length >= 4) {
+  if (proUser == null && res.length >= 4) {
     return Response.json({
-      // status must be success here so the user doesn't get frustrated that
-      // their feedback was not created. It is up to the creator to decide if
-      // they want to upgrade to a pro plan or not.
       status: "limit_reached",
       message: "You have exceeded your feedback limit",
     });
   }
 
-  if (orbit.status === "Paused") {
+  if (orbit.status === PAUSED) {
     return Response.json({
-      // status must be success here so the user doesn't get frustrated that
-      // their feedback was not created. It is up to the creator to decide if
-      // they want to upgrade to a pro plan or not.
       status: "paused",
       message:
         "Creator has paused orbit. No feedback would be registered with orbit",

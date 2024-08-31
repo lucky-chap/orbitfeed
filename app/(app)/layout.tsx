@@ -54,8 +54,9 @@ const links = [
   },
 ];
 
-const someProFeatures = [
-  "Everything in Free Plan",
+const features = [
+  "Receive feedback for your project",
+  "Free entry to annual conference",
   "Unlimited orbits & feedback",
   "Free future updates",
   "24/7 Customer Support",
@@ -102,10 +103,10 @@ export default function Home({ children }: { children: React.ReactNode }) {
                     get more features like:
                   </p>
                   <ul className="flex flex-col pb-10">
-                    {someProFeatures.map((feature) => (
+                    {features.map((feature) => (
                       <li
                         key={feature}
-                        className="flex items-center gap-x-3 text-zinc-500"
+                        className="flex items-center gap-x-3 py-1 text-zinc-500"
                       >
                         <CheckIcon
                           aria-hidden="true"

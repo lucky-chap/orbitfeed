@@ -30,13 +30,13 @@ import { checkUserId } from "./helpers";
 //     return proUsers;
 //   },
 // });
+// make this an internal function?
 export const checkIfUserIsPro = query({
   args: {
     userId: v.id("users"),
     email: v.string(),
   },
   handler: async (ctx, { userId, email }) => {
-    await checkUserId(ctx);
     const proUser = await ctx.db
       .query("proUsers")
       .filter((q) => q.eq(q.field("userId"), userId))

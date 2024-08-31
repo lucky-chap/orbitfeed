@@ -9,6 +9,7 @@ import { auth } from "./auth";
 export const viewer = query({
   args: {},
   handler: async (ctx) => {
+    // TODO: update to current API
     const userId = await auth.getUserId(ctx);
     return userId !== null ? ctx.db.get(userId) : null;
   },

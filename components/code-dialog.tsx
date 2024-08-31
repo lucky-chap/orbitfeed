@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { api } from "@/convex/_generated/api";
+import { useQuery } from "convex/react";
 import {
   Badge,
   ChevronLeft,
@@ -25,6 +27,8 @@ import {
 } from "@/components/ui/dialog";
 
 export default function CodeDialog({ orbitId }: { orbitId: string }) {
+  const user = useQuery(api.user.viewer);
+
   const [npmCopied, setNPMCopied] = useState(false);
   const [importCopied, setImportCopied] = useState(false);
   const [useCopied, setUseCopied] = useState(false);
@@ -51,7 +55,9 @@ export default function CodeDialog({ orbitId }: { orbitId: string }) {
 
   const handleUseCopy = () => {
     if (orbitId) {
-      navigator.clipboard.writeText(`<FeedbackWidget orbitId=${orbitId} />`);
+      navigator.clipboard.writeText(
+        `<FeedbackWidget userId=${user?._id} userEmail=${user?.email} orbitId=${orbitId} />`
+      );
       setUseCopied(true);
       setTimeout(() => {
         setUseCopied(false);
