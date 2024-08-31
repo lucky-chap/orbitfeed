@@ -19,11 +19,13 @@ export default function Home() {
         <Header />
         <div className="mx-auto grid max-w-5xl place-content-center px-2 pt-28 text-center">
           <h2 className="text-4xl font-semibold text-zinc-600 lg:text-6xl">
-            Ready for SaaS Websites Crafted by TailGrids
+            Collect feedback for your SaaS with OrbitFeed.
           </h2>
           <p className="mx-auto max-w-xl px-1 py-12 text-xl text-zinc-600">
-            Example Template for SaaS, Software, and App Landing Page. Crafted
-            with TailGrids UI Components by TailGrids Team
+            {/* Example Template for SaaS, Software, and App Landing Page. Crafted
+            with TailGrids UI Components by TailGrids Team. */}
+            OrbitFeed makes it simple to collect feedback from your users or
+            page visitors in just a few steps!
           </p>
           <div className="flex flex-col items-center justify-center pb-12 sm:flex-row">
             <Button className="w-full bg-blue-500 transition-all duration-150 ease-linear hover:bg-blue-600 sm:w-auto">
