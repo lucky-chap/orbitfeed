@@ -58,7 +58,7 @@ const inter = localFont({
 
 export const metadata: Metadata = {
   title: "OrbitFeed",
-  description: "Collect feedbacks on your projects with a simple widget!",
+  description: "Collect feedbacks on your website with a simple widget!",
 };
 
 export default function RootLayout({

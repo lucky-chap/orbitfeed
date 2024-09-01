@@ -10,7 +10,6 @@ const schema = defineSchema({
     name: v.string(),
     website: v.string(),
     status: v.string(),
-    notificationFrequency: v.string(),
   })
     // using indexes for search
     // https://docs.convex.dev/database/indexes/indexes-and-query-perf

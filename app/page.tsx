@@ -3,7 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import love from "@/public/images/project-app-screenshot.png";
+import banner from "@/public/images/demo.png";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { Authenticated, Unauthenticated } from "convex/react";
@@ -20,7 +20,7 @@ export default function Home() {
         <Header />
         <div className="mx-auto grid max-w-5xl place-content-center px-2 pt-28 text-center">
           <h2 className="text-4xl font-semibold text-zinc-600 lg:text-6xl">
-            Collect feedback for your SaaS with OrbitFeed.
+            Collect feedback on your website with OrbitFeed
           </h2>
           <p className="mx-auto max-w-xl px-1 py-12 text-xl text-zinc-600">
             {/* Example Template for SaaS, Software, and App Landing Page. Crafted
@@ -69,7 +69,7 @@ export default function Home() {
             </Button>
           </div>
           <div className="mx-auto w-full max-w-7xl shadow">
-            <Image src={love} alt="Banner" className="rounded" />
+            <Image src={banner} alt="Banner" className="rounded" />
           </div>
         </div>
       </div>

@@ -85,18 +85,8 @@ export const createOrbit = mutation({
     name: v.string(),
     website: v.string(),
     userEmail: v.string(),
-    notificationFrequency: v.string(),
   },
-  handler: async (
-    ctx,
-    {
-      name,
-      website,
-      userEmail,
-
-      notificationFrequency,
-    }
-  ) => {
+  handler: async (ctx, { name, website, userEmail }) => {
     const userId = await checkUserId(ctx);
     const orbitId = await ctx.db.insert("orbits", {
       userId,
@@ -104,7 +94,6 @@ export const createOrbit = mutation({
       name,
       website,
       status: "Active",
-      notificationFrequency,
     });
 
     return orbitId;

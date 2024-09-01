@@ -30,9 +30,6 @@ const FormSchema = z.object({
   website: z.string().url({
     message: "Please enter a valid website",
   }),
-  // notification_frequency: z.enum([EVERYDAY, ONCE_EVERY_3_DAYS, ONEC_A_WEEK], {
-  //   required_error: "Notification frequency must be specified.",
-  // }),
 });
 
 export default function CreateOrbit() {
@@ -40,7 +37,6 @@ export default function CreateOrbit() {
 
   const createNewOrbit = useMutation(api.app.orbits.createOrbit);
   const [loading, setLoading] = useState(false);
-  const [notificationFrequency, setNotificationFrequency] = useState("");
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -57,7 +53,6 @@ export default function CreateOrbit() {
         name: data.name,
         userEmail: user?.email as string,
         website: data.website,
-        notificationFrequency: notificationFrequency,
       });
       if (orbitId != null) {
         setLoading(false);
@@ -87,8 +82,6 @@ export default function CreateOrbit() {
       }
     }
   }
-
-  // console.log("NOtiFICATION FREQUENCY: ", notificationFrequency)
 
   return (
     <Form {...form}>
@@ -145,112 +138,6 @@ export default function CreateOrbit() {
               />
             </div>
           </div>
-
-          <div className="border- border-gray-900/10 pb-12">
-            <FormLabel>Notifications</FormLabel>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              We will inform you about crucial updates, but you have the choice
-              to decide what additional information you wish to receive.
-            </p>
-
-            <div className="mt-10 space-y-10">
-              <fieldset>
-                <div className="mt-6 space-y-6">
-                  <div className="relative flex gap-x-3">
-                    <div className="flex h-6 items-center">
-                      <input
-                        id="feedback"
-                        name="feedback"
-                        type="checkbox"
-                        defaultValue={1}
-                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
-                        checked
-                        disabled
-                      />
-                    </div>
-                    <div className="text-sm leading-6 opacity-60">
-                      <label
-                        htmlFor="feedback"
-                        className="font-medium text-gray-900"
-                      >
-                        Feedback
-                      </label>
-                      <p className="text-gray-500">
-                        Get notified when someones gives feedback on a project.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </fieldset>
-              {/* push notifications */}
-
-              <fieldset className="pl-16">
-                <legend className="text-sm font-semibold leading-6 text-gray-900">
-                  Frequency
-                </legend>
-                <p className="mt-1 text-sm leading-6 text-gray-600">
-                  Choose how often you'd like to receive notifications.
-                </p>
-
-                <div className="mt-6 space-y-6">
-                  <div className="flex items-center gap-x-3">
-                    <input
-                      id="push-everything"
-                      name="push-notifications"
-                      type="radio"
-                      defaultValue={ONEC_A_WEEK}
-                      onChange={(e) => {
-                        setNotificationFrequency(e.target.value);
-                      }}
-                      className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                    />
-                    <label
-                      htmlFor="push-everything"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Once a week
-                    </label>
-                  </div>
-                  <div className="flex items-center gap-x-3">
-                    <input
-                      id="push-every-3-days"
-                      name="push-notifications"
-                      type="radio"
-                      defaultValue={THRICE_A_WEEK}
-                      onChange={(e) => {
-                        setNotificationFrequency(e.target.value);
-                      }}
-                      className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                    />
-                    <label
-                      htmlFor="push-every-3-days"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Thrice a week
-                    </label>
-                  </div>
-                  {/* <div className="flex items-center gap-x-3">
-                    <input
-                      id="push-push-once-a-week"
-                      name="push-notifications"
-                      type="radio"
-                      defaultValue={ONEC_A_WEEK}
-                      onChange={(e) => {
-                        setNotificationFrequency(e.target.value)
-                      }}
-                      className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                    />
-                    <label
-                      htmlFor="push-push-once-a-week"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Once a week (every Monday)
-                    </label>
-                  </div> */}
-                </div>
-              </fieldset>
-            </div>
-          </div>
         </div>
 
         <div className="mt-12 flex items-center justify-between gap-x-6">
@@ -261,7 +148,7 @@ export default function CreateOrbit() {
           </Link>
           <Button
             onClick={() => form.handleSubmit(onSubmit)}
-            disabled={loading || notificationFrequency.trim().length === 0}
+            disabled={loading}
             className="w-full bg-blue-500 hover:bg-blue-600"
           >
             {loading ? (
