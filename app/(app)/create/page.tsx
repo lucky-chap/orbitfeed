@@ -86,7 +86,7 @@ export default function CreateOrbit() {
   return (
     <Form {...form}>
       <form
-        className="mx-auto max-w-xl py-12"
+        className="mx-auto max-w-xl px-2 py-12"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div className="space-y-12">

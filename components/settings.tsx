@@ -289,7 +289,6 @@ function ProfileForm({
                   <SelectContent className="" defaultValue={status}>
                     <SelectItem value="Active">Active</SelectItem>
                     <SelectItem value="Paused">Paused</SelectItem>
-                    <SelectItem value="Stopped">Stopped</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

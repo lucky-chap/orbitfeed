@@ -1,5 +1,3 @@
-"use server";
-
 // import { getAuthUserId } from "@convex-dev/auth/server";
 import { GenericQueryCtx } from "convex/server";
 

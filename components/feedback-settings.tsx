@@ -5,7 +5,14 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import saveAs from "file-saver";
-import { Download, Ellipsis, Flag, Trash } from "lucide-react";
+import {
+  Download,
+  Ellipsis,
+  Flag,
+  RectangleEllipsis,
+  Settings,
+  Trash,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -48,49 +55,16 @@ export function FeedbackSettings({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="h-5 p-2 text-xs">
-          <Ellipsis size={20} className="text-zinc-500" />
+          <Ellipsis size={15} className="text-zinc-500" />
+          {/* More */}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>Settings</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          {/* <DropdownMenuItem
-            // disabled={res?.find((r) => r.id === feedbackId)?.url == null}
-            disabled={res?.find((r) => r.id === feedbackId)?.url == null}
-            onClick={() =>
-              handleDownloadFile(
-                feedbackId,
-                res?.find((r) => r.id === feedbackId)?.url as string
-              )
-            }
-          >
-            <Download className="mr-2 text-zinc-500" size={18} />{" "}
-            {res?.find((r) => r.id === feedbackId)?.url !== null
-              ? "Download image"
-              : "No image"}
-          </DropdownMenuItem> */}
           <>
-            {/* {res?.find((r) => r.id === feedbackId)?.url !== null && (
-              <DropdownMenuItem
-                // disabled={res?.find((r) => r.id === feedbackId)?.url == null}
-                onClick={() =>
-                  handleDownloadFile(
-                    feedbackId,
-                    res?.find((r) => r.id === feedbackId)?.url as string
-                  )
-                }
-              >
-                <Download className="mr-2 text-zinc-500" size={18} />{" "}
-                {res?.find((r) => r.id === feedbackId)?.url !== null
-                  ? "Download image"
-                  : "No image"}
-              </DropdownMenuItem>
-            )} */}
             <DropdownMenuItem
-              // disabled={res?.find((r) => r.id === feedbackId)?.url == null}
-              // check serveFile mutation and what it returns.
-
               disabled={imageUrl.trim().length == 0 || imageUrl === "no_image"}
               onClick={() => handleDownloadFile(feedbackId, imageUrl)}
             >

@@ -1,41 +1,30 @@
-import Image from "next/image"
-import Link from "next/link"
-import folder from "@/public/images/folder.png"
+import Link from "next/link";
 
-import { Button } from "./ui/button"
-
-export default function Empty({
-  image,
-  heading,
-  subheading,
-  icon,
-}: {
-  image?: boolean
-  heading: string
-  subheading: string
-  icon?: boolean
-}) {
+export default function Empty() {
   return (
-    <div className="flex w-full items-center justify-center">
-      <div className="flex h-64 w-full flex-col items-center justify-center rounded-lg">
-        <div className="flex flex-col items-center justify-center pb-6 pt-5">
-          {image && <Image src={folder} alt="folder" height={42} width={42} />}
-          <p className="mb-2 mt-4 text-lg font-medium text-zinc-600">
-            <span className="">{heading}</span>{" "}
-          </p>
-          <p className="text-zinc-500">{subheading}</p>
-          {icon && (
-            <Link href={"/create"}>
-              <Button
-                variant={"ghost"}
-                className="mr-2 mt-2 rounded-md bg-blue-500 px-5 py-2 font-medium text-white transition-all duration-100 ease-linear hover:bg-blue-600 hover:text-white"
-              >
-                New orbit
-              </Button>
-            </Link>
-          )}
-        </div>
-      </div>
-    </div>
-  )
+    <Link href={"/create"} className="w-full">
+      <button
+        type="button"
+        className="relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+      >
+        <svg
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 48 48"
+          aria-hidden="true"
+          className="mx-auto h-12 w-12 text-gray-400"
+        >
+          <path
+            d="M8 14v20c0 4.418 7.163 8 16 8 1.381 0 2.721-.087 4-.252M8 14c0 4.418 7.163 8 16 8s16-3.582 16-8M8 14c0-4.418 7.163-8 16-8s16 3.582 16 8m0 0v14m0-4c0 4.418-7.163 8-16 8S8 28.418 8 24m32 10v6m0 0v6m0-6h6m-6 0h-6"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+        <span className="mt-2 block text-sm font-semibold text-gray-900">
+          Create a new project
+        </span>
+      </button>
+    </Link>
+  );
 }

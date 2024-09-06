@@ -6,6 +6,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import Avatar01 from "@/public/images/avatar-01.webp";
+import Avatar02 from "@/public/images/avatar-02.webp";
+import Avatar03 from "@/public/images/avatar-03.webp";
+import Avatar04 from "@/public/images/avatar-04.webp";
+import Avatar05 from "@/public/images/avatar-05.webp";
+import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import {
   useAction,
   useMutation,
@@ -19,7 +25,7 @@ import {
   Cog,
   Lightbulb,
   Link2,
-  Loader2,
+  Loader,
   Paperclip,
   Search,
   Settings,
@@ -29,7 +35,7 @@ import ReactCountryFlag from "react-country-flag";
 import TimeAgo from "react-timeago";
 
 import { ACTIVE, IDEA, ISSUE, OTHER, PAUSED, PRAISE } from "@/lib/constants";
-import { cn } from "@/lib/utils";
+import { classNames, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
@@ -54,12 +60,7 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
   });
 
   // handleFileServe();
-  const {
-    results,
-    status,
-    loadMore,
-    isLoading: paginatedLoading,
-  } = usePaginatedQuery(
+  const { results, status, loadMore, isLoading } = usePaginatedQuery(
     api.app.feedback.fetchFeedbackForOrbit,
     {
       orbitId: params.id as any,
@@ -128,7 +129,7 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
         <House size={25} />
         <span className="pl-2 text-lg font-semibold text-zinc-700">Orbit</span>
       </h4> */}
-      <div className="mx-auto flex w-full max-w-5xl flex-col items-start justify-between space-x-2">
+      <div className="mx-auto flex w-full max-w-5xl flex-col items-start justify-between space-x-2 px-2 pt-10">
         <div className="flex w-full items-center justify-between">
           <Link href={"/orbits"}>
             <Button type="submit" className="px-2" variant={"outline"}>
@@ -146,175 +147,214 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
             </a>
           </div> */}
 
-          <SettingsMenu
-            orbitId={orbit?._id}
-            name={orbit?.name as string}
-            website={orbit?.website as string}
-            status={orbit?.status as string}
-            handleDeleteOrbit={handleDeleteOrbit}
-          />
+          {orbit === undefined ? (
+            <div className="flex w-full items-center justify-between"></div>
+          ) : (
+            <SettingsMenu
+              orbitId={orbit?._id}
+              name={orbit?.name as string}
+              website={orbit?.website as string}
+              status={orbit?.status as string}
+              handleDeleteOrbit={handleDeleteOrbit}
+            />
+          )}
           {/* <OrbitSheet /> */}
         </div>
         {/* header */}
-        <div className="my-20 flex w-full justify-between">
-          <div className="">
-            <div className="flex flex-wrap items-center">
-              <h4 className="text-2xl font-medium text-zinc-600 transition-all duration-100 ease-linear">
-                {orbit?.name}
-              </h4>
-              <span className="mx-4 inline-block h-1 w-1 rounded-full bg-zinc-400"></span>
-              <span className="mr-4 text-xs font-medium text-zinc-500">
-                Created <TimeAgo date={orbit?._creationTime || Date.now()} />
-              </span>
-              <div className="my-2">
-                {orbit?.status === ACTIVE && <Active />}
-                {orbit?.status === PAUSED && <Paused />}
+        <div className="flex w-full justify-between py-16">
+          {orbit === undefined ? (
+            <div className="flex w-full items-center justify-center">
+              <Loader className="h-7 w-7 animate-spin text-zinc-400" />
+            </div>
+          ) : (
+            <div className="flex w-full flex-col items-start md:flex-row md:justify-between">
+              <div className="mb-2 md:mb-0">
+                <div className="flex flex-wrap items-center">
+                  <h4 className="mr-2 text-2xl font-medium text-zinc-600 transition-all duration-100 ease-linear lg:mr-0">
+                    {orbit?.name}
+                  </h4>
+                  <span className="hidden h-1 w-1 rounded-full bg-zinc-400 lg:mx-4 lg:inline-block"></span>
+                  <span className="mr-4 text-xs font-medium text-zinc-500">
+                    Created{" "}
+                    <TimeAgo date={orbit?._creationTime || Date.now()} />
+                  </span>
+                  <div className="my-2">
+                    {orbit?.status === ACTIVE && <Active />}
+                    {orbit?.status === PAUSED && <Paused />}
+                  </div>
+                </div>
+                <div className="flex items-center">
+                  {/* <AvatarGroup /> */}
+                  <span className="flex items-center text-xs font-bold text-zinc-600">
+                    <a
+                      href={orbit?.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center"
+                    >
+                      <Link2 size={20} className="mr-1 text-zinc-600" />
+                      <span>{orbit?.website}</span>
+                    </a>
+                  </span>
+                </div>
               </div>
+              <CodeDialog orbitId={orbit?._id as string} />
             </div>
-            <div className="flex items-center">
-              {/* <AvatarGroup /> */}
-              <span className="flex items-center text-xs font-bold text-zinc-600">
-                <a
-                  href={orbit?.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center"
-                >
-                  <Link2 size={20} className="mr-1 text-zinc-600" />
-                  <span>{orbit?.website}</span>
-                </a>
-              </span>
-              {/* <Button variant={"link"} className="ml-2">
-                <span className="text-xs font-medium text-zinc-500">
-                  Delete
-                </span>
-              </Button> */}
-            </div>
-          </div>
-
-          <CodeDialog orbitId={orbit?._id as string} />
+          )}
         </div>
         {/* feedback section */}
-        <div className="w-full divide-y divide-gray-300/0 px-36">
+        <ul role="list" className="w-full divide-y divide-black/5">
           {results?.map((feedback, index) => {
             return (
-              <div
-                key={index}
-                className="rounded-xl py-6 transition-all duration-100 ease-linear"
+              <li
+                key={feedback._id}
+                className="relative flex items-center space-x-4 py-10"
               >
-                <div className="flex items-center justify-between">
-                  <div className="item my-2 flex items-center">
-                    <div className="my-2 flex items-center">
-                      {/* <img
-                        className="mr-2 inline-block size-[26px] rounded-full ring-2 ring-white dark:ring-neutral-900"
-                        src="https://images.unsplash.com/photo-1531927557220-a9e23c1e4794?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80"
-                        alt="Avatar"
-                      /> */}
-                      <p className="text-sm font-semibold text-zinc-700">
-                        {feedback.by.trim().length === 0
-                          ? "Anonymous"
-                          : feedback.by}
-                      </p>
-                    </div>
-                    <span className="mx-3">
-                      {feedback.type === IDEA && <Idea />}
-                      {feedback.type === PRAISE && <Praise />}
-                      {feedback.type === ISSUE && <Issue />}
-                      {feedback.type === OTHER && <Other />}
-                    </span>
-                    <div className="flex items-center text-xs">
-                      <span className="mr-2 font-medium text-zinc-500">
-                        {" "}
-                        <TimeAgo date={feedback?._creationTime || Date.now()} />
+                <div className="min-w-0 flex-auto">
+                  <div className="flex flex-col gap-x-3">
+                    {feedback.type === IDEA && (
+                      <span>
+                        <Idea />
                       </span>
-                    </div>
+                    )}
+                    {feedback.type === ISSUE && (
+                      <span>
+                        <Issue />
+                      </span>
+                    )}
+                    {feedback.type === OTHER && (
+                      <span>
+                        <Other />
+                      </span>
+                    )}
+                    {feedback.type === PRAISE && (
+                      <span>
+                        <Praise />
+                      </span>
+                    )}
+                    <h2 className="mt-2 min-w-0 text-sm font-medium leading-6 text-gray-700">
+                      <p className="flex gap-x-2">
+                        <span className="max-w-3x">{feedback.content}</span>
+                      </p>
+                    </h2>
                   </div>
-                  <FeedbackSettings
-                    key={feedback._id}
-                    feedbackId={feedback._id}
-                    imageUrl={feedback.image}
-                    deleteFeedback={() =>
-                      handleDeleteFeedback(
-                        feedback._id,
-                        feedback.image_storage_id
-                      )
-                    }
-                  />
-                </div>
-
-                <div className="mb-2 flex items-center text-xs">
-                  <a
-                    href=" https://somewebsite.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <span className="flex items-center font-medium text-zinc-500">
+                  <div className="mt-3 items-center gap-x-2.5 text-xs leading-5 text-gray-400 sm:flex">
+                    <span className="mb-[2px] inline-block truncate font-medium text-zinc-600 sm:mb-0 sm:inline">
+                      By{" "}
+                      {feedback.by.trim().length === 0
+                        ? "Anonymous"
+                        : feedback.by}
+                    </span>
+                    <svg
+                      viewBox="0 0 2 2"
+                      className="hidden h-0.5 w-0.5 flex-none fill-gray-500 sm:block"
+                    >
+                      <circle r={1} cx={1} cy={1} />
+                    </svg>
+                    <p className="mb-[2px] whitespace-nowrap font-medium text-zinc-500 sm:mb-0">
+                      <TimeAgo
+                        date={
+                          orbit == undefined
+                            ? Date.now()
+                            : feedback._creationTime
+                        }
+                      />
+                    </p>
+                    <svg
+                      viewBox="0 0 2 2"
+                      className="hidden h-0.5 w-0.5 flex-none fill-gray-500 sm:block"
+                    >
+                      <circle r={1} cx={1} cy={1} />
+                    </svg>
+                    <span className="mt-[7px] flex items-center font-medium text-zinc-500 sm:mt-0 sm:inline">
                       {feedback.location}{" "}
                       <ReactCountryFlag
                         countryCode={feedback.country_code}
                         svg
-                        className="ml-1 text-base"
+                        className="ml-2 text-base"
                       />
                     </span>
-                  </a>
+                    <svg
+                      viewBox="0 0 2 2"
+                      className="hidden h-0.5 w-0.5 flex-none fill-gray-500 sm:block"
+                    >
+                      <circle r={1} cx={1} cy={1} />
+                    </svg>
+                    <a
+                      href={feedback.route}
+                      className="mt-[7px] flex items-center font-medium text-zinc-500 underline sm:mt-0"
+                    >
+                      {feedback.route}{" "}
+                    </a>
+                  </div>
+                  <div className="mt-4">
+                    <FeedbackSettings
+                      key={feedback._id}
+                      feedbackId={feedback._id}
+                      imageUrl={feedback.image}
+                      deleteFeedback={() =>
+                        handleDeleteFeedback(
+                          feedback._id,
+                          feedback.image_storage_id
+                        )
+                      }
+                    />
+                  </div>
                 </div>
 
-                <p className="text-base text-zinc-600">{feedback.content}</p>
-
-                <div className="mt-4 flex items-center justify-between self-end"></div>
-
-                <div className="flex items-start justify-between">
-                  {/* <Image
-                src={brick}
-                alt="brick wall"
-                height={100}
-                width={100}
-                className="rounded pr-2"
-              /> */}
-                </div>
-              </div>
+                {/* <FeedbackSettings
+                  key={feedback._id}
+                  feedbackId={feedback._id}
+                  imageUrl={feedback.image}
+                  deleteFeedback={() =>
+                    handleDeleteFeedback(
+                      feedback._id,
+                      feedback.image_storage_id
+                    )
+                  }
+                /> */}
+              </li>
             );
           })}
-        </div>
+        </ul>
         <div className="flex w-full justify-center py-6">
-          {paginatedLoading && (
-            <div className="mt-56 flex h-full items-center justify-center">
-              <Loader2 className="h-7 w-7 animate-spin text-blue-500" />
+          {/* {status === "CanLoadMore" && (
+            <div className="">
+              <Button
+                onClick={() => loadMore(10)}
+                className="mr-2 mt-10 rounded-md bg-blue-500 px-5 py-2 font-medium text-white transition-all duration-100 ease-linear hover:bg-blue-600"
+              >
+                {isLoading ? "Loading..." : "Load More"}
+                {isLoading ? (
+                  <Loader className="ml-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Loader className="ml-2 h-4 w-4" />
+                )}
+              </Button>
             </div>
-          )}
+          )} */}
 
-          {status === "LoadingMore" && (
-            <div className="mt-56 flex h-full items-center justify-center">
-              <Loader2 className="h-7 w-7 animate-spin text-blue-500" />
+          {status === "LoadingMore" ||
+            (status === "LoadingFirstPage" && (
+              <div className="mr-12 flex h-full min-h-[70vh] items-center justify-center">
+                <Loader className="h-7 w-7 animate-spin text-zinc-400" />
+              </div>
+            ))}
+
+          {status === "Exhausted" && results?.length === 0 && (
+            <div className="mt-56">
+              <p className="text-center">No feedback for this orbit.</p>
             </div>
           )}
 
           {status === "CanLoadMore" && (
-            <div className="">
+            <div className="mx-auto mt-6 max-w-sm px-3 pr-32">
               <Button
-                // variant={"ghost"}
                 onClick={() => loadMore(10)}
-                className="mr-2 mt-10 rounded-md bg-blue-500 px-5 py-2 font-medium text-white transition-all duration-100 ease-linear hover:bg-blue-600"
+                className="bg-indigo-500 hover:bg-indigo-600"
               >
-                {paginatedLoading ? "Loading..." : "Load More"}
-                {paginatedLoading ? (
-                  <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                ) : (
-                  <Loader2 className="ml-2 h-4 w-4" />
-                )}
+                {isLoading ? "Loading..." : "Load More"}
               </Button>
-            </div>
-          )}
-
-          {!results && paginatedLoading && (
-            <div className="flex h-full min-h-[70vh] items-center justify-center">
-              <Loader2 className="h-7 w-7 animate-spin" />
-            </div>
-          )}
-
-          {results?.length === 0 && (
-            <div className="mt-56">
-              <p className="text-center">No feedback for this orbit.</p>
             </div>
           )}
         </div>

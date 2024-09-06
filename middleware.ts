@@ -5,7 +5,7 @@ import {
   nextjsMiddlewareRedirect,
 } from "@convex-dev/auth/nextjs/server";
 
-const isSignInPage = createRouteMatcher(["/signin"]);
+const isSignInPage = createRouteMatcher(["/login"]);
 const isProtectedRoute = createRouteMatcher([
   "/orbits(.*)",
   "/settings(.*)",

@@ -1,32 +1,42 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { api } from "@/convex/_generated/api";
+import Avatar01 from "@/public/images/avatar-01.webp";
+import Avatar02 from "@/public/images/avatar-02.webp";
+import Avatar03 from "@/public/images/avatar-03.webp";
+import Avatar04 from "@/public/images/avatar-04.webp";
+import Avatar05 from "@/public/images/avatar-05.webp";
+import {
+  Dialog,
+  DialogBackdrop,
+  DialogPanel,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  TransitionChild,
+} from "@headlessui/react";
+import {
+  Bars3Icon,
+  ChevronRightIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePaginatedQuery, useQuery } from "convex/react";
-import { House, Loader2, Plus } from "lucide-react";
+import { House, Loader, Loader2, Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import TimeAgo from "react-timeago";
 import { z } from "zod";
 
 import { ACTIVE, PAUSED } from "@/lib/constants";
+import { classNames } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import CodeDialog from "@/components/code-dialog";
 import Empty from "@/components/empty";
 import Active from "@/components/pills/active";
 import Paused from "@/components/pills/paused";
-import Stopped from "@/components/pills/stopped";
 
 const FormSchema = z.object({
   search_term: z.string().min(2, {
@@ -70,198 +80,322 @@ export default function Orbit() {
     { initialNumItems: 10 }
   );
 
-  console.log("Search results: ", searchResults);
+  // console.log("Results: ", results);
+  // console.log("Search results: ", searchResults);
 
   return (
-    <div className="">
-      {/* <h4 className="flex items-center">
-        <House size={25} />
-        <span className="pl-2 text-lg font-semibold text-zinc-700">Orbit</span>
-      </h4> */}
-      <div className="mx-auto flex w-full max-w-5xl items-center space-x-2">
-        <Input
-          placeholder="Search for Orbits..."
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="rounded-full focus-visible:ring-1 focus-visible:ring-blue-400"
-        />
-        {/* <Button
-          type="submit"
-          className="rounded-full bg-blue-500 hover:bg-blue-600"
-        >
-          Search
-        </Button> */}
+    <div>
+      <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-6 border-b border-black/5 bg-gray-50 px-4 shadow-sm sm:px-6 lg:px-8">
+        <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
+          <form action="#" method="GET" className="flex flex-1">
+            <label htmlFor="search-field" className="sr-only">
+              Search
+            </label>
+            <div className="relative w-full">
+              <MagnifyingGlassIcon
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-gray-500"
+              />
+              <input
+                id="search-field"
+                name="search"
+                type="search"
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search..."
+                className="block h-full w-full border-0 bg-transparent py-0 pl-8 pr-0 focus:ring-0 sm:text-sm"
+              />
+            </div>
+          </form>
+        </div>
       </div>
-      <div className="mx-auto my-20 flex max-w-5xl flex-col divide-y divide-gray-300/50">
+      <header className="flex items-center justify-between border-b border-white/5 px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
+        <h1 className="text-base font-semibold leading-7">Orbits</h1>
+      </header>
+
+      {/* Deployment list */}
+      <ul role="list" className="divide-y divide-black/5">
         {searchTerm.trim().length === 0 &&
           results.map((orbit, index) => (
-            <div key={index} className="flex items-start justify-between py-7">
-              <div className="flex flex-col">
-                <Link href={`/orbits/${orbit._id}`}>
-                  <h4 className="text-base font-semibold text-zinc-700 transition-all duration-100 ease-linear hover:underline">
-                    {orbit.name}
-                  </h4>
-                </Link>
-                <div className="flex items-center pt-1 text-xs text-zinc-500">
-                  <span className="font-bold underline">
-                    <a
-                      href={`${orbit.website}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+            <li
+              key={orbit._id}
+              className="relative flex items-center space-x-4 px-4 py-4 sm:px-6 lg:px-8"
+            >
+              <div className="min-w-0 flex-auto">
+                <div className="flex items-center gap-x-3">
+                  <div
+                    className={classNames(
+                      orbit.status === ACTIVE
+                        ? "bg-green-400/10 text-green-400 ring-green-400/20"
+                        : "bg-amber-400/10 text-fuchsia-400 ring-fuchsia-400/30",
+                      "flex-none rounded-full p-1"
+                    )}
+                  >
+                    <div className="h-2 w-2 rounded-full bg-current" />
+                  </div>
+                  <h2 className="min-w-0 text-sm font-semibold leading-6 text-gray-800">
+                    <Link
+                      href={`/orbits/${orbit._id}`}
+                      className="flex gap-x-2"
                     >
-                      {orbit.website}
-                    </a>
-                  </span>
-                  <span className="mx-2 inline-block h-1 w-1 rounded-full bg-zinc-400"></span>
-                  {/* <span className="mr-2">{orbit._creationTime}</span> */}
-                  <span className="mr-2">
+                      <span className="truncate">{orbit.name}</span>
+                      {/* <span className="text-gray-400">/</span> */}
+                      {/* <span className="whitespace-nowrap">
+                            {deployment.projectName}
+                          </span> */}
+                      <span className="absolute inset-0" />
+                    </Link>
+                  </h2>
+                </div>
+                <div className="mt-3 flex items-center gap-x-2.5 text-xs leading-5 text-gray-400">
+                  <a
+                    href={orbit.website}
+                    target="_blank"
+                    className="truncate font-medium text-zinc-600 underline"
+                  >
+                    {orbit.website}
+                  </a>
+                  <svg
+                    viewBox="0 0 2 2"
+                    className="h-0.5 w-0.5 flex-none fill-gray-500"
+                  >
+                    <circle r={1} cx={1} cy={1} />
+                  </svg>
+                  <p className="whitespace-nowrap">
+                    Created{" "}
                     <TimeAgo
                       date={
                         orbit == undefined ? Date.now() : orbit._creationTime
                       }
                     />
-                  </span>
-                  <div>
-                    {orbit.status === ACTIVE && <Active />}
-                    {orbit.status === PAUSED && <Paused />}
-                  </div>
+                  </p>
                 </div>
               </div>
-              <div className="flex items-center justify-between">
-                <CodeDialog orbitId={orbit?._id as string} />
+              <div className="-mx-0.5 flex justify-center -space-x-3">
+                <Image
+                  className="box-content rounded-full border-2 border-gray-50"
+                  src={Avatar01}
+                  width={24}
+                  height={24}
+                  alt="Avatar 01"
+                />
+                <Image
+                  className="box-content rounded-full border-2 border-gray-50"
+                  src={Avatar02}
+                  width={24}
+                  height={24}
+                  alt="Avatar 01"
+                />
+                <Image
+                  className="box-content rounded-full border-2 border-gray-50"
+                  src={Avatar03}
+                  width={24}
+                  height={24}
+                  alt="Avatar 02"
+                />
+                <Image
+                  className="box-content rounded-full border-2 border-gray-50"
+                  src={Avatar04}
+                  width={24}
+                  height={24}
+                  alt="Avatar 03"
+                />
+                <Image
+                  className="box-content rounded-full border-2 border-gray-50"
+                  src={Avatar05}
+                  width={24}
+                  height={24}
+                  alt="Avatar 04"
+                />
               </div>
-            </div>
+              {/* <div
+                className={classNames(
+                  orbit.status === ACTIVE
+                    ? "bg-green-100 text-green-400 ring-green-400/20"
+                    : "bg-amber-100 text-amber-400 ring-amber-400/30",
+                  "ml-2 flex-none rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset"
+                )}
+              >
+                {orbit.status}
+              </div> */}
+              {orbit.status === ACTIVE && <Active />}
+              {orbit.status === PAUSED && <Paused />}
+              <ChevronRightIcon
+                aria-hidden="true"
+                className="h-5 w-5 flex-none text-gray-400"
+              />
+            </li>
           ))}
+      </ul>
 
-        {paginatedLoading && (
-          <div className="flex h-full min-h-[70vh] items-center justify-center">
-            <Loader2 className="h-7 w-7 animate-spin text-blue-500" />
-          </div>
-        )}
-
-        {status === "LoadingMore" && (
-          <div className="flex h-full min-h-[70vh] items-center justify-center">
-            <Loader2 className="h-7 w-7 animate-spin text-blue-500" />
-          </div>
-        )}
-
-        {status === "CanLoadMore" && (
-          <div className="">
-            <Button
-              // variant={"ghost"}
-              onClick={() => loadMore(10)}
-              className="mr-2 mt-10 rounded-md bg-blue-500 px-5 py-2 font-medium text-white transition-all duration-100 ease-linear hover:bg-blue-600"
-            >
-              {paginatedLoading ? "Loading..." : "Load More"}
-              {paginatedLoading ? (
-                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Loader2 className="ml-2 h-4 w-4" />
-              )}
-            </Button>
-          </div>
-        )}
-
-        {!results && paginatedLoading && (
-          <div className="flex h-full min-h-[70vh] items-center justify-center">
-            <Loader2 className="h-7 w-7 animate-spin" />
-          </div>
-        )}
-      </div>
-      {status === "Exhausted" && results?.length === 0 && (
-        <div className="mt-56 flex w-full items-center justify-center">
-          {/* <p className="text-center">You have no orbits.</p> */}
-          <Link href={"/create"}>
-            <Button variant={"secondary"} className="ml-2">
-              <Plus size={14} className="mr-2" />
-              Create new orbit
-            </Button>
-          </Link>
-        </div>
-      )}
-
-      {/* SEARCH RESULTS */}
-
-      <div className="mx-auto my-20 flex max-w-5xl flex-col divide-y divide-gray-300/50">
+      {/* Search list */}
+      <ul role="list" className="divide-y divide-black/5">
         {searchTerm.trim().length > 0 &&
           searchResults.length > 0 &&
           searchResults.map((orbit, index) => (
-            <div key={index} className="flex items-start justify-between py-7">
-              <div className="flex flex-col">
-                <Link href={`/orbits/${orbit._id}`}>
-                  <h4 className="text-base font-semibold text-zinc-700 transition-all duration-100 ease-linear hover:underline">
-                    {orbit.name}
-                  </h4>
-                </Link>
-                <div className="flex items-center pt-1 text-xs text-zinc-500">
-                  <span className="font-bold underline">
-                    <a
-                      href={`${orbit.website}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+            <li
+              key={orbit._id}
+              className="relative flex items-center space-x-4 px-4 py-4 sm:px-6 lg:px-8"
+            >
+              <div className="min-w-0 flex-auto">
+                <div className="flex items-center gap-x-3">
+                  <div
+                    className={classNames(
+                      orbit.status === ACTIVE
+                        ? "bg-green-400/10 text-green-400 ring-green-400/20"
+                        : "bg-amber-400/10 text-amber-400 ring-amber-400/30",
+                      "flex-none rounded-full p-1"
+                    )}
+                  >
+                    <div className="h-2 w-2 rounded-full bg-current" />
+                  </div>
+                  <h2 className="min-w-0 text-sm font-semibold leading-6 text-gray-800">
+                    <Link
+                      href={`/orbits/${orbit._id}`}
+                      className="flex gap-x-2"
                     >
-                      {orbit.website}
-                    </a>
-                  </span>
-                  <span className="mx-2 inline-block h-1 w-1 rounded-full bg-zinc-400"></span>
-                  {/* <span className="mr-2">{orbit._creationTime}</span> */}
-                  <span className="mr-2">
+                      <span className="truncate">{orbit.name}</span>
+                      {/* <span className="text-gray-400">/</span> */}
+                      {/* <span className="whitespace-nowrap">
+                            {deployment.projectName}
+                          </span> */}
+                      <span className="absolute inset-0" />
+                    </Link>
+                  </h2>
+                </div>
+                <div className="mt-3 flex items-center gap-x-2.5 text-xs leading-5 text-gray-400">
+                  <a
+                    href={orbit.website}
+                    target="_blank"
+                    className="truncate font-medium text-zinc-600 underline"
+                  >
+                    {orbit.website}
+                  </a>
+                  <svg
+                    viewBox="0 0 2 2"
+                    className="h-0.5 w-0.5 flex-none fill-gray-500"
+                  >
+                    <circle r={1} cx={1} cy={1} />
+                  </svg>
+                  <p className="whitespace-nowrap">
+                    Created{" "}
                     <TimeAgo
                       date={
                         orbit == undefined ? Date.now() : orbit._creationTime
                       }
                     />
-                  </span>
-                  <div>
-                    {orbit.status === ACTIVE && <Active />}
-                    {orbit.status === PAUSED && <Paused />}
-                  </div>
+                  </p>
                 </div>
               </div>
-              <div className="flex items-center justify-between">
-                <CodeDialog orbitId={orbit?._id as string} />
+              <div className="-mx-0.5 flex justify-center -space-x-3">
+                <Image
+                  className="box-content rounded-full border-2 border-gray-50"
+                  src={Avatar01}
+                  width={24}
+                  height={24}
+                  alt="Avatar 01"
+                />
+                <Image
+                  className="box-content rounded-full border-2 border-gray-50"
+                  src={Avatar02}
+                  width={24}
+                  height={24}
+                  alt="Avatar 01"
+                />
+                <Image
+                  className="box-content rounded-full border-2 border-gray-50"
+                  src={Avatar03}
+                  width={24}
+                  height={24}
+                  alt="Avatar 02"
+                />
+                <Image
+                  className="box-content rounded-full border-2 border-gray-50"
+                  src={Avatar04}
+                  width={24}
+                  height={24}
+                  alt="Avatar 03"
+                />
+                <Image
+                  className="box-content rounded-full border-2 border-gray-50"
+                  src={Avatar05}
+                  width={24}
+                  height={24}
+                  alt="Avatar 04"
+                />
               </div>
-            </div>
+              <div
+                className={classNames(
+                  orbit.status === ACTIVE
+                    ? "bg-green-100 text-green-400 ring-green-400/20"
+                    : "bg-amber-100 text-amber-400 ring-amber-400/30",
+                  "flex-none rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset"
+                )}
+              >
+                {orbit.status}
+              </div>
+              <ChevronRightIcon
+                aria-hidden="true"
+                className="h-5 w-5 flex-none text-gray-400"
+              />
+            </li>
           ))}
+      </ul>
 
-        {searchTerm.trim().length > 0 && searchLoading && (
-          <div className="flex h-full min-h-[70vh] items-center justify-center">
-            <Loader2 className="h-7 w-7 animate-spin text-blue-500" />
+      {searchTerm.trim().length > 0 && searchLoading && (
+        <div className="flex h-full min-h-[70vh] items-center justify-center">
+          <Loader className="h-7 w-7 animate-spin text-zinc-400" />
+        </div>
+      )}
+
+      {searchTerm.trim().length > 0 && searchStatus === "LoadingMore" && (
+        <div className="flex h-full min-h-[70vh] items-center justify-center">
+          <Loader className="h-7 w-7 animate-spin text-zinc-400" />
+        </div>
+      )}
+
+      {status === "Exhausted" && results?.length === 0 && (
+        <div className="mx-auto flex min-h-[70vh] max-w-2xl items-center justify-center px-3">
+          <Empty />
+        </div>
+      )}
+      {searchTerm.trim().length > 0 && !searchResults && searchLoading && (
+        <div className="mx-auto max-w-sm px-3 pl-40">
+          <Loader className="h-7 w-7 animate-spin text-zinc-400" />
+        </div>
+      )}
+
+      {status === "LoadingMore" ||
+        (status === "LoadingFirstPage" && (
+          <div className="mx-auto flex min-h-[60vh] max-w-sm flex-col justify-center px-3 pl-40">
+            <Loader className="h-7 w-7 animate-spin text-zinc-400" />
+          </div>
+        ))}
+      {!results && paginatedLoading && (
+        <div className="mx-auto flex min-h-[60vh] max-w-sm flex-col justify-center px-3 pl-40">
+          <Loader className="h-7 w-7 animate-spin text-zinc-400" />
+        </div>
+      )}
+
+      {searchTerm.trim().length > 0 &&
+        searchResults?.length === 0 &&
+        searchStatus === "Exhausted" && (
+          <div className="mx-auto flex min-h-[70vh] max-w-2xl flex-col justify-center px-3 text-center">
+            <h2 className="text-lg font-medium">No results found</h2>
+            <p className="text-zinc-500">
+              We can&apos;t find any orbit with that name at the moment, try
+              searching something else.
+            </p>
           </div>
         )}
 
-        {searchTerm.trim().length > 0 && searchStatus === "LoadingMore" && (
-          <div className="flex h-full min-h-[70vh] items-center justify-center">
-            <Loader2 className="h-7 w-7 animate-spin text-blue-500" />
-          </div>
-        )}
-
-        {searchTerm.trim().length > 0 && searchStatus === "CanLoadMore" && (
-          <div className="">
-            <Button
-              // variant={"ghost"}
-              onClick={() => loadMore(10)}
-              className="mr-2 mt-10 rounded-md bg-blue-500 px-5 py-2 font-medium text-white transition-all duration-100 ease-linear hover:bg-blue-600"
-            >
-              {searchLoading ? "Loading..." : "Load More"}
-              {searchLoading ? (
-                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Loader2 className="ml-2 h-4 w-4" />
-              )}
-            </Button>
-          </div>
-        )}
-
-        {searchTerm.trim().length > 0 && !searchResults && searchLoading && (
-          <div className="flex h-full min-h-[70vh] items-center justify-center">
-            <Loader2 className="h-7 w-7 animate-spin" />
-          </div>
-        )}
-      </div>
-
-      {searchTerm.trim().length > 0 && searchResults?.length === 0 && (
-        <div className="mt-56 flex w-full items-center justify-center">
-          <p className="text-center">No results found.</p>
+      {status === "CanLoadMore" && (
+        <div className="mx-auto max-w-sm px-3 pl-32">
+          <Button
+            onClick={() => loadMore(10)}
+            className="bg-indigo-500 hover:bg-indigo-600"
+          >
+            Load more
+          </Button>
         </div>
       )}
     </div>

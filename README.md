@@ -4,3 +4,7 @@
 https://labs.convex.dev/auth/setup
 https://labs.convex.dev/auth/config/email
 https://authjs.dev/getting-started/providers/resend
+
+https://labs.convex.dev/auth/authz/nextjs#preloading-and-loading-data
+
+https://labs.convex.dev/auth/authz/nextjs#calling-authenticated-mutations-and-actions

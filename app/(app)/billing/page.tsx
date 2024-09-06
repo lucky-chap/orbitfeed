@@ -85,7 +85,7 @@ export default function Billing() {
   };
 
   return (
-    <div className="bg-white sm:py-12">
+    <div className="mb-7 bg-white sm:py-12 lg:mb-0">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {/* <div className="mx-auto max-w-2xl sm:text-center">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
@@ -200,18 +200,21 @@ export default function Billing() {
                     USD
                   </span>
                 </p>
-                <Button
-                  className="mt-10 flex w-full items-center rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                  onClick={() => handleCheckout()}
-                  // disabled={proUser !== null}
-                  disabled={proUser !== null && proUser !== undefined}
-                >
-                  {proUser?.userId === user?._id &&
-                    proUser !== undefined &&
-                    "On Pro Plan"}
-                  {proUser === undefined && proUser == null && "Checking..."}
-                  {proUser !== undefined && proUser === null && "Buy Pro Plan"}
-                </Button>
+                {proUser !== undefined && (
+                  <Button
+                    className="mt-10 flex w-full items-center rounded-md bg-blue-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                    onClick={() => handleCheckout()}
+                    disabled={proUser !== null && proUser !== undefined}
+                  >
+                    {proUser?.userId === user?._id &&
+                      proUser !== undefined &&
+                      "On Pro Plan"}
+                    {proUser === undefined && proUser == null && "Checking..."}
+                    {proUser !== undefined &&
+                      proUser === null &&
+                      "Buy Pro Plan"}
+                  </Button>
+                )}
                 <p className="mt-6 text-xs leading-5 text-gray-600">
                   Buy OrbitFeed and get access to tons of features and future
                   updates.

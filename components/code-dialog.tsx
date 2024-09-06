@@ -70,7 +70,7 @@ export default function CodeDialog({ orbitId }: { orbitId: string }) {
       <DialogTrigger asChild>
         <Button variant="outline" className="h-7 p-2 text-xs">
           <Code size={14} className="mr-1 text-zinc-600" />
-          <span className="text-xs font-medium">Embed</span>
+          <span className="text-xs font-medium">Code</span>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
