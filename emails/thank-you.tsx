@@ -71,7 +71,7 @@
 
 //         <Section style={buttonContainer}>
 //           <Button style={button} href="https://orbitfeed.lol">
-//             Continue to OrbitFeed
+//             Continue to Orbitfeed
 //           </Button>
 //         </Section>
 //       </Container>
@@ -193,13 +193,13 @@ export const ThankYou: React.FC<Readonly<WaitlistEmailProps>> = ({ name }) => (
         <Container style={container} className="max-w-xl">
           <Img
             src={`${baseUrl}/images/thank-you.png`}
-            alt="OrbitFeed"
+            alt="Orbitfeed"
             className="w-full"
             style={thankYouBanner}
           />
           <Heading className="text-black">You went Pro! 🎉</Heading>
           <Text className="text-zinc-600">
-            We at OrbitFeed would like to take a moment to express our sincerest
+            We at Orbitfeed would like to take a moment to express our sincerest
             gratitude for upgrading to our Pro plan! Your support means the
             world to us, and we're thrilled to have you as a valued member of
             our community.
@@ -221,7 +221,7 @@ export const ThankYou: React.FC<Readonly<WaitlistEmailProps>> = ({ name }) => (
               className="flex w-52 items-center justify-center rounded bg-blue-500 p-3 text-center font-medium text-white duration-100 ease-in hover:bg-blue-600"
               href="https://orbitfeed.lol"
             >
-              Continue to OrbitFeed
+              Continue to Orbitfeed
             </Button>
           </Section>
         </Container>

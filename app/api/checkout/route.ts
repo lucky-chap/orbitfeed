@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
           price_data: {
             currency: "usd",
             product_data: {
-              name: "OrbitFeed Pro Plan",
+              name: "Orbitfeed Pro Plan",
             },
             unit_amount,
           },

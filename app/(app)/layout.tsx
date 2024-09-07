@@ -25,6 +25,7 @@ import { useQuery } from "convex/react";
 import { Loader } from "lucide-react";
 
 import { classNames } from "@/lib/utils";
+import Logo from "@/components/logo";
 
 const navigation = [
   { name: "Orbits", href: "/orbits", icon: FolderIcon, pathname: "orbits" },
@@ -105,11 +106,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               {/* Sidebar component, swap this element with another sidebar if you like */}
               <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-50 px-6 ring-1 ring-black/10">
                 <div className="flex h-16 shrink-0 items-center">
-                  <img
-                    alt="Your Company"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                    className="h-8 w-auto"
-                  />
+                  <Logo />
                 </div>
                 <nav className="flex flex-1 flex-col">
                   <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -188,11 +185,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-50 px-6 ring-1 ring-black/5">
             <div className="flex h-16 shrink-0 items-center">
-              <img
-                alt="Your Company"
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                className="h-8 w-auto"
-              />
+              <Logo />
             </div>
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -264,9 +257,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                           "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                         }
                         alt="profile"
-                        width={32}
-                        height={32}
-                        className="h-8 w-8 rounded-full bg-gray-50"
+                        width={24}
+                        height={24}
+                        className="h-6 w-6 rounded-full bg-gray-50"
                       />
                       <span className="sr-only"> Your profile</span>
                       <span aria-hidden="true">

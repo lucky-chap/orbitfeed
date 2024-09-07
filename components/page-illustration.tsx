@@ -6,7 +6,7 @@ export default function PageIllustration() {
     <>
       {/* Stripes illustration */}
       <div
-        className="pointer-events-none absolute left-1/2 top-0 -z-10 -translate-x-1/2 transform"
+        className="pointer-events-none absolute left-1/2 top-0 -z-10 -translate-x-1/2 transform overflow-hidden"
         aria-hidden="true"
       >
         {/* <Image

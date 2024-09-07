@@ -135,9 +135,9 @@ export default function Login() {
             </button>
           </div>
 
-          <p className="mt-10 text-center text-sm text-gray-500">
+          {/* <p className="mt-10 text-center text-sm text-gray-500">
             Sign in to access awesome features.{" "}
-          </p>
+          </p> */}
         </div>
       </div>
     </>

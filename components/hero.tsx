@@ -7,12 +7,13 @@ import Avatar02 from "@/public/images/avatar-02.webp";
 import Avatar03 from "@/public/images/avatar-03.webp";
 import Avatar04 from "@/public/images/avatar-04.webp";
 import Avatar05 from "@/public/images/avatar-05.webp";
-import demo from "@/public/images/demo.png";
+import home from "@/public/images/home.png";
 import AOS from "aos";
 
 import "aos/dist/aos.css";
 
 import Link from "next/link";
+import { useAuthActions } from "@convex-dev/auth/react";
 import { Authenticated, Unauthenticated } from "convex/react";
 import { ArrowRight } from "lucide-react";
 
@@ -22,6 +23,8 @@ import Header from "./header";
 import { Button } from "./ui/button";
 
 export default function Hero() {
+  const { signIn } = useAuthActions();
+
   useEffect(() => {
     AOS.init({
       once: true,
@@ -32,7 +35,7 @@ export default function Hero() {
   });
 
   return (
-    <section className="relative">
+    <section className="relative min-h-screen overflow-x-hidden">
       <Header />
       <PageIllustration />
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -102,7 +105,7 @@ export default function Hero() {
                 how companies create user interfaces together. */}
                 {/* Uniter is a collaborative event planner built to simplify
                     scheduling and bring people together seamlessly. */}
-                OrbitFeed makes it simple to collect feedback from your users or
+                Orbitfeed makes it simple to collect feedback from your users or
                 page visitors in just a few steps!
               </p>
               <div className="relative before:absolute before:inset-0 before:border-y before:[border-image:linear-gradient(to_right,transparent,theme(colors.zinc.200/.8),transparent)1]">
@@ -112,9 +115,16 @@ export default function Hero() {
                   data-aos-delay={450}
                 >
                   <Unauthenticated>
-                    <Button className="btn group mb-4 w-full rounded-lg bg-gradient-to-t from-blue-600 to-blue-500 bg-[length:100%_100%] bg-[bottom] p-2 px-4 text-white shadow hover:bg-[length:100%_150%] sm:mb-0 sm:w-auto">
+                    <Button
+                      onClick={() =>
+                        void signIn("github", {
+                          redirectTo: "/orbits",
+                        })
+                      }
+                      className="btn group mb-4 w-full rounded-lg bg-gradient-to-t from-blue-600 to-blue-500 bg-[length:100%_100%] bg-[bottom] p-2 px-4 text-white shadow hover:bg-[length:100%_150%] sm:mb-0 sm:w-auto"
+                    >
                       <span className="relative inline-flex items-center">
-                        Login with Google{" "}
+                        Login with GitHub{" "}
                         <span className="ml-1 tracking-normal text-white transition-transform group-hover:translate-x-0.5">
                           <ArrowRight size={20} />
                         </span>
@@ -143,13 +153,26 @@ export default function Hero() {
           >
             <Image
               className="rounded-lg"
-              src={demo}
+              src={home}
               width={1024}
               height={432}
               alt="Hero image"
             />
           </div>
         </div>
+      </div>
+      <div className="my-10 flex items-center justify-center">
+        <p className="text-xs text-zinc-500">
+          Crafted by{" "}
+          <a
+            href="https://github.com/lucky-chap"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-zinc-600 underline"
+          >
+            Quavo
+          </a>
+        </p>
       </div>
     </section>
   );

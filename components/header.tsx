@@ -20,9 +20,7 @@ export default function Header() {
       >
         <div className="flex lg:flex-1">
           <Link href="#" className="-m-1.5 flex items-center p-1.5">
-            <span className="sr-only">Your Company</span>
             <Logo />
-            <p className="ml-1 text-base font-semibold">OrbitFeed</p>
           </Link>
         </div>
 

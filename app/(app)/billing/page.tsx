@@ -216,7 +216,7 @@ export default function Billing() {
                   </Button>
                 )}
                 <p className="mt-6 text-xs leading-5 text-gray-600">
-                  Buy OrbitFeed and get access to tons of features and future
+                  Buy Orbitfeed and get access to tons of features and future
                   updates.
                 </p>
               </div>

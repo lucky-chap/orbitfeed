@@ -33,9 +33,11 @@ export default function CodeDialog({ orbitId }: { orbitId: string }) {
   const [importCopied, setImportCopied] = useState(false);
   const [useCopied, setUseCopied] = useState(false);
 
+  const importCode = `{ FeedbackWidget }`;
+
   const handleNPMCopy = () => {
     if (orbitId) {
-      navigator.clipboard.writeText("npm install OrbitFeedjs");
+      navigator.clipboard.writeText("npm install Orbitfeed");
       setNPMCopied(true);
       setTimeout(() => {
         setNPMCopied(false);
@@ -45,7 +47,9 @@ export default function CodeDialog({ orbitId }: { orbitId: string }) {
 
   const handleImportCopy = () => {
     if (orbitId) {
-      navigator.clipboard.writeText("import FeedbackWidget from 'OrbitFeedjs'");
+      navigator.clipboard.writeText(
+        "import { FeedbackWidget } from 'orbitfeed'"
+      );
       setImportCopied(true);
       setTimeout(() => {
         setImportCopied(false);
@@ -76,10 +80,10 @@ export default function CodeDialog({ orbitId }: { orbitId: string }) {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="">
-            Using OrbitFeed on your website
+            Using Orbitfeed on your website
           </DialogTitle>
           <DialogDescription className="pt-3">
-            You can use the OrbitFeed component in your project by following the
+            You can use the Orbitfeed component in your project by following the
             steps below
           </DialogDescription>
         </DialogHeader>
@@ -88,7 +92,7 @@ export default function CodeDialog({ orbitId }: { orbitId: string }) {
             <div className="flex items-end justify-between">
               <Card className="w-full border-none shadow-none">
                 <CardHeader className="p-0">
-                  <h2 className="text-sm font-medium">Install OrbitFeed</h2>
+                  <h2 className="text-sm font-medium">Install Orbitfeed</h2>
                 </CardHeader>
                 <CardContent className="mt-3 flex w-full items-center rounded-md bg-zinc-100 p-0 font-medium">
                   <pre className="w-full rounded-md p-2 text-sm">
@@ -128,7 +132,9 @@ export default function CodeDialog({ orbitId }: { orbitId: string }) {
                   <pre className="w-full rounded-md p-2 text-sm">
                     <code className="flex items-center">
                       <p className="text-purple-600">import</p>{" "}
-                      <span className="px-2 text-red-600">FeedbackWidget</span>
+                      <span className="px-1 text-amber-400">{`{ `}</span>
+                      <span className="text-red-600">{`FeedbackWidget`}</span>
+                      <span className="px-1 text-amber-400">{` }`}</span>
                       <p className="pr-2 text-purple-600">from</p>{" "}
                       <p className="text-green-600">"orbitfeed"</p>{" "}
                     </code>
@@ -207,7 +213,7 @@ export default function CodeDialog({ orbitId }: { orbitId: string }) {
         </div>
         <p className="text-xs text-zinc-600">
           NB: It is recommended to store your{" "}
-          <span className="font-medium text-zinc-900">orbitId</span> in an env
+          <span className="font-medium text-zinc-900">secrets</span> in an env
           file.
         </p>
         <DialogFooter className="flex justify-between">
