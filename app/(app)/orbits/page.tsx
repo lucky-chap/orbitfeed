@@ -112,7 +112,7 @@ export default function Orbit() {
         <h1 className="text-base font-semibold leading-7">Orbits</h1>
       </header>
 
-      {/* Deployment list */}
+      {/* Orbit list */}
       <ul role="list" className="divide-y divide-black/5">
         {searchTerm.trim().length === 0 &&
           results.map((orbit, index) => (

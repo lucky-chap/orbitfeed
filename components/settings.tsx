@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import {
   Camera,
   Image,
@@ -67,6 +68,7 @@ const FormSchema = z.object({
   status: z.string({
     message: "Please choose a status",
   }),
+  team_id: z.optional(z.string()),
 });
 
 export function SettingsMenu({
@@ -74,12 +76,14 @@ export function SettingsMenu({
   name,
   website,
   status,
+  teamId,
   handleDeleteOrbit,
 }: {
   orbitId: any;
   name: string;
   website: string;
   status: string;
+  teamId?: string | undefined;
   handleDeleteOrbit: () => void;
 }) {
   const [open, setOpen] = React.useState(false);
@@ -108,6 +112,7 @@ export function SettingsMenu({
               name={name}
               website={website}
               status={status}
+              teamId={teamId}
             />
           </div>
           <DrawerFooter className="px-0 pt-12">
@@ -148,6 +153,7 @@ export function SettingsMenu({
             name={name}
             website={website}
             status={status}
+            teamId={teamId}
           />
         </div>
 
@@ -167,14 +173,38 @@ function ProfileForm({
   name,
   website,
   status,
+  teamId,
 }: {
   orbitId: any;
   name: string;
   website: string;
   status: string;
+  teamId?: string | undefined;
 }) {
+  const [currentTeam, setCurrentTeam] = useState<
+    | {
+        _id: Id<"teams">;
+        _creationTime: number;
+        name: string;
+        leader: Id<"users">;
+      }
+    | undefined
+  >(undefined);
   const updateOrbit = useMutation(api.app.orbits.updateOrbit);
+  const updateTeam = useMutation(api.app.teams.updateTeam);
   const [loading, setLoading] = useState(false);
+
+  const user = useQuery(api.user.viewer);
+  const proUser = useQuery(api.proUsers.checkIfUserIsPro, {
+    userId: user?._id as Id<"users">,
+    email: user?.email as string,
+  });
+  const allTeams = useQuery(api.app.teams.fetchTeams, {
+    userId: user?._id as Id<"users">,
+    user_email: user?.email as string,
+  });
+
+  const previousTeam = allTeams?.find((team) => team._id === teamId);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -182,25 +212,76 @@ function ProfileForm({
       name: name,
       website: website,
       status: status,
+      team_id: undefined,
     },
   });
+
+  const handlTeamChange = (id: Id<"teams">) => {
+    const team = allTeams?.find((team) => team._id === id);
+    setCurrentTeam(team);
+  };
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    setLoading(true);
+    console.log("Data: ", data);
+    console.log("Current team: ", currentTeam);
     console.log("Current status: ", data.status);
+    console.log("Previous team from server: ", previousTeam);
+
+    setLoading(true);
     try {
       const result = await updateOrbit({
         orbitId: orbitId,
         name: data.name,
         website: data.website,
         status: data.status,
+        teamId: data.team_id as Id<"teams">, // i think leaving off this value may unset it in the db, check docs
       });
       if (result === "updated") {
-        setLoading(false);
-        toast({
-          variant: "default",
-          title: "Orbit updated.",
-          description: "Your orbit was updated successfully",
-        });
+        // move to team
+        if (data.team_id !== undefined) {
+          // check if the current selected team is the same
+          // as the team from the props
+          if (data.team_id == teamId) {
+            setLoading(false);
+            toast({
+              variant: "default",
+              title: "Orbit updated.",
+              description: "Your orbit was updated successfully",
+            });
+            return;
+          } else {
+            // move to team
+            const result = await updateOrbit({
+              orbitId: orbitId,
+              name: data.name,
+              website: data.website,
+              status: data.status,
+              teamId: data.team_id as Id<"teams">,
+            });
+            if (result === "updated") {
+              setLoading(false);
+              toast({
+                variant: "default",
+                title: "Orbit updated.",
+                description: "Orbit was moved to team successfully",
+              });
+            } else {
+              setLoading(false);
+              toast({
+                variant: "destructive",
+                title: "An error occurred",
+                description: "Orbit was not moved to team.",
+              });
+            }
+          }
+        } else {
+          setLoading(false);
+          toast({
+            variant: "default",
+            title: "Orbit updated.",
+            description: "Your orbit was updated successfully",
+          });
+        }
       } else {
         setLoading(false);
         toast({
@@ -283,7 +364,7 @@ function ProfileForm({
                 >
                   <FormControl>
                     <SelectTrigger className="focus:ring-2 focus:ring-blue-500">
-                      <SelectValue placeholder="Select a verified email to display" />
+                      <SelectValue placeholder="Select a status" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent className="" defaultValue={status}>
@@ -296,6 +377,54 @@ function ProfileForm({
             )}
           />
         </div>
+        {proUser !== undefined && proUser !== null && (
+          <div className="grid gap-2">
+            {/* <div className="flex flex-col items-start">
+              <h3 className="mb-2 font-medium">Team</h3>
+              <Select defaultValue={previousTeam?.name}>
+                <SelectTrigger className="focus:ring-2 focus:ring-blue-500">
+                  <SelectValue placeholder="Select a team" />
+                </SelectTrigger>
+                <SelectContent defaultValue={previousTeam?.name}>
+                  <SelectGroup>
+                    {allTeams?.map((team) => (
+                      <SelectItem key={team._id} value={team._id}>
+                        {team.name}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div> */}
+            <FormField
+              control={form.control}
+              name="team_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Add to team</FormLabel>
+                  <Select onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger className="focus:ring-2 focus:ring-blue-500">
+                        <SelectValue placeholder="Add to team" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {allTeams?.map((team) => (
+                        <SelectItem
+                          key={team._id}
+                          value={team._id} // the id is now the value since that is most important now
+                        >
+                          {team.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        )}
 
         <Button type="submit" className="mt-9 bg-blue-500 hover:bg-blue-600">
           {loading ? (

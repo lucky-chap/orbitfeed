@@ -26,6 +26,7 @@ In today's fast-paced, feedback-driven world, collecting and acting on user inpu
 - **[Convex](https://convex.dev)**
 - **[Tailwind UI](https://tailwindui.com)**
 - **[Shadcn](https://ui.shadcn.com)**
+- **[Resend](https://resend.com)**
 - **[TypeScript](https://www.typescriptlang.org/)**
 - **[ESLint](https://eslint.org/)**
 - **[Prettier](https://prettier.io/)**

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery } from "convex/react";
@@ -26,39 +27,34 @@ const FormSchema = z.object({
   name: z.string().min(4, {
     message: "Please enter a name with at least 4 characters",
   }),
-  website: z.string().url({
-    message: "Please enter a valid website",
-  }),
 });
 
 export default function CreateOrbit() {
   const user = useQuery(api.user.viewer);
 
-  const createNewOrbit = useMutation(api.app.orbits.createOrbit);
+  const createNewTeam = useMutation(api.app.teams.createTeam);
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       name: "",
-      website: "",
     },
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setLoading(true);
     try {
-      const orbitId = await createNewOrbit({
+      const orbitId = await createNewTeam({
         name: data.name,
-        userEmail: user?.email as string,
-        website: data.website,
+        leader: user?._id as Id<"users">,
       });
       if (orbitId != null) {
         setLoading(false);
         toast({
           variant: "default",
-          title: "New orbit created.",
-          description: "Find it in /orbits",
+          title: "New team created.",
+          description: "Find it in your teams list.",
         });
         form.reset();
       } else {
@@ -66,7 +62,7 @@ export default function CreateOrbit() {
         toast({
           variant: "destructive",
           title: "An error occurred",
-          description: "Your orbit was not created.",
+          description: "Your team was not created.",
         });
       }
     } catch (error) {
@@ -76,7 +72,7 @@ export default function CreateOrbit() {
         toast({
           variant: "destructive",
           title: "An error occurred",
-          description: "Orbit creation failed.",
+          description: "Team creation failed.",
         });
       }
     }
@@ -91,10 +87,11 @@ export default function CreateOrbit() {
         <div className="space-y-12">
           <div className="border- border-gray-900/10 pb-12">
             <h2 className="text-3xl font-semibold leading-7 text-gray-900">
-              Create a new Orbit
+              Create a new team
             </h2>
             <p className="mt-4 text-sm leading-6 text-gray-600">
-              Receive feedback from your project with a new orbit.
+              Create new team to add other members and manage your orbits. A
+              team has a maximum of 5 members.
             </p>
 
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8">
@@ -106,7 +103,7 @@ export default function CreateOrbit() {
                     <FormLabel>Name</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Paladin"
+                        placeholder="Akatsuki"
                         {...field}
                         disabled={loading}
                         className="placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-blue-500 sm:col-span-4"
@@ -117,7 +114,7 @@ export default function CreateOrbit() {
                 )}
               />
 
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="website"
                 render={({ field }) => (
@@ -134,7 +131,7 @@ export default function CreateOrbit() {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
             </div>
           </div>
         </div>
@@ -153,7 +150,7 @@ export default function CreateOrbit() {
             {loading ? (
               <LoaderCircle className="animate-spin duration-700" />
             ) : (
-              "Create new orbit"
+              "Create new team"
             )}
           </Button>
         </div>

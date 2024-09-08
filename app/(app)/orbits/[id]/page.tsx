@@ -155,6 +155,7 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
               name={orbit?.name as string}
               website={orbit?.website as string}
               status={orbit?.status as string}
+              teamId={orbit?.teamId as string}
               handleDeleteOrbit={handleDeleteOrbit}
             />
           )}

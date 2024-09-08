@@ -2,7 +2,6 @@ import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 
 import { mutation, query } from "../_generated/server";
-import { auth } from "../auth";
 import { checkUserId } from "../helpers";
 
 // async function checkUserId(ctx: GenericQueryCtx<DataModel>) {
@@ -30,7 +29,7 @@ export const searchOrbits = query({
   },
 });
 
-// write another fetch function that fetches the first created 6 projects
+// TODO?: write another fetch function that fetches the first created 6 projects
 // this functin would be used when the user is not on a pro plan. so always
 // in client whether the user is on a pro plan or not.
 export const fetchOrbits = query({
@@ -47,6 +46,22 @@ export const fetchOrbits = query({
       .filter((q) => q.eq(q.field("userId"), args.userId))
       .order("desc")
       .paginate(args.paginationOpts);
+
+    return orbits;
+  },
+});
+
+// fetch ortbis for a team
+export const fetchOrbitsForTeam = query({
+  args: {
+    teamId: v.id("teams"),
+  },
+  handler: async (ctx, { teamId }) => {
+    const orbits = await ctx.db
+      .query("orbits")
+      .withIndex("team", (q) => q.eq("teamId", teamId))
+      .order("desc")
+      .collect();
 
     return orbits;
   },
@@ -85,8 +100,9 @@ export const createOrbit = mutation({
     name: v.string(),
     website: v.string(),
     userEmail: v.string(),
+    teamId: v.optional(v.id("teams")),
   },
-  handler: async (ctx, { name, website, userEmail }) => {
+  handler: async (ctx, { name, website, userEmail, teamId }) => {
     const userId = await checkUserId(ctx);
     const orbitId = await ctx.db.insert("orbits", {
       userId,
@@ -94,6 +110,7 @@ export const createOrbit = mutation({
       name,
       website,
       status: "Active",
+      teamId,
     });
 
     return orbitId;
@@ -107,13 +124,15 @@ export const updateOrbit = mutation({
     name: v.string(),
     website: v.string(),
     status: v.string(),
+    teamId: v.optional(v.id("teams")),
   },
-  handler: async (ctx, { orbitId, name, website, status }) => {
+  handler: async (ctx, { orbitId, name, website, status, teamId }) => {
     await checkUserId(ctx);
     await ctx.db.patch(orbitId, {
       name,
       website,
       status,
+      teamId,
     });
     return "updated";
   },

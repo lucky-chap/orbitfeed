@@ -17,6 +17,7 @@ import type {
 import type * as app_feedback from "../app/feedback.js";
 import type * as app_files from "../app/files.js";
 import type * as app_orbits from "../app/orbits.js";
+import type * as app_teams from "../app/teams.js";
 import type * as auth from "../auth.js";
 import type * as crons from "../crons.js";
 import type * as emails from "../emails.js";
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   "app/feedback": typeof app_feedback;
   "app/files": typeof app_files;
   "app/orbits": typeof app_orbits;
+  "app/teams": typeof app_teams;
   auth: typeof auth;
   crons: typeof crons;
   emails: typeof emails;
