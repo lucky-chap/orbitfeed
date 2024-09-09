@@ -64,12 +64,6 @@ const navigation = [
   },
 ];
 
-const teams = [
-  { id: 1, name: "Planetaria", href: "#", initial: "P", current: false },
-  { id: 2, name: "Protocol", href: "#", initial: "P", current: false },
-  { id: 3, name: "Tailwind Labs", href: "#", initial: "T", current: false },
-];
-
 export default function Layout({ children }: { children: React.ReactNode }) {
   const user = useQuery(api.user.viewer);
   const allTeams = useQuery(api.app.teams.fetchTeams, {

@@ -3,7 +3,6 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { fetchMutation, fetchQuery } from "convex/nextjs";
 
-// Hack for TypeScript before 5.2
 const Response = NextResponse;
 
 export async function GET(request: NextRequest) {

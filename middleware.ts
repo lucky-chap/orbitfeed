@@ -12,6 +12,8 @@ const isProtectedRoute = createRouteMatcher([
   "/billing(.*)",
   "/profile(.*)",
   "/create(.*)",
+  "/new-team(.*)",
+  "/teams(.*)",
   "/pro-activated(.*)",
 ]);
 

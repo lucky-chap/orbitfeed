@@ -3,9 +3,8 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { fetchMutation, fetchQuery } from "convex/nextjs";
 
-import { PAUSED } from "@/lib/constants";
+import { PAUSED, UNRESOLVED } from "@/lib/constants";
 
-// Hack for TypeScript before 5.2
 const Response = NextResponse;
 
 export async function GET(request: NextRequest) {
@@ -22,7 +21,6 @@ export async function POST(request: NextRequest) {
   // A workaround is to have the client send it from its side,
   // making things easier over here: TODO: fix this weird error?
 
-  // console.log("User on feedback POST route: ", user);
   const data = await request.json();
   const {
     userId,
@@ -88,6 +86,7 @@ export async function POST(request: NextRequest) {
       route: route as string,
       image: image as string,
       image_storage_id: image_storage_id as Id<"_storage">,
+      status: UNRESOLVED,
     }
   );
 

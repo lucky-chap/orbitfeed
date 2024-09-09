@@ -1,6 +1,8 @@
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 
+import { UNRESOLVED } from "@/lib/constants";
+
 import { internal } from "../_generated/api";
 import {
   action,
@@ -27,12 +29,10 @@ export const fetchFeedbackForOrbit = query({
     await checkUserId(ctx);
     const feedback = await ctx.db
       .query("feedback")
+      .withIndex("orbit_id", (q) => q.eq("orbitId", orbitId))
       .filter((q) => q.eq(q.field("orbitId"), orbitId))
       .order("desc")
       .paginate(args.paginationOpts);
-
-    // remember to paginate the results
-    // return both the feedback and the length
 
     return feedback;
   },
@@ -48,12 +48,10 @@ export const fetchFeedbackForOrbitNoAuth = query({
 
     const feedback = await ctx.db
       .query("feedback")
+      .withIndex("orbit_id", (q) => q.eq("orbitId", orbitId))
       .filter((q) => q.eq(q.field("orbitId"), orbitId))
       .order("desc")
       .collect();
-
-    // remember to paginate the results
-    // return both the feedback and the length
 
     return {
       feedback,
@@ -103,6 +101,7 @@ export const createFeedbackForOrbit = mutation({
     route: v.string(),
     image: v.string(),
     image_storage_id: v.optional(v.id("_storage")),
+    status: v.string(),
   },
   handler: async (
     ctx,
@@ -116,6 +115,7 @@ export const createFeedbackForOrbit = mutation({
       route,
       image,
       image_storage_id,
+      status,
     }
   ) => {
     const feedbackId = await ctx.db.insert("feedback", {
@@ -128,6 +128,7 @@ export const createFeedbackForOrbit = mutation({
       route,
       image,
       image_storage_id,
+      status: status,
     });
 
     return feedbackId;
@@ -146,6 +147,7 @@ export const createFeedbackForOrbitNoAuth = mutation({
     route: v.string(),
     image: v.string(),
     image_storage_id: v.optional(v.id("_storage")),
+    status: v.string(),
   },
   handler: async (
     ctx,
@@ -159,6 +161,7 @@ export const createFeedbackForOrbitNoAuth = mutation({
       route,
       image,
       image_storage_id,
+      status,
     }
   ) => {
     const feedbackId = await ctx.db.insert("feedback", {
@@ -171,6 +174,7 @@ export const createFeedbackForOrbitNoAuth = mutation({
       route: route,
       image: image,
       image_storage_id: image_storage_id,
+      status: status,
     });
 
     return feedbackId;

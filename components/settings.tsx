@@ -1,4 +1,7 @@
+"use client";
+
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -77,17 +80,43 @@ export function SettingsMenu({
   website,
   status,
   teamId,
-  handleDeleteOrbit,
 }: {
   orbitId: any;
   name: string;
   website: string;
   status: string;
   teamId?: string | undefined;
-  handleDeleteOrbit: () => void;
 }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const deleteOrbitMutation = useMutation(api.app.orbits.deleteOrbit);
   const isDesktop = useMediaQuery("(min-width: 768px)");
+
+  const router = useRouter();
+
+  const handleDeleteOrbit = async () => {
+    if (orbitId) {
+      setDeleting(true);
+      const result = await deleteOrbitMutation({
+        orbitId: orbitId as Id<"orbits">,
+      });
+      if (result === "deleted") {
+        setDeleting(false);
+        router.push("/orbits");
+        toast({
+          title: "Deleted!",
+          description: "Orbit has been deleted",
+        });
+      } else {
+        setDeleting(false);
+        toast({
+          variant: "destructive",
+          title: "Error!",
+          description: "Orbit could not be deleted",
+        });
+      }
+    }
+  };
 
   if (isDesktop) {
     return (
@@ -181,17 +210,7 @@ function ProfileForm({
   status: string;
   teamId?: string | undefined;
 }) {
-  const [currentTeam, setCurrentTeam] = useState<
-    | {
-        _id: Id<"teams">;
-        _creationTime: number;
-        name: string;
-        leader: Id<"users">;
-      }
-    | undefined
-  >(undefined);
   const updateOrbit = useMutation(api.app.orbits.updateOrbit);
-  const updateTeam = useMutation(api.app.teams.updateTeam);
   const [loading, setLoading] = useState(false);
 
   const user = useQuery(api.user.viewer);
@@ -216,14 +235,8 @@ function ProfileForm({
     },
   });
 
-  const handlTeamChange = (id: Id<"teams">) => {
-    const team = allTeams?.find((team) => team._id === id);
-    setCurrentTeam(team);
-  };
-
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log("Data: ", data);
-    console.log("Current team: ", currentTeam);
     console.log("Current status: ", data.status);
     console.log("Previous team from server: ", previousTeam);
 

@@ -1,11 +1,12 @@
+"use client";
+
 import React from "react";
-import Image from "next/image";
-import logo from "@/public/images/logo.png";
+import Link from "next/link";
 
 export default function Logo() {
   return (
-    <>
-      <span className="sr-only">Your Company</span>
+    <Link href={"/orbits"}>
+      <span className="sr-only">Orbitfeed</span>
       <h3 className="flex items-center text-sm font-semibold text-gray-900">
         <svg
           viewBox="0 0 40 40"
@@ -20,6 +21,6 @@ export default function Logo() {
         </svg>
         <span className="ml-2">Orbitfeed</span>
       </h3>
-    </>
+    </Link>
   );
 }
