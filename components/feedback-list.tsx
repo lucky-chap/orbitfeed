@@ -4,10 +4,11 @@ import React, { useState } from "react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useAction, useMutation } from "convex/react";
+import { Check, CircleSlash } from "lucide-react";
 import ReactCountryFlag from "react-country-flag";
 import TimeAgo from "react-timeago";
 
-import { IDEA, ISSUE, OTHER, PRAISE } from "@/lib/constants";
+import { IDEA, ISSUE, OTHER, PRAISE, RESOLVED } from "@/lib/constants";
 import { IFeedback, IOrbit } from "@/lib/types";
 
 import { FeedbackSettings } from "./feedback-settings";
@@ -19,12 +20,11 @@ import { toast } from "./ui/use-toast";
 
 export default function FeedbackList({
   results,
-  orbit,
+  orbitId,
 }: {
   results: IFeedback[] | null | undefined;
-  orbit: IOrbit | null | undefined;
+  orbitId: Id<"orbits"> | null | undefined;
 }) {
-  const deleteOrbitMutation = useMutation(api.app.orbits.deleteOrbit);
   const deleteFeedbackAction = useAction(
     api.app.feedback.deleteFeedbackAndFile
   );
@@ -32,7 +32,7 @@ export default function FeedbackList({
   const [deleting, setDeleting] = useState(false);
 
   const handleDeleteFeedback = async (id: any, storageId?: any) => {
-    if (orbit?._id) {
+    if (orbitId) {
       setDeleting(true);
       const result = await deleteFeedbackAction({
         feedbackId: id as Id<"feedback">,
@@ -105,7 +105,7 @@ export default function FeedbackList({
                 <p className="mb-[2px] whitespace-nowrap font-medium text-zinc-500 sm:mb-0">
                   <TimeAgo
                     date={
-                      orbit == undefined ? Date.now() : feedback._creationTime
+                      orbitId == undefined ? Date.now() : feedback._creationTime
                     }
                   />
                 </p>
@@ -136,7 +136,7 @@ export default function FeedbackList({
                   {feedback.route}{" "}
                 </a>
               </div>
-              <div className="mt-4">
+              <div className="mt-4 flex items-center justify-between">
                 <FeedbackSettings
                   key={feedback._id}
                   feedbackId={feedback._id}
@@ -148,6 +148,19 @@ export default function FeedbackList({
                     )
                   }
                 />
+                <p>
+                  {feedback.status === RESOLVED ? (
+                    <div className="flex items-center text-xs text-green-500">
+                      <Check size={13} className="mr-1" />
+                      <span>Resolved</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center text-xs text-yellow-500">
+                      <CircleSlash size={13} className="mr-1" />
+                      <span>Pending</span>
+                    </div>
+                  )}
+                </p>
               </div>
             </div>
 

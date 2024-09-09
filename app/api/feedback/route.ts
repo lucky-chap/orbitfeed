@@ -3,7 +3,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { fetchMutation, fetchQuery } from "convex/nextjs";
 
-import { PAUSED, UNRESOLVED } from "@/lib/constants";
+import { PAUSED, PENDING } from "@/lib/constants";
 
 const Response = NextResponse;
 
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
       route: route as string,
       image: image as string,
       image_storage_id: image_storage_id as Id<"_storage">,
-      status: UNRESOLVED,
+      status: PENDING,
     }
   );
 

@@ -30,10 +30,12 @@ import {
   UsersIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { useQuery } from "convex/react";
+import { usePaginatedQuery, useQuery } from "convex/react";
 import { ChevronRightIcon, Loader } from "lucide-react";
 
 import { classNames } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import FeedbackList from "@/components/feedback-list";
 
 const statuses: any = {
   offline: "text-gray-500 bg-gray-100/10",
@@ -147,9 +149,15 @@ export default function TeamOrbits({ params }: { params: { slug: string } }) {
   console.log("Team ID: ", teamId);
   console.log("Orbit ID: ", orbitId);
 
-  const router = useRouter();
+  const { results, status, loadMore, isLoading } = usePaginatedQuery(
+    api.app.feedback.fetchFeedbackForOrbit,
+    {
+      orbitId: orbitId as Id<"orbits">,
+    },
+    { initialNumItems: 10 }
+  );
 
-  const [hovered, setHovered] = useState(false);
+  console.log("Feedback Results for orbit: ", results);
 
   return (
     <>
@@ -158,7 +166,7 @@ export default function TeamOrbits({ params }: { params: { slug: string } }) {
           <main className="lg:pr-96">
             <header className="flex items-center justify-between border-b border-black/5 px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
               <h1 className="text-base font-semibold leading-7 text-gray-700">
-                Team Orbits
+                Feedback for orbit
               </h1>
 
               {/* Sort dropdown */}
@@ -202,64 +210,39 @@ export default function TeamOrbits({ params }: { params: { slug: string } }) {
               </Menu>
             </header>
 
-            {/* Deployment list */}
-            <ul role="list" className="divide-y divide-white/5">
-              {deployments.map((deployment) => (
-                <li
-                  key={deployment.id + Math.random()}
-                  className="relative flex items-center space-x-4 px-4 py-4 sm:px-6 lg:px-8"
-                >
-                  <div className="min-w-0 flex-auto">
-                    <div className="flex items-center gap-x-3">
-                      <div
-                        className={classNames(
-                          statuses[deployment.status],
-                          "flex-none rounded-full p-1"
-                        )}
-                      >
-                        <div className="h-2 w-2 rounded-full bg-current" />
-                      </div>
-                      <h2 className="min-w-0 text-sm font-semibold leading-6 text-gray-500">
-                        <a href={deployment.href} className="flex gap-x-2">
-                          <span className="truncate">
-                            {deployment.teamName}
-                          </span>
-                          <span className="text-gray-400">/</span>
-                          <span className="whitespace-nowrap">
-                            {deployment.projectName}
-                          </span>
-                          <span className="absolute inset-0" />
-                        </a>
-                      </h2>
-                    </div>
-                    <div className="mt-3 flex items-center gap-x-2.5 text-xs leading-5 text-gray-400">
-                      <p className="truncate">{deployment.description}</p>
-                      <svg
-                        viewBox="0 0 2 2"
-                        className="h-0.5 w-0.5 flex-none fill-gray-300"
-                      >
-                        <circle r={1} cx={1} cy={1} />
-                      </svg>
-                      <p className="whitespace-nowrap">
-                        {deployment.statusText}
-                      </p>
-                    </div>
+            {/* Feedback list */}
+            <div className="mx-auto max-w-6xl px-4">
+              <FeedbackList
+                results={results}
+                orbitId={orbitId as Id<"orbits">}
+              />
+            </div>
+
+            <div className="flex w-full justify-center py-6">
+              {status === "LoadingMore" ||
+                (status === "LoadingFirstPage" && (
+                  <div className="mr-12 flex h-full min-h-[70vh] items-center justify-center">
+                    <Loader className="h-7 w-7 animate-spin text-zinc-400" />
                   </div>
-                  <div
-                    className={classNames(
-                      environments[deployment.environment],
-                      "flex-none rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset"
-                    )}
+                ))}
+
+              {status === "Exhausted" && results?.length === 0 && (
+                <div className="mt-56">
+                  <p className="text-center">No feedback for this orbit.</p>
+                </div>
+              )}
+
+              {status === "CanLoadMore" && (
+                <div className="mx-auto mt-6 max-w-sm px-3 pr-32">
+                  <Button
+                    onClick={() => loadMore(10)}
+                    className="bg-indigo-500 hover:bg-indigo-600"
                   >
-                    {deployment.environment}
-                  </div>
-                  <ChevronRightIcon
-                    aria-hidden="true"
-                    className="h-5 w-5 flex-none text-gray-400"
-                  />
-                </li>
-              ))}
-            </ul>
+                    {isLoading ? "Loading..." : "Load More"}
+                  </Button>
+                </div>
+              )}
+            </div>
           </main>
           {/* Activity feed */}
           <aside className="bg-gray-50/20 lg:fixed lg:bottom-0 lg:right-0 lg:top-0 lg:w-96 lg:overflow-y-auto lg:ring-1 lg:ring-black/10">

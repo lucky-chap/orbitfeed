@@ -14,6 +14,7 @@ import {
   Trash,
 } from "lucide-react";
 
+import { PENDING, RESOLVED } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -29,6 +30,8 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+import { toast } from "./ui/use-toast";
 
 export function FeedbackSettings({
   feedbackId,
@@ -48,6 +51,30 @@ export function FeedbackSettings({
       const response = await fetch(url);
       const blob = await response.blob();
       saveAs(blob, `${feedbackId}.png`);
+    }
+  };
+
+  const updateFeedbackStatusMutation = useMutation(
+    api.app.feedback.updateFeedbackStatus
+  );
+
+  const handleFeedbackStatus = async (status: string) => {
+    const result = await updateFeedbackStatusMutation({
+      feedbackId: feedbackId,
+      feedbackStatus: status,
+    });
+    if (result === "feedback_status_updated") {
+      toast({
+        variant: "default",
+        title: "Updated!",
+        description: "Feedback status updated successfully",
+      });
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Failure!",
+        description: "Feedback status could not be updated",
+      });
     }
   };
 
@@ -85,8 +112,14 @@ export function FeedbackSettings({
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
-                <DropdownMenuItem>Resolved</DropdownMenuItem>
-                <DropdownMenuItem>Pending</DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleFeedbackStatus(RESOLVED)}
+                >
+                  Resolved
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleFeedbackStatus(PENDING)}>
+                  Pending
+                </DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>

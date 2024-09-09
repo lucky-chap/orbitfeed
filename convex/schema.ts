@@ -29,7 +29,7 @@ const schema = defineSchema({
     route: v.string(),
     image: v.string(),
     image_storage_id: v.optional(v.id("_storage")),
-    status: v.string(), // resolved or unresolved
+    status: v.string(), // resolved or pending
   }).index("orbit_id", ["orbitId"]),
 
   teams: defineTable({
@@ -53,7 +53,7 @@ const schema = defineSchema({
     actorName: v.string(),
     actorEmail: v.string(),
     actorPhoto: v.string(),
-    action: v.string(), // resolved, unresolved, remove
+    action: v.string(), // resolved, set to pending, removed
   }),
   proUsers: defineTable({
     userId: v.id("users"),

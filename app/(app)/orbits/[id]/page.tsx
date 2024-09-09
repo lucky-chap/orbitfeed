@@ -54,13 +54,10 @@ import Stopped from "@/components/pills/stopped";
 import { SettingsMenu } from "@/components/settings";
 
 export default function SingleOrbit({ params }: { params: { id: string } }) {
-  const router = useRouter();
-  const [deleting, setDeleting] = useState(false);
   const orbit = useQuery(api.app.orbits.fetchSingleOrbit, {
     id: params.id as any,
   });
 
-  // handleFileServe();
   const { results, status, loadMore, isLoading } = usePaginatedQuery(
     api.app.feedback.fetchFeedbackForOrbit,
     {
@@ -68,34 +65,6 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
     },
     { initialNumItems: 10 }
   );
-
-  // console.log("Single orbit: ", orbit);
-  // console.log("Feedback for orbit: ", results);
-  const deleteOrbitMutation = useMutation(api.app.orbits.deleteOrbit);
-
-  const handleDeleteOrbit = async () => {
-    if (orbit?._id) {
-      setDeleting(true);
-      const result = await deleteOrbitMutation({
-        orbitId: orbit._id,
-      });
-      if (result === "deleted") {
-        setDeleting(false);
-        router.push("/orbits");
-        toast({
-          title: "Deleted!",
-          description: "Orbit has been deleted",
-        });
-      } else {
-        setDeleting(false);
-        toast({
-          variant: "destructive",
-          title: "Error!",
-          description: "Orbit could not be deleted",
-        });
-      }
-    }
-  };
 
   return (
     <div className="">
@@ -163,7 +132,7 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
           )}
         </div>
         {/* feedback section */}
-        <FeedbackList orbit={orbit} results={results} />
+        <FeedbackList orbitId={orbit?._id} results={results} />
         <div className="flex w-full justify-center py-6">
           {status === "LoadingMore" ||
             (status === "LoadingFirstPage" && (

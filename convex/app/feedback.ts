@@ -1,8 +1,6 @@
 import { paginationOptsValidator } from "convex/server";
 import { v } from "convex/values";
 
-import { UNRESOLVED } from "@/lib/constants";
-
 import { internal } from "../_generated/api";
 import {
   action,
@@ -181,6 +179,22 @@ export const createFeedbackForOrbitNoAuth = mutation({
   },
 });
 
+// update feedback status
+
+export const updateFeedbackStatus = mutation({
+  args: {
+    feedbackId: v.id("feedback"),
+    feedbackStatus: v.string(),
+  },
+  handler: async (ctx, { feedbackId, feedbackStatus }) => {
+    await checkUserId(ctx);
+    await ctx.db.patch(feedbackId, {
+      status: feedbackStatus,
+    });
+    return "feedback_status_updated";
+  },
+});
+
 // update image for feedback
 export const updateFeedbackImage = mutation({
   args: {
@@ -188,7 +202,6 @@ export const updateFeedbackImage = mutation({
     image: v.string(),
   },
   handler: async (ctx, args) => {
-    // await checkUserId(ctx);
     await ctx.db.patch(args.feedbackId, {
       image: args.image,
     });

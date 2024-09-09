@@ -5,5 +5,5 @@ export const PRAISE = "Praise";
 export const OTHER = "Other";
 export const ISSUE = "Issue";
 export const RESOLVED = "Resolved";
-export const UNRESOLVED = "Unresolved";
+export const PENDING = "Pending";
 export const REMOVE = "Remove";
