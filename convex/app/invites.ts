@@ -27,16 +27,33 @@ export const createInvite = mutation({
   args: {
     recipientEmail: v.string(),
     senderEmail: v.string(),
+    role: v.string(),
     teamId: v.id("teams"),
   },
   handler: async (ctx, args) => {
     await checkUserId(ctx);
     const inviteId = await ctx.db.insert("invites", {
       recipientEmail: args.recipientEmail,
+      recipientRole: args.role,
       senderEmail: args.senderEmail,
       teamId: args.teamId,
     });
 
     return inviteId;
+  },
+});
+
+export const removeInvite = mutation({
+  args: {
+    inviteId: v.id("invites"),
+  },
+  handler: async (ctx, args) => {
+    await checkUserId(ctx);
+    const deletedInvite = await ctx.db.delete(args.inviteId);
+    if (deletedInvite !== null) {
+      return "deleted_invite";
+    } else {
+      return null;
+    }
   },
 });

@@ -15,14 +15,14 @@ export const viewer = query({
   },
 });
 
-export const getUserByEmail = query({
+export const getUser = query({
   args: {
-    email: v.string(),
+    id: v.id("users"),
   },
   handler: async (ctx, args) => {
     const user = await ctx.db
       .query("users")
-      .filter((q) => q.eq(q.field("email"), args.email))
+      .filter((q) => q.eq(q.field("_id"), args.id))
       .unique();
     return user;
   },

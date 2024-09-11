@@ -9,13 +9,14 @@ export async function POST(req: NextRequest) {
   const {
     inviteId,
     recipientEmail,
+    senderId,
     senderName,
     senderEmail,
     teamId,
     teamName,
   } = await req.json();
   const appUrl = process.env.NEXT_PUBLIC_APP_URL as string;
-  const inviteLink = `${appUrl}/invites/${inviteId}?senderEmail=${senderEmail}&teamId=${teamId}`;
+  const inviteLink = `${appUrl}/invites/${inviteId}?senderId=${senderId}&teamId=${teamId}`;
 
   const res = await resend.emails.send({
     // todo: change the "from" to custom domain

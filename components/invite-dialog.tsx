@@ -21,6 +21,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 import { toast } from "./ui/use-toast";
 
 export function InviteDialog({ team }: { team: ITeam | undefined | null }) {
@@ -28,6 +37,7 @@ export function InviteDialog({ team }: { team: ITeam | undefined | null }) {
   const createInviteMutation = useMutation(api.app.invites.createInvite);
   const [loading, setLoading] = useState(false);
   const [recipientEmail, setRecipientEmail] = useState("");
+  const [recipientRole, setRecipientRole] = useState("");
 
   const handleSendInvite = async () => {
     if (recipientEmail.trim().length === 0 || !recipientEmail.includes("@")) {
@@ -35,6 +45,12 @@ export function InviteDialog({ team }: { team: ITeam | undefined | null }) {
         variant: "destructive",
         title: "Recipient email is required",
         description: "Please enter a valid email address",
+      });
+    } else if (recipientRole.trim().length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Role is required",
+        description: "Please select a role",
       });
     } else if (recipientEmail.trim() === user?.email) {
       toast({
@@ -47,6 +63,7 @@ export function InviteDialog({ team }: { team: ITeam | undefined | null }) {
       // create an invite to get the inviteid
       const inviteId = await createInviteMutation({
         recipientEmail,
+        role: recipientRole,
         senderEmail: user?.email as string,
         teamId: team?._id as Id<"teams">,
       });
@@ -59,6 +76,7 @@ export function InviteDialog({ team }: { team: ITeam | undefined | null }) {
           body: JSON.stringify({
             inviteId: inviteId as Id<"invites">,
             recipientEmail,
+            senderId: user?._id as Id<"users">,
             senderName: user?.name as string,
             senderEmail: user?.email as string,
             teamId: team?._id as Id<"teams">,
@@ -114,14 +132,29 @@ export function InviteDialog({ team }: { team: ITeam | undefined | null }) {
         </DialogHeader>
         <div className="flex items-center space-x-2">
           <div className="grid flex-1 gap-2">
-            <Label htmlFor="recipientEmail" className="sr-only">
-              Recipient email
-            </Label>
+            <Label htmlFor="recipientEmail">Recipient email</Label>
             <Input
               id="recipientEmail"
+              disabled={loading}
               value={recipientEmail}
               onChange={(e) => setRecipientEmail(e.target.value)}
+              className="mb-4"
             />
+            <Label htmlFor="role">Role</Label>
+            <Select
+              disabled={loading}
+              onValueChange={(value) => setRecipientRole(value)}
+            >
+              <SelectTrigger className="w-full focus:ring-2 focus:ring-blue-500">
+                <SelectValue placeholder="Select a role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="viewer">Viewer</SelectItem>
+                  <SelectItem value="editor">Editor</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
         </div>
         <DialogFooter className="sm:justify-between">

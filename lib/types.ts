@@ -32,3 +32,11 @@ export interface ITeam {
   name: string;
   leader: Id<"users">;
 }
+
+export interface IMember {
+  _id: Id<"members">;
+  _creationTime: number;
+  teamId: Id<"teams">;
+  memberId: Id<"users">;
+  role: string;
+}

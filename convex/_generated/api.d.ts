@@ -17,6 +17,7 @@ import type {
 import type * as app_feedback from "../app/feedback.js";
 import type * as app_files from "../app/files.js";
 import type * as app_invites from "../app/invites.js";
+import type * as app_members from "../app/members.js";
 import type * as app_orbits from "../app/orbits.js";
 import type * as app_teams from "../app/teams.js";
 import type * as auth from "../auth.js";
@@ -39,6 +40,7 @@ declare const fullApi: ApiFromModules<{
   "app/feedback": typeof app_feedback;
   "app/files": typeof app_files;
   "app/invites": typeof app_invites;
+  "app/members": typeof app_members;
   "app/orbits": typeof app_orbits;
   "app/teams": typeof app_teams;
   auth: typeof auth;

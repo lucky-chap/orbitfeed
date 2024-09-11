@@ -39,16 +39,17 @@ const schema = defineSchema({
     teamId: v.id("teams"),
     memberId: v.id("users"),
     role: v.string(), // editor or viewer
-  }),
+  }).index("team_id", ["teamId"]),
   invites: defineTable({
     senderEmail: v.string(),
     recipientEmail: v.string(),
+    recipientRole: v.string(),
     teamId: v.id("teams"),
   }).index("recipient", ["recipientEmail"]),
   activityFeed: defineTable({
     orbitId: v.id("orbits"),
     actorId: v.id("users"),
-    action: v.string(), // resolved, set to pending, removed
+    action: v.string(), // resolved, pending or removed
   }),
   proUsers: defineTable({
     userId: v.id("users"),

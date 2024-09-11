@@ -7,3 +7,5 @@ export const ISSUE = "Issue";
 export const RESOLVED = "Resolved";
 export const PENDING = "Pending";
 export const REMOVE = "Remove";
+export const VIEWER = "viewer";
+export const EDITOR = "editor";
