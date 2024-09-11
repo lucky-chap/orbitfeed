@@ -4,13 +4,6 @@ import { v } from "convex/values";
 import { mutation, query } from "../_generated/server";
 import { checkUserId } from "../helpers";
 
-// async function checkUserId(ctx: GenericQueryCtx<DataModel>) {
-//   const userId = await auth.getUserId(ctx)
-//   if (userId === null) {
-//     throw new Error("Client is not authenticated!")
-//   }
-// }
-
 export const searchOrbits = query({
   args: {
     searchTerm: v.string(),

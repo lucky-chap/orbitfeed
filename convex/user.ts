@@ -15,6 +15,19 @@ export const viewer = query({
   },
 });
 
+export const getUserByEmail = query({
+  args: {
+    email: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .filter((q) => q.eq(q.field("email"), args.email))
+      .unique();
+    return user;
+  },
+});
+
 export const account = query({
   args: {
     userId: v.id("users"),

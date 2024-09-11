@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { loadStripe } from "@stripe/stripe-js";
@@ -21,6 +20,7 @@ const freeFeatures = [
 
 const paidFeatures = [
   "Everything in Free Plan",
+  "Team collaboration",
   "Unlimited feedback for each orbit",
   "Monthly updates",
   "24/7 Customer Support",
@@ -28,18 +28,6 @@ const paidFeatures = [
 
 export default function Billing() {
   const user = useQuery(api.user.viewer);
-
-  // const { results, status, loadMore, proUser == undefined } = usePaginatedQuery(
-  //   api.proUsers.checkIfUserIsPro,
-  //   {
-  //     // ideally, we'd want to use the orb_ck1 as the userId instead, but since convex validates the
-  //     // values, this would likely cause a 500 internal server error and we wouldn't want our users to
-  //     // see that would we?
-  //     userId: user?._id as Id<"users">,
-  //     email: user?.email as string,
-  //   },
-  //   { initialNumItems: 1 }
-  // );
 
   const proUser = useQuery(api.proUsers.checkIfUserIsPro, {
     userId: user?._id as Id<"users">,
@@ -87,15 +75,6 @@ export default function Billing() {
   return (
     <div className="mb-7 bg-white sm:py-12 lg:mb-0">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        {/* <div className="mx-auto max-w-2xl sm:text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            Simple no-tricks pricing
-          </h2>
-          <p className="mt-6 text-lg leading-8 text-gray-600">
-            Distinctio et nulla eum soluta et neque labore quibusdam. Saepe et
-            quasi iusto modi velit ut non voluptas in. Explicabo id ut laborum.
-          </p>
-        </div> */}
         {/* FREE */}
         <div className="mx-auto max-w-2xl rounded-3xl ring-1 ring-gray-200 lg:mx-0 lg:flex lg:max-w-none">
           <div className="p-8 sm:p-10 lg:flex-auto">

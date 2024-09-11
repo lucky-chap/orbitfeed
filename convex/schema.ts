@@ -31,7 +31,6 @@ const schema = defineSchema({
     image_storage_id: v.optional(v.id("_storage")),
     status: v.string(), // resolved or pending
   }).index("orbit_id", ["orbitId"]),
-
   teams: defineTable({
     leader: v.id("users"),
     name: v.string(),
@@ -39,20 +38,16 @@ const schema = defineSchema({
   members: defineTable({
     teamId: v.id("teams"),
     memberId: v.id("users"),
-    memberName: v.string(),
-    memberEmail: v.string(),
-    memberPhoto: v.string(),
     role: v.string(), // editor or viewer
   }),
   invites: defineTable({
-    userEmail: v.string(),
-  }),
+    senderEmail: v.string(),
+    recipientEmail: v.string(),
+    teamId: v.id("teams"),
+  }).index("recipient", ["recipientEmail"]),
   activityFeed: defineTable({
     orbitId: v.id("orbits"),
     actorId: v.id("users"),
-    actorName: v.string(),
-    actorEmail: v.string(),
-    actorPhoto: v.string(),
     action: v.string(), // resolved, set to pending, removed
   }),
   proUsers: defineTable({

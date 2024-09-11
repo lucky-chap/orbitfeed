@@ -113,25 +113,6 @@ export default function CreateOrbit() {
                   </FormItem>
                 )}
               />
-
-              {/* <FormField
-                control={form.control}
-                name="website"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Website</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="https://orbitfeed.lol"
-                        {...field}
-                        disabled={loading}
-                        className="placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-blue-500 sm:col-span-4"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
             </div>
           </div>
         </div>

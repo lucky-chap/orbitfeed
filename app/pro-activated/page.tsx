@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { usePaginatedQuery, useQuery } from "convex/react";
-import { Loader2 } from "lucide-react";
+import { Loader, Loader2 } from "lucide-react";
 import Confetti from "react-confetti";
 import useWindowSize from "react-use/lib/useWindowSize";
 
@@ -95,7 +95,10 @@ export default function ProActivated() {
           <div className="flex min-h-screen flex-1 flex-col items-center justify-center px-6 py-12 align-middle lg:px-8">
             <div className="mt-10 sm:mx-auto sm:w-full">
               <div className="mt-10 flex items-center justify-center text-center">
-                <Loader2 className="animate-spin text-blue-500" size={22} />
+                <Loader
+                  className="h-6 w-6 animate-spin text-zinc-400"
+                  size={22}
+                />
               </div>
             </div>
           </div>

@@ -25,3 +25,10 @@ export interface IFeedback {
   route: string;
   image: string;
 }
+
+export interface ITeam {
+  _id: Id<"teams">;
+  _creationTime: number;
+  name: string;
+  leader: Id<"users">;
+}

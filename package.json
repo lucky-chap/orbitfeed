@@ -77,8 +77,5 @@
     "prettier-plugin-tailwindcss": "^0.6.6",
     "tailwindcss": "^3.4.10",
     "typescript": "^5"
-  },
-  "resolutions": {
-    "@react-email/render": "0.0.9-canary.2"
   }
 }

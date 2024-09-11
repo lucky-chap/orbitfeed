@@ -24,6 +24,7 @@ import {
   Bars3Icon,
   ChevronRightIcon,
   MagnifyingGlassIcon,
+  PlusCircleIcon,
 } from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePaginatedQuery, useQuery } from "convex/react";
@@ -36,6 +37,7 @@ import { ACTIVE, PAUSED } from "@/lib/constants";
 import { classNames } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Empty from "@/components/empty";
+import { InviteDialog } from "@/components/invite-dialog";
 import OrbitList from "@/components/orbit-list";
 import Active from "@/components/pills/active";
 import Paused from "@/components/pills/paused";
@@ -113,9 +115,7 @@ export default function Team({ params }: { params: { id: string } }) {
           <h1 className="text-base font-semibold leading-7">
             Team {team.name}
           </h1>
-          <Button className="bg-blue-500 hover:bg-blue-600">
-            Add new members
-          </Button>
+          <InviteDialog team={team} />
         </header>
       )}
 
@@ -130,9 +130,7 @@ export default function Team({ params }: { params: { id: string } }) {
       {teamOrbits !== undefined && teamOrbits?.length === 0 && (
         <div className="mx-auto flex min-h-[70vh] max-w-2xl flex-col justify-center px-3 text-center">
           <h2 className="text-lg font-medium">No orbits for this team</h2>
-          <p className="text-zinc-500">
-            Try creating a new orbit and add to team
-          </p>
+          <p className="text-zinc-500">Try moving an orbit to team</p>
         </div>
       )}
       {teamOrbits == undefined && (
