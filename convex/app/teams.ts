@@ -88,13 +88,11 @@ export const updateTeam = mutation({
   args: {
     teamId: v.id("teams"),
     name: v.string(),
-    leader: v.id("users"),
   },
-  handler: async (ctx, { teamId, name, leader }) => {
+  handler: async (ctx, { teamId, name }) => {
     await checkUserId(ctx);
     await ctx.db.patch(teamId, {
       name,
-      leader,
     });
     return "updated";
   },

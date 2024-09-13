@@ -11,11 +11,13 @@ import Avatar03 from "@/public/images/avatar-03.webp";
 import Avatar04 from "@/public/images/avatar-04.webp";
 import Avatar05 from "@/public/images/avatar-05.webp";
 import { usePaginatedQuery, useQuery } from "convex/react";
-import { House, Loader, Loader2, Plus } from "lucide-react";
+import { House, Loader, Loader2, Pencil, Plus, Settings } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { InviteDialog } from "@/components/invite-dialog";
 import MembersSheet from "@/components/members-sheet";
 import OrbitList from "@/components/orbit-list";
+import TeamSettings from "@/components/team-settings";
 
 export default function Team({ params }: { params: { id: string } }) {
   const user = useQuery(api.user.viewer);
@@ -46,7 +48,12 @@ export default function Team({ params }: { params: { id: string } }) {
         </div>
       ) : (
         <header className="flex items-center justify-between border-b border-black/5 px-4 py-4 sm:px-6 lg:px-8">
-          <h1 className="text-lg font-semibold leading-7">Team {team.name}</h1>
+          <div className="flex items-center">
+            <h1 className="text-lg font-semibold leading-7">
+              Team {team.name}
+            </h1>
+            {team.leader === user?._id && <TeamSettings team={team} />}
+          </div>
           <div className="flex items-center">
             <div className="-mx-0.5 mr-3 flex justify-center -space-x-3">
               <MembersSheet participants={participants} team={team} />

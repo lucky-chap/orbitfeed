@@ -64,15 +64,14 @@ export default function Invite() {
         inviteId: invite?._id as Id<"invites">,
       });
       if (removed !== null) {
+        router.push("/orbits");
         toast({
           title: "Success",
           description: `You were added to team ${team?.name}!`,
         });
-        setTimeout(() => {
-          router.push("/orbits");
-        }, 1000);
       } else {
         setLoading(false);
+        router.push("/orbits");
         toast({
           variant: "destructive",
           title: "Failed to add you to team",

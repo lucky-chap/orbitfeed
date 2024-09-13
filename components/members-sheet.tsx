@@ -45,6 +45,9 @@ export default function MembersSheet({
   const updateMemberRoleMutation = useMutation(
     api.app.members.updateMemberRole
   );
+  const removeMemberMutation = useMutation(
+    api.app.members.removeMemberFromTeam
+  );
 
   const handleUpdateMemberRole = async (
     memberId: Id<"users">,
@@ -68,6 +71,28 @@ export default function MembersSheet({
         variant: "destructive",
         title: "Error!",
         description: "Member role could not be updated",
+      });
+    }
+  };
+
+  const handleRemoveMember = async (memberId: Id<"users">) => {
+    setLoading(true);
+    const result = await removeMemberMutation({
+      teamId: team?._id as Id<"teams">,
+      memberId: memberId,
+    });
+    if (result === "deleted") {
+      setLoading(false);
+      toast({
+        title: "Success!",
+        description: "Member has been removed",
+      });
+    } else {
+      setLoading(false);
+      toast({
+        variant: "destructive",
+        title: "Error!",
+        description: "Member could not be removed",
       });
     }
   };
@@ -121,6 +146,7 @@ export default function MembersSheet({
             <div className="flex items-center">
               <Button
                 disabled={loading || team?.leader !== user?._id}
+                onClick={() => handleRemoveMember(participant._id)}
                 variant={"outline"}
                 className="w-full text-red-500 hover:text-red-500"
               >

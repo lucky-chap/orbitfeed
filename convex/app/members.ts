@@ -80,13 +80,39 @@ export const updateMemberRole = mutation({
       .query("members")
       .withIndex("team_id", (q) => q.eq("teamId", args.teamId))
       .filter((q) => q.eq(q.field("memberId"), args.memberId))
-      .first();
+      .unique();
 
     if (member) {
       await ctx.db.patch(member._id, { role: args.role });
     }
 
     return member;
+  },
+});
+
+export const removeMemberFromTeam = mutation({
+  args: {
+    teamId: v.id("teams"),
+    memberId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    await checkUserId(ctx);
+    const member = await ctx.db
+      .query("members")
+      .withIndex("team_id", (q) => q.eq("teamId", args.teamId))
+      .filter((q) => q.eq(q.field("memberId"), args.memberId))
+      .unique();
+
+    if (member) {
+      const deleted = await ctx.db.delete(member._id);
+      if (deleted !== null) {
+        return "deleted";
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
   },
 });
 

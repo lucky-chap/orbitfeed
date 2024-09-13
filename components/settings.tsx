@@ -10,6 +10,8 @@ import {
   Camera,
   Image,
   Link,
+  Loader,
+  Loader2,
   LoaderCircle,
   Settings,
   UserIcon,
@@ -147,8 +149,9 @@ export function SettingsMenu({
           <DrawerFooter className="px-0 pt-12">
             <DrawerClose asChild>
               <Button
+                disabled={deleting}
                 variant="outline"
-                className="px-0"
+                className="px-0 text-red-500 hover:text-red-500"
                 onClick={handleDeleteOrbit}
               >
                 Delete orbit
@@ -189,7 +192,9 @@ export function SettingsMenu({
         <DrawerFooter className="pt-12">
           <DrawerClose asChild>
             <Button
+              disabled={deleting}
               variant="outline"
+              onClick={handleDeleteOrbit}
               className="w-full text-red-500 hover:text-red-500"
             >
               Delete orbit
@@ -397,30 +402,13 @@ function ProfileForm({
         </div>
         {proUser !== undefined && proUser !== null && (
           <div className="grid gap-2">
-            {/* <div className="flex flex-col items-start">
-              <h3 className="mb-2 font-medium">Team</h3>
-              <Select defaultValue={previousTeam?.name}>
-                <SelectTrigger className="focus:ring-2 focus:ring-blue-500">
-                  <SelectValue placeholder="Select a team" />
-                </SelectTrigger>
-                <SelectContent defaultValue={previousTeam?.name}>
-                  <SelectGroup>
-                    {teams?.map((team) => (
-                      <SelectItem key={team._id} value={team._id}>
-                        {team.name}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div> */}
             <FormField
               control={form.control}
               name="team_id"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Add to team</FormLabel>
-                  <Select onValueChange={field.onChange}>
+                  <Select onValueChange={field.onChange} disabled={loading}>
                     <FormControl>
                       <SelectTrigger className="focus:ring-2 focus:ring-blue-500">
                         <SelectValue placeholder="Add to team" />
@@ -444,9 +432,13 @@ function ProfileForm({
           </div>
         )}
 
-        <Button type="submit" className="mt-9 bg-blue-500 hover:bg-blue-600">
+        <Button
+          disabled={loading}
+          type="submit"
+          className="mt-9 bg-blue-500 hover:bg-blue-600"
+        >
           {loading ? (
-            <LoaderCircle className="animate-spin duration-700" />
+            <Loader className="animate-spin text-zinc-100 duration-700" />
           ) : (
             "Save changes"
           )}
