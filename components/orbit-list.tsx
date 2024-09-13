@@ -5,11 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import Avatar01 from "@/public/images/avatar-01.webp";
-import Avatar02 from "@/public/images/avatar-02.webp";
-import Avatar03 from "@/public/images/avatar-03.webp";
-import Avatar04 from "@/public/images/avatar-04.webp";
-import Avatar05 from "@/public/images/avatar-05.webp";
 import { ChevronRightIcon, Link2 } from "lucide-react";
 import TimeAgo from "react-timeago";
 
@@ -41,16 +36,6 @@ export default function OrbitList({
           >
             <div className="min-w-0 flex-auto">
               <div className="flex items-center gap-x-3">
-                {/* <div
-                  className={classNames(
-                    orbit.status === ACTIVE
-                      ? "bg-green-400/10 text-green-400 ring-green-400/20"
-                      : "bg-amber-400/10 text-fuchsia-400 ring-fuchsia-400/30",
-                    "flex-none rounded-full p-1"
-                  )}
-                >
-                  <div className="h-2 w-2 rounded-full bg-current" />
-                </div> */}
                 <h2 className="min-w-0 text-sm font-semibold leading-6 text-gray-800">
                   <Link
                     href={
@@ -92,53 +77,7 @@ export default function OrbitList({
                 </p>
               </div>
             </div>
-            {/* <div className="-mx-0.5 flex justify-center -space-x-3">
-              <Image
-                className="box-content rounded-full border-2 border-gray-50"
-                src={Avatar01}
-                width={24}
-                height={24}
-                alt="Avatar 01"
-              />
-              <Image
-                className="box-content rounded-full border-2 border-gray-50"
-                src={Avatar02}
-                width={24}
-                height={24}
-                alt="Avatar 01"
-              />
-              <Image
-                className="box-content rounded-full border-2 border-gray-50"
-                src={Avatar03}
-                width={24}
-                height={24}
-                alt="Avatar 02"
-              />
-              <Image
-                className="box-content rounded-full border-2 border-gray-50"
-                src={Avatar04}
-                width={24}
-                height={24}
-                alt="Avatar 03"
-              />
-              <Image
-                className="box-content rounded-full border-2 border-gray-50"
-                src={Avatar05}
-                width={24}
-                height={24}
-                alt="Avatar 04"
-              />
-            </div> */}
-            {/* <div
-                className={classNames(
-                  orbit.status === ACTIVE
-                    ? "bg-green-100 text-green-400 ring-green-400/20"
-                    : "bg-amber-100 text-amber-400 ring-amber-400/30",
-                  "ml-2 flex-none rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset"
-                )}
-              >
-                {orbit.status}
-              </div> */}
+
             {orbit.status === ACTIVE && <Active />}
             {orbit.status === PAUSED && <Paused />}
             <ChevronRightIcon

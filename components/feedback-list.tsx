@@ -34,6 +34,8 @@ export default function FeedbackList({
     api.app.feedback.deleteFeedbackAndFile
   );
 
+  const createActivityMutation = useMutation(api.app.activities.createActivity);
+
   const [deleting, setDeleting] = useState(false);
 
   const handleDeleteFeedback = async (id: any, storageId?: any) => {
@@ -44,11 +46,26 @@ export default function FeedbackList({
         storageId: storageId as Id<"_storage">,
       });
       if (result === "deleted") {
-        setDeleting(false);
-        toast({
-          title: "Deleted!",
-          description: "Feedback has been deleted",
+        const res = await createActivityMutation({
+          orbitId: orbitId as Id<"orbits">,
+          actorId: user?._id as Id<"users">,
+          actorName: user?.name as string,
+          actorImage: user?.image as string,
+          action: `deleted feedback`,
         });
+        if (res !== null) {
+          setDeleting(false);
+          toast({
+            title: "Deleted!",
+            description: "Feedback has been deleted",
+          });
+        } else {
+          setDeleting(false);
+          toast({
+            title: "Error!",
+            description: "Feedback deleted, but activity could not be created",
+          });
+        }
       } else {
         setDeleting(false);
         toast({
@@ -147,6 +164,7 @@ export default function FeedbackList({
               <div className="mt-4 flex items-center justify-between">
                 <FeedbackSettings
                   key={feedback._id}
+                  orbitId={orbitId}
                   feedbackId={feedback._id}
                   imageUrl={feedback.image}
                   deleteFeedback={() =>
@@ -155,6 +173,7 @@ export default function FeedbackList({
                       feedback.image_storage_id
                     )
                   }
+                  deleting={deleting}
                   member={member}
                   leader={leader}
                 />

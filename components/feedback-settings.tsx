@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import saveAs from "file-saver";
 import {
   Download,
@@ -35,18 +35,23 @@ import {
 import { toast } from "./ui/use-toast";
 
 export function FeedbackSettings({
+  orbitId,
   feedbackId,
   imageUrl,
   deleteFeedback,
+  deleting,
   leader,
   member,
 }: {
+  orbitId: Id<"orbits"> | null | undefined;
   feedbackId: Id<"feedback">;
   imageUrl: string;
   deleteFeedback: (id: Id<"feedback">) => void;
+  deleting: boolean;
   leader?: Id<"users"> | null | undefined;
   member?: IMember | null | undefined;
 }) {
+  const user = useQuery(api.user.viewer);
   const handleDownloadFile = async (
     feedbackId: Id<"feedback">,
     url: string
@@ -62,17 +67,35 @@ export function FeedbackSettings({
     api.app.feedback.updateFeedbackStatus
   );
 
+  const createActivityMutation = useMutation(api.app.activities.createActivity);
+
   const handleFeedbackStatus = async (status: string) => {
     const result = await updateFeedbackStatusMutation({
       feedbackId: feedbackId,
       feedbackStatus: status,
     });
     if (result === "feedback_status_updated") {
-      toast({
-        variant: "default",
-        title: "Updated!",
-        description: "Feedback status updated successfully",
+      const res = await createActivityMutation({
+        orbitId: orbitId as Id<"orbits">,
+        actorId: user?._id as Id<"users">,
+        actorName: user?.name as string,
+        actorImage: user?.image as string,
+        action: `marked feedback as ${status.toLowerCase()}`,
       });
+      if (res !== null) {
+        toast({
+          variant: "default",
+          title: "Updated!",
+          description: "Feedback status updated successfully",
+        });
+      } else {
+        toast({
+          variant: "default",
+          title: "Updated!",
+          description:
+            "Feedback status updated, but activity could not be created",
+        });
+      }
     } else {
       toast({
         variant: "destructive",
@@ -105,7 +128,7 @@ export function FeedbackSettings({
             </DropdownMenuItem>
           </>
           <DropdownMenuItem
-            disabled={member?.role === VIEWER}
+            disabled={member?.role === VIEWER || deleting}
             onClick={() => deleteFeedback(feedbackId)}
           >
             {" "}

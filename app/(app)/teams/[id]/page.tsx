@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import Avatar01 from "@/public/images/avatar-01.webp";
@@ -10,17 +11,20 @@ import Avatar02 from "@/public/images/avatar-02.webp";
 import Avatar03 from "@/public/images/avatar-03.webp";
 import Avatar04 from "@/public/images/avatar-04.webp";
 import Avatar05 from "@/public/images/avatar-05.webp";
-import { usePaginatedQuery, useQuery } from "convex/react";
+import { useMutation, usePaginatedQuery, useQuery } from "convex/react";
 import { House, Loader, Loader2, Pencil, Plus, Settings } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/use-toast";
 import { InviteDialog } from "@/components/invite-dialog";
 import MembersSheet from "@/components/members-sheet";
 import OrbitList from "@/components/orbit-list";
 import TeamSettings from "@/components/team-settings";
 
 export default function Team({ params }: { params: { id: string } }) {
+  const router = useRouter();
   const user = useQuery(api.user.viewer);
+  const [loading, setLoading] = useState(false);
   const team = useQuery(api.app.teams.fetchSingleTeam, {
     id: params.id as any,
   });
@@ -29,6 +33,8 @@ export default function Team({ params }: { params: { id: string } }) {
     userId: user?._id as Id<"users">,
     user_email: user?.email as string,
   });
+
+  const leaveTeamMutation = useMutation(api.app.members.removeMemberFromTeam);
 
   const participants = useQuery(api.app.members.getMembersForTeam, {
     teamId: team?._id as Id<"teams">,
@@ -39,6 +45,31 @@ export default function Team({ params }: { params: { id: string } }) {
   const teamOrbits = useQuery(api.app.orbits.fetchOrbitsForTeam, {
     teamId: team?._id as Id<"teams">,
   });
+
+  const handleLeaveTeam = async (memberId: Id<"users">) => {
+    if (memberId !== undefined) {
+      setLoading(true);
+      const result = await leaveTeamMutation({
+        teamId: team?._id as Id<"teams">,
+        memberId: memberId,
+      });
+      if (result === "deleted") {
+        setLoading(false);
+        router.push("/orbits");
+        toast({
+          title: "Success!",
+          description: "You left this team",
+        });
+      } else {
+        setLoading(false);
+        toast({
+          variant: "destructive",
+          title: "Error!",
+          description: "You could not be removed from team",
+        });
+      }
+    }
+  };
 
   return (
     <div>
@@ -55,20 +86,19 @@ export default function Team({ params }: { params: { id: string } }) {
             {team.leader === user?._id && <TeamSettings team={team} />}
           </div>
           <div className="flex items-center">
-            <div className="-mx-0.5 mr-3 flex justify-center -space-x-3">
-              <MembersSheet participants={participants} team={team} />
-              {/* {participants?.map((participant) => (
-                <Image
-                  key={participant._id}
-                  className="box-content rounded-full border-2 border-gray-100"
-                  src={participant.image as string}
-                  width={24}
-                  height={24}
-                  alt="participant avatar"
-                />
-              ))} */}
-            </div>
-            {user?._id === team.leader && <InviteDialog team={team} />}
+            <MembersSheet participants={participants} team={team} />
+            {user?._id === team.leader && (
+              <InviteDialog team={team} participants={participants} />
+            )}
+            {user?._id !== team.leader && (
+              <Button
+                variant={"secondary"}
+                disabled={loading}
+                onClick={() => handleLeaveTeam(user?._id as Id<"users">)}
+              >
+                {loading ? "Leaving team..." : "Leave team"}
+              </Button>
+            )}
           </div>
         </header>
       )}

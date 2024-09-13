@@ -7,7 +7,7 @@ import { PlusCircleIcon } from "@heroicons/react/20/solid";
 import { useMutation, useQuery } from "convex/react";
 import { Loader } from "lucide-react";
 
-import { ITeam } from "@/lib/types";
+import { IMember, IParticipant, ITeam } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,7 +32,13 @@ import {
 } from "./ui/select";
 import { toast } from "./ui/use-toast";
 
-export function InviteDialog({ team }: { team: ITeam | undefined | null }) {
+export function InviteDialog({
+  team,
+  participants,
+}: {
+  team: ITeam | undefined | null;
+  participants: IMember[] | undefined;
+}) {
   const user = useQuery(api.user.viewer);
   const createInviteMutation = useMutation(api.app.invites.createInvite);
   const [loading, setLoading] = useState(false);
@@ -118,7 +124,10 @@ export function InviteDialog({ team }: { team: ITeam | undefined | null }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-blue-500 hover:bg-blue-600">
+        <Button
+          disabled={(participants?.length ?? 0) >= 6}
+          className="bg-blue-500 hover:bg-blue-600"
+        >
           <PlusCircleIcon className="mr-1 h-5 w-5" />
           Send invite
         </Button>
@@ -159,7 +168,7 @@ export function InviteDialog({ team }: { team: ITeam | undefined | null }) {
         </div>
         <DialogFooter className="sm:justify-between">
           <Button
-            disabled={loading}
+            disabled={loading || (participants?.length ?? 0) > 6}
             onClick={handleSendInvite}
             className="bg-blue-500 hover:bg-blue-600"
           >

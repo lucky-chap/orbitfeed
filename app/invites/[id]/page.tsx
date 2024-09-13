@@ -55,6 +55,9 @@ export default function Invite() {
     // Add user to team
     const memberId = await addMemberMutation({
       memberId: user?._id as Id<"users">,
+      memberName: user?.name as string,
+      memberEmail: user?.email as string,
+      memberImage: user?.image as string,
       role: invite?.recipientRole as string,
       teamId: team?._id as Id<"teams">,
     });

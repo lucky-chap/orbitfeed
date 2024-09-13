@@ -26,7 +26,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { usePaginatedQuery, useQuery } from "convex/react";
-import { House, Loader, Loader2, Plus } from "lucide-react";
+import { House, Link2, Loader, Loader2, Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import TimeAgo from "react-timeago";
 import { z } from "zod";
@@ -132,36 +132,24 @@ export default function Orbit() {
             >
               <div className="min-w-0 flex-auto">
                 <div className="flex items-center gap-x-3">
-                  <div
-                    className={classNames(
-                      orbit.status === ACTIVE
-                        ? "bg-green-400/10 text-green-400 ring-green-400/20"
-                        : "bg-amber-400/10 text-amber-400 ring-amber-400/30",
-                      "flex-none rounded-full p-1"
-                    )}
-                  >
-                    <div className="h-2 w-2 rounded-full bg-current" />
-                  </div>
                   <h2 className="min-w-0 text-sm font-semibold leading-6 text-gray-800">
                     <Link
                       href={`/orbits/${orbit._id}`}
                       className="flex gap-x-2"
                     >
                       <span className="truncate">{orbit.name}</span>
-                      {/* <span className="text-gray-400">/</span> */}
-                      {/* <span className="whitespace-nowrap">
-                            {deployment.projectName}
-                          </span> */}
+
                       <span className="absolute inset-0" />
                     </Link>
                   </h2>
                 </div>
-                <div className="mt-3 flex items-center gap-x-2.5 text-xs leading-5 text-gray-400">
+                <div className="mt-3 flex items-center gap-x-2.5 text-xs leading-5">
                   <a
                     href={orbit.website}
                     target="_blank"
-                    className="truncate font-medium text-zinc-600 underline"
+                    className="flex items-center truncate font-semibold text-zinc-700"
                   >
+                    <Link2 size={16} className="mr-1" />
                     {orbit.website}
                   </a>
                   <svg
@@ -170,7 +158,7 @@ export default function Orbit() {
                   >
                     <circle r={1} cx={1} cy={1} />
                   </svg>
-                  <p className="whitespace-nowrap">
+                  <p className="whitespace-nowrap text-zinc-500">
                     Created{" "}
                     <TimeAgo
                       date={
@@ -180,53 +168,9 @@ export default function Orbit() {
                   </p>
                 </div>
               </div>
-              <div className="-mx-0.5 flex justify-center -space-x-3">
-                <Image
-                  className="box-content rounded-full border-2 border-gray-50"
-                  src={Avatar01}
-                  width={24}
-                  height={24}
-                  alt="Avatar 01"
-                />
-                <Image
-                  className="box-content rounded-full border-2 border-gray-50"
-                  src={Avatar02}
-                  width={24}
-                  height={24}
-                  alt="Avatar 01"
-                />
-                <Image
-                  className="box-content rounded-full border-2 border-gray-50"
-                  src={Avatar03}
-                  width={24}
-                  height={24}
-                  alt="Avatar 02"
-                />
-                <Image
-                  className="box-content rounded-full border-2 border-gray-50"
-                  src={Avatar04}
-                  width={24}
-                  height={24}
-                  alt="Avatar 03"
-                />
-                <Image
-                  className="box-content rounded-full border-2 border-gray-50"
-                  src={Avatar05}
-                  width={24}
-                  height={24}
-                  alt="Avatar 04"
-                />
-              </div>
-              <div
-                className={classNames(
-                  orbit.status === ACTIVE
-                    ? "bg-green-100 text-green-400 ring-green-400/20"
-                    : "bg-amber-100 text-amber-400 ring-amber-400/30",
-                  "flex-none rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset"
-                )}
-              >
-                {orbit.status}
-              </div>
+
+              {orbit.status === ACTIVE && <Active />}
+              {orbit.status === PAUSED && <Paused />}
               <ChevronRightIcon
                 aria-hidden="true"
                 className="h-5 w-5 flex-none text-gray-400"

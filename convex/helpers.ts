@@ -1,6 +1,7 @@
 // import { getAuthUserId } from "@convex-dev/auth/server";
 import { GenericQueryCtx } from "convex/server";
 
+import { internal } from "./_generated/api";
 import { DataModel, Id } from "./_generated/dataModel";
 import { auth } from "./auth";
 
@@ -12,16 +13,4 @@ export async function checkUserId(ctx: GenericQueryCtx<DataModel>) {
   } else {
     return userId;
   }
-}
-
-export async function activityCreator(
-  ctx: GenericQueryCtx<DataModel>,
-  orbitId: Id<"orbits">,
-  teamId: Id<"teams">,
-  actorId: Id<"users">,
-  action: string
-) {
-  // 1. get the logged in user
-  const loggedInUserId = await checkUserId(ctx);
-  // 2.
 }

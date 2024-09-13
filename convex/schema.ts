@@ -38,6 +38,9 @@ const schema = defineSchema({
   members: defineTable({
     teamId: v.id("teams"),
     memberId: v.id("users"),
+    memberName: v.string(),
+    memberEmail: v.string(),
+    memberImage: v.string(),
     role: v.string(), // editor or viewer
   })
     .index("team_id", ["teamId"])
@@ -52,8 +55,12 @@ const schema = defineSchema({
   activityFeed: defineTable({
     orbitId: v.id("orbits"),
     actorId: v.id("users"),
+    actorName: v.string(),
+    actorImage: v.string(),
     action: v.string(), // resolved, pending or removed
-  }),
+  })
+    .index("orbit_id", ["orbitId"])
+    .index("actor", ["actorId"]),
   proUsers: defineTable({
     userId: v.id("users"),
     email: v.string(),

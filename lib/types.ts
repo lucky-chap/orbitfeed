@@ -50,6 +50,9 @@ export interface IMember {
   _creationTime: number;
   teamId: Id<"teams">;
   memberId: Id<"users">;
+  memberName: string;
+  memberEmail: string;
+  memberImage: string;
   role: string;
 }
 

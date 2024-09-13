@@ -37,7 +37,7 @@ export default function MembersSheet({
   participants,
   team,
 }: {
-  participants: IParticipant[] | null | undefined;
+  participants: IMember[] | null | undefined;
   team: ITeam | null | undefined;
 }) {
   const user = useQuery(api.user.viewer);
@@ -110,9 +110,8 @@ export default function MembersSheet({
               className="-mx-0.5 mr-3 flex justify-center -space-x-3"
             >
               <Image
-                key={participant._id}
                 className="box-content rounded-full border-2 border-gray-100"
-                src={participant.image as string}
+                src={participant.memberImage as string}
                 width={24}
                 height={24}
                 alt="participant avatar"
@@ -134,19 +133,21 @@ export default function MembersSheet({
               <div className="flex flex-wrap items-center">
                 <Image
                   className="box-content rounded-full border-2 border-gray-100"
-                  src={participant.image as string}
+                  src={participant.memberImage as string}
                   width={24}
                   height={24}
                   alt="participant avatar"
                 />
-                <p className="truncate pl-2 font-medium">{participant.name}</p>
-                <p className="pl-2">({participant.email})</p>
+                <p className="truncate pl-2 font-medium">
+                  {participant.memberName}
+                </p>
+                <p className="pl-2">({participant.memberEmail})</p>
               </div>
             </div>
             <div className="flex items-center">
               <Button
                 disabled={loading || team?.leader !== user?._id}
-                onClick={() => handleRemoveMember(participant._id)}
+                onClick={() => handleRemoveMember(participant.memberId)}
                 variant={"outline"}
                 className="w-full text-red-500 hover:text-red-500"
               >
@@ -156,8 +157,7 @@ export default function MembersSheet({
               <Select
                 disabled={loading || team?.leader !== user?._id}
                 onValueChange={(value) => {
-                  console.log("Member role: ", value);
-                  handleUpdateMemberRole(participant._id, value);
+                  handleUpdateMemberRole(participant.memberId, value);
                 }}
                 defaultValue={participant.role}
               >

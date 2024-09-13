@@ -1,8 +1,8 @@
 import { v } from "convex/values";
 
-import { IParticipant, ITeam, IUser } from "@/lib/types";
+import { ITeam } from "@/lib/types";
 
-import { action, internalQuery, mutation, query } from "../_generated/server";
+import { mutation, query } from "../_generated/server";
 import { checkUserId } from "../helpers";
 
 export const getMembersForTeam = query({
@@ -17,19 +17,7 @@ export const getMembersForTeam = query({
       .order("desc")
       .collect();
 
-    let userIds = members.map((member) => member.memberId);
-    let docId = members.map((member) => member._id);
-    let participants: IParticipant[] = [];
-    for (let i = 0; i < userIds.length; i++) {
-      const user = await ctx.db.get(userIds[i]);
-      // get the member here
-      const member = await ctx.db.get(docId[i]);
-      if (user && member) {
-        participants.push({ ...user, role: member.role });
-      }
-    }
-
-    return participants;
+    return members;
   },
 });
 
@@ -54,6 +42,9 @@ export const addMemberToTeam = mutation({
   args: {
     teamId: v.id("teams"),
     memberId: v.id("users"),
+    memberName: v.string(),
+    memberEmail: v.string(),
+    memberImage: v.string(),
     role: v.string(),
   },
   handler: async (ctx, args) => {
@@ -61,6 +52,9 @@ export const addMemberToTeam = mutation({
     const memberId = await ctx.db.insert("members", {
       teamId: args.teamId,
       memberId: args.memberId,
+      memberName: args.memberName,
+      memberEmail: args.memberEmail,
+      memberImage: args.memberImage,
       role: args.role,
     });
 

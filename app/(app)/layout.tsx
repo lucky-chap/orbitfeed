@@ -32,7 +32,6 @@ import Logo from "@/components/logo";
 
 const navigation = [
   { name: "Orbits", href: "/orbits", icon: FolderIcon, pathname: "orbits" },
-  // { name: "Deployments", href: "#", icon: ServerIcon, pathname: true },
   {
     name: "Create orbit",
     href: "/create",

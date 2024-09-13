@@ -220,7 +220,7 @@ function ProfileForm({
   status: string;
   teamId?: string | undefined;
 }) {
-  const updateOrbit = useMutation(api.app.orbits.updateOrbit);
+  const updateOrbitMutation = useMutation(api.app.orbits.updateOrbit);
   const [loading, setLoading] = useState(false);
 
   const user = useQuery(api.user.viewer);
@@ -252,7 +252,7 @@ function ProfileForm({
 
     setLoading(true);
     try {
-      const result = await updateOrbit({
+      const result = await updateOrbitMutation({
         orbitId: orbitId,
         name: data.name,
         website: data.website,
@@ -274,7 +274,7 @@ function ProfileForm({
             return;
           } else {
             // move to team
-            const result = await updateOrbit({
+            const result = await updateOrbitMutation({
               orbitId: orbitId,
               name: data.name,
               website: data.website,
