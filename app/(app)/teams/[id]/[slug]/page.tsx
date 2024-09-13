@@ -144,10 +144,23 @@ export default function TeamOrbits({ params }: { params: { slug: string } }) {
   // first path is the teamId
   const teamId = pathname.split("/")[2];
 
+  const member = useQuery(api.app.members.getSingleMemberForTeam, {
+    memberId: user?._id as Id<"users">,
+    teamId: teamId as Id<"teams">,
+  });
+  const team = useQuery(api.app.teams.fetchSingleTeam, {
+    id: teamId as Id<"teams">,
+  });
   const orbitId = params.slug;
+
+  const orbit = useQuery(api.app.orbits.fetchSingleOrbit, {
+    id: orbitId as Id<"orbits">,
+  });
 
   console.log("Team ID: ", teamId);
   console.log("Orbit ID: ", orbitId);
+
+  console.log("A member for: ", member);
 
   const { results, status, loadMore, isLoading } = usePaginatedQuery(
     api.app.feedback.fetchFeedbackForOrbit,
@@ -166,7 +179,8 @@ export default function TeamOrbits({ params }: { params: { slug: string } }) {
           <main className="lg:pr-96">
             <header className="flex items-center justify-between border-b border-black/5 px-4 py-4 sm:px-6 sm:py-6 lg:px-8">
               <h1 className="text-base font-semibold leading-7 text-gray-700">
-                Feedback for orbit
+                {/* {orbit !== undefined && "Feedback for " + orbit?.name} */}
+                Feedback
               </h1>
             </header>
 
@@ -175,6 +189,8 @@ export default function TeamOrbits({ params }: { params: { slug: string } }) {
               <FeedbackList
                 results={results}
                 orbitId={orbitId as Id<"orbits">}
+                leader={team?.leader}
+                member={member}
               />
             </div>
 
@@ -220,7 +236,7 @@ export default function TeamOrbits({ params }: { params: { slug: string } }) {
                       src={item.user.imageUrl}
                       className="h-6 w-6 flex-none rounded-full bg-gray-800"
                     />
-                    <h3 className="flex-auto truncate text-sm font-semibold leading-6 text-gray-600">
+                    <h3 className="font flex-auto truncate text-sm leading-6 text-gray-600">
                       {item.user.name}
                     </h3>
                     <time

@@ -34,12 +34,15 @@ const schema = defineSchema({
   teams: defineTable({
     leader: v.id("users"),
     name: v.string(),
-  }),
+  }).index("leader", ["leader"]),
   members: defineTable({
     teamId: v.id("teams"),
     memberId: v.id("users"),
     role: v.string(), // editor or viewer
-  }).index("team_id", ["teamId"]),
+  })
+    .index("team_id", ["teamId"])
+    // this index would be used for finding teams a member is in
+    .index("member_id", ["memberId"]),
   invites: defineTable({
     senderEmail: v.string(),
     recipientEmail: v.string(),

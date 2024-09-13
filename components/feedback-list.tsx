@@ -3,13 +3,13 @@
 import React, { useState } from "react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useAction, useMutation } from "convex/react";
+import { useAction, useMutation, useQuery } from "convex/react";
 import { Check, CircleSlash } from "lucide-react";
 import ReactCountryFlag from "react-country-flag";
 import TimeAgo from "react-timeago";
 
 import { IDEA, ISSUE, OTHER, PRAISE, RESOLVED } from "@/lib/constants";
-import { IFeedback, IOrbit } from "@/lib/types";
+import { IFeedback, IMember, IOrbit } from "@/lib/types";
 
 import { FeedbackSettings } from "./feedback-settings";
 import Idea from "./pills/idea";
@@ -21,10 +21,15 @@ import { toast } from "./ui/use-toast";
 export default function FeedbackList({
   results,
   orbitId,
+  member,
+  leader,
 }: {
   results: IFeedback[] | null | undefined;
   orbitId: Id<"orbits"> | null | undefined;
+  leader?: Id<"users"> | null | undefined;
+  member?: IMember | null | undefined;
 }) {
+  const user = useQuery(api.user.viewer);
   const deleteFeedbackAction = useAction(
     api.app.feedback.deleteFeedbackAndFile
   );
@@ -54,6 +59,9 @@ export default function FeedbackList({
       }
     }
   };
+
+  console.log("Feedback list leader: ", leader);
+  console.log("Feedback list member role: ", member?.role);
 
   return (
     <ul role="list" className="w-full divide-y divide-black/5">
@@ -85,14 +93,14 @@ export default function FeedbackList({
                     <Praise />
                   </span>
                 )}
-                <h2 className="mt-2 min-w-0 text-sm font-medium leading-6 text-gray-700">
+                <h2 className="font- mt-2 min-w-0 text-[15px] leading-6 text-gray-600">
                   <p className="flex gap-x-2">
                     <span className="max-w-3x">{feedback.content}</span>
                   </p>
                 </h2>
               </div>
               <div className="mt-3 items-center gap-x-2.5 text-xs leading-5 text-gray-400 sm:flex">
-                <span className="mb-[2px] inline-block truncate font-medium text-zinc-600 sm:mb-0 sm:inline">
+                <span className="mb-[2px] inline-block truncate font-medium text-gray-600 sm:mb-0 sm:inline">
                   By{" "}
                   {feedback.by.trim().length === 0 ? "Anonymous" : feedback.by}
                 </span>
@@ -102,7 +110,7 @@ export default function FeedbackList({
                 >
                   <circle r={1} cx={1} cy={1} />
                 </svg>
-                <p className="mb-[2px] whitespace-nowrap font-medium text-zinc-500 sm:mb-0">
+                <p className="mb-[2px] whitespace-nowrap font-medium text-gray-500 sm:mb-0">
                   <TimeAgo
                     date={
                       orbitId == undefined ? Date.now() : feedback._creationTime
@@ -115,7 +123,7 @@ export default function FeedbackList({
                 >
                   <circle r={1} cx={1} cy={1} />
                 </svg>
-                <span className="mt-[7px] flex items-center font-medium text-zinc-500 sm:mt-0 sm:inline">
+                <span className="mt-[7px] flex items-center font-medium text-gray-500 sm:mt-0 sm:inline">
                   {feedback.location}{" "}
                   <ReactCountryFlag
                     countryCode={feedback.country_code}
@@ -147,6 +155,8 @@ export default function FeedbackList({
                       feedback.image_storage_id
                     )
                   }
+                  member={member}
+                  leader={leader}
                 />
                 <p>
                   {feedback.status === RESOLVED ? (

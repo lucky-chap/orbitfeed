@@ -188,7 +188,12 @@ export function SettingsMenu({
 
         <DrawerFooter className="pt-12">
           <DrawerClose asChild>
-            <Button variant="outline">Delete orbit</Button>
+            <Button
+              variant="outline"
+              className="w-full text-red-500 hover:text-red-500"
+            >
+              Delete orbit
+            </Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
@@ -218,12 +223,12 @@ function ProfileForm({
     userId: user?._id as Id<"users">,
     email: user?.email as string,
   });
-  const allTeams = useQuery(api.app.teams.fetchTeams, {
+  const teams = useQuery(api.app.teams.fetchTeams, {
     userId: user?._id as Id<"users">,
     user_email: user?.email as string,
   });
 
-  const previousTeam = allTeams?.find((team) => team._id === teamId);
+  const previousTeam = teams?.find((team) => team._id === teamId);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -400,7 +405,7 @@ function ProfileForm({
                 </SelectTrigger>
                 <SelectContent defaultValue={previousTeam?.name}>
                   <SelectGroup>
-                    {allTeams?.map((team) => (
+                    {teams?.map((team) => (
                       <SelectItem key={team._id} value={team._id}>
                         {team.name}
                       </SelectItem>
@@ -422,7 +427,7 @@ function ProfileForm({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {allTeams?.map((team) => (
+                      {teams?.map((team) => (
                         <SelectItem
                           key={team._id}
                           value={team._id} // the id is now the value since that is most important now

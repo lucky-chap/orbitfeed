@@ -14,7 +14,8 @@ import {
   Trash,
 } from "lucide-react";
 
-import { PENDING, RESOLVED } from "@/lib/constants";
+import { PENDING, RESOLVED, VIEWER } from "@/lib/constants";
+import { IMember } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -37,11 +38,14 @@ export function FeedbackSettings({
   feedbackId,
   imageUrl,
   deleteFeedback,
+  leader,
+  member,
 }: {
   feedbackId: Id<"feedback">;
   imageUrl: string;
-
   deleteFeedback: (id: Id<"feedback">) => void;
+  leader?: Id<"users"> | null | undefined;
+  member?: IMember | null | undefined;
 }) {
   const handleDownloadFile = async (
     feedbackId: Id<"feedback">,
@@ -78,12 +82,13 @@ export function FeedbackSettings({
     }
   };
 
+  console.log("Member is viewer: ", member?.role === VIEWER);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" className="h-5 p-2 text-xs">
           <Ellipsis size={15} className="text-zinc-500" />
-          {/* More */}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
@@ -99,7 +104,10 @@ export function FeedbackSettings({
               {imageUrl.trim().length > 0 ? "Download image" : "No image"}
             </DropdownMenuItem>
           </>
-          <DropdownMenuItem onClick={() => deleteFeedback(feedbackId)}>
+          <DropdownMenuItem
+            disabled={member?.role === VIEWER}
+            onClick={() => deleteFeedback(feedbackId)}
+          >
             {" "}
             <Trash className="mr-2 text-zinc-500" size={18} /> Delete
           </DropdownMenuItem>
@@ -113,11 +121,15 @@ export function FeedbackSettings({
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
                 <DropdownMenuItem
+                  disabled={member?.role === VIEWER}
                   onClick={() => handleFeedbackStatus(RESOLVED)}
                 >
                   Resolved
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleFeedbackStatus(PENDING)}>
+                <DropdownMenuItem
+                  disabled={member?.role === VIEWER}
+                  onClick={() => handleFeedbackStatus(PENDING)}
+                >
                   Pending
                 </DropdownMenuItem>
               </DropdownMenuSubContent>

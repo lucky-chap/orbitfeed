@@ -10,7 +10,7 @@ import Avatar02 from "@/public/images/avatar-02.webp";
 import Avatar03 from "@/public/images/avatar-03.webp";
 import Avatar04 from "@/public/images/avatar-04.webp";
 import Avatar05 from "@/public/images/avatar-05.webp";
-import { ChevronRightIcon } from "lucide-react";
+import { ChevronRightIcon, Link2 } from "lucide-react";
 import TimeAgo from "react-timeago";
 
 import { ACTIVE, PAUSED } from "@/lib/constants";
@@ -34,14 +34,14 @@ export default function OrbitList({
   return (
     <ul role="list" className="divide-y divide-black/5">
       {searchTerm?.trim().length === 0 &&
-        results?.map((orbit, index) => (
+        results?.map((orbit, _) => (
           <li
             key={orbit._id}
             className="relative flex items-center space-x-4 px-4 py-4 sm:px-6 lg:px-8"
           >
             <div className="min-w-0 flex-auto">
               <div className="flex items-center gap-x-3">
-                <div
+                {/* <div
                   className={classNames(
                     orbit.status === ACTIVE
                       ? "bg-green-400/10 text-green-400 ring-green-400/20"
@@ -50,7 +50,7 @@ export default function OrbitList({
                   )}
                 >
                   <div className="h-2 w-2 rounded-full bg-current" />
-                </div>
+                </div> */}
                 <h2 className="min-w-0 text-sm font-semibold leading-6 text-gray-800">
                   <Link
                     href={
@@ -69,12 +69,13 @@ export default function OrbitList({
                   </Link>
                 </h2>
               </div>
-              <div className="mt-3 flex items-center gap-x-2.5 text-xs leading-5 text-gray-400">
+              <div className="mt-3 flex items-center gap-x-2.5 text-xs leading-5">
                 <a
                   href={orbit.website}
                   target="_blank"
-                  className="truncate font-medium text-zinc-600 underline"
+                  className="flex items-center truncate font-semibold text-zinc-700"
                 >
+                  <Link2 size={16} className="mr-1" />
                   {orbit.website}
                 </a>
                 <svg
@@ -83,7 +84,7 @@ export default function OrbitList({
                 >
                   <circle r={1} cx={1} cy={1} />
                 </svg>
-                <p className="whitespace-nowrap">
+                <p className="whitespace-nowrap text-zinc-500">
                   Created{" "}
                   <TimeAgo
                     date={orbit == undefined ? Date.now() : orbit._creationTime}
@@ -91,7 +92,7 @@ export default function OrbitList({
                 </p>
               </div>
             </div>
-            <div className="-mx-0.5 flex justify-center -space-x-3">
+            {/* <div className="-mx-0.5 flex justify-center -space-x-3">
               <Image
                 className="box-content rounded-full border-2 border-gray-50"
                 src={Avatar01}
@@ -127,7 +128,7 @@ export default function OrbitList({
                 height={24}
                 alt="Avatar 04"
               />
-            </div>
+            </div> */}
             {/* <div
                 className={classNames(
                   orbit.status === ACTIVE

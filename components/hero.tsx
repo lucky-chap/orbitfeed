@@ -123,12 +123,12 @@ export default function Hero() {
                       }
                       className="btn group mb-4 w-full rounded-lg bg-gradient-to-t from-blue-600 to-blue-500 bg-[length:100%_100%] bg-[bottom] p-2 px-4 text-white shadow hover:bg-[length:100%_150%] sm:mb-0 sm:w-auto"
                     >
-                      <span className="relative inline-flex items-center">
+                      <p className="relative inline-flex items-center">
                         Login with GitHub{" "}
                         <span className="ml-1 tracking-normal text-white transition-transform group-hover:translate-x-0.5">
                           <ArrowRight size={20} />
                         </span>
-                      </span>
+                      </p>
                     </Button>
                   </Unauthenticated>
                   <Authenticated>
@@ -138,7 +138,7 @@ export default function Hero() {
                       </Button>
                     </Link>
                   </Authenticated>
-                  <Button className="btn w-full rounded-lg bg-white p-2 px-4 text-gray-800 shadow hover:bg-gray-50 sm:ml-4 sm:w-auto">
+                  <Button className="w-full rounded-lg bg-white p-2 px-4 text-gray-800 shadow hover:bg-gray-50 sm:ml-4 sm:w-auto">
                     Source Code
                   </Button>
                 </div>

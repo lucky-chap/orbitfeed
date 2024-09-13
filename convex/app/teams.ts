@@ -23,7 +23,6 @@ export const searchTeams = query({
   },
 });
 
-// since a user can only have a maximum of 5 teams, we can fetch without paginating
 export const fetchTeams = query({
   args: {
     userId: v.any(),
@@ -33,7 +32,7 @@ export const fetchTeams = query({
     await checkUserId(ctx);
     const teams = await ctx.db
       .query("teams")
-      .filter((q) => q.eq(q.field("leader"), args.userId))
+      .withIndex("leader", (q) => q.eq("leader", args.userId))
       .order("desc")
       .collect();
 

@@ -26,6 +26,7 @@ import {
 import { useQuery } from "convex/react";
 import { Loader } from "lucide-react";
 
+import { ITeam } from "@/lib/types";
 import { classNames } from "@/lib/utils";
 import Logo from "@/components/logo";
 
@@ -66,12 +67,16 @@ const navigation = [
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const user = useQuery(api.user.viewer);
-  const allTeams = useQuery(api.app.teams.fetchTeams, {
+  const teams = useQuery(api.app.teams.fetchTeams, {
     userId: user?._id as Id<"users">,
     user_email: user?.email as string,
   });
 
-  console.log("All Teams: ", allTeams);
+  const teamsUserBelongsTo = useQuery(api.app.members.getTeamsUserBelongsTo, {
+    memberId: user?._id as Id<"users">,
+  });
+
+  console.log("Teams I belong to: ", teamsUserBelongsTo);
 
   const { signOut } = useAuthActions();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -87,7 +92,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <div>
+      <div id="sidebar">
         <Dialog
           open={sidebarOpen}
           onClose={setSidebarOpen}
@@ -120,9 +125,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </TransitionChild>
               {/* Sidebar component, swap this element with another sidebar if you like */}
               <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-50 px-6 ring-1 ring-black/10">
-                <div className="flex h-16 shrink-0 items-center">
+                <Link
+                  href="/orbits"
+                  className="flex h-16 shrink-0 items-center"
+                >
                   <Logo />
-                </div>
+                </Link>
                 <nav className="flex flex-1 flex-col">
                   <ul role="list" className="flex flex-1 flex-col gap-y-7">
                     <li>
@@ -149,16 +157,36 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         ))}
                       </ul>
                     </li>
-                    {user == undefined && allTeams == undefined ? (
+                    {user == undefined &&
+                    teams == undefined &&
+                    teamsUserBelongsTo == undefined ? (
                       <Loader className="h-6 w-6 animate-spin text-zinc-400" />
                     ) : (
                       <>
                         <li>
                           <div className="text-xs font-semibold leading-6 text-gray-700">
-                            Your teams
+                            Teams
                           </div>
                           <ul role="list" className="-mx-2 mt-2 space-y-1">
-                            {allTeams?.map((team) => (
+                            {teams?.map((team) => (
+                              <li key={team._id}>
+                                <Link
+                                  href={`/teams/${team._id}`}
+                                  className={classNames(
+                                    teamPath === team._id
+                                      ? "bg-transparent text-indigo-600"
+                                      : "text-gray-800 hover:bg-gray-100 hover:text-indigo-600",
+                                    "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
+                                  )}
+                                >
+                                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-300 bg-gray-100 text-[0.625rem] font-medium group-hover:text-indigo-600">
+                                    {team.name.charAt(0).toUpperCase()}
+                                  </span>
+                                  <span className="truncate">{team.name}</span>
+                                </Link>
+                              </li>
+                            ))}
+                            {teamsUserBelongsTo?.map((team) => (
                               <li key={team._id}>
                                 <Link
                                   href={`/teams/${team._id}`}
@@ -217,9 +245,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="hidden xl:fixed xl:inset-y-0 xl:z-50 xl:flex xl:w-72 xl:flex-col">
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-50 px-6 ring-1 ring-black/5">
-            <div className="flex h-16 shrink-0 items-center">
+            <Link href="/orbits" className="flex h-16 shrink-0 items-center">
               <Logo />
-            </div>
+            </Link>
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
                 <li>
@@ -247,16 +275,40 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   </ul>
                 </li>
 
-                {user == undefined && allTeams == undefined ? (
+                {user == undefined &&
+                teams == undefined &&
+                teamsUserBelongsTo == undefined ? (
                   <Loader className="h-6 w-6 animate-spin text-zinc-400" />
                 ) : (
                   <>
                     <li>
                       <div className="text-xs font-semibold leading-6 text-gray-700">
-                        Your teams
+                        Teams
                       </div>
-                      <ul role="list" className="-mx-2 mt-2 space-y-1">
-                        {allTeams?.map((team) => (
+                      <ul
+                        role="list"
+                        id="teamsList"
+                        className="-mx-2 mt-2 max-h-[29rem] space-y-1 overflow-y-scroll"
+                      >
+                        {teams?.map((team) => (
+                          <li key={team._id}>
+                            <Link
+                              href={`/teams/${team._id}`}
+                              className={classNames(
+                                teamPath === team._id
+                                  ? "bg-transparent text-indigo-600"
+                                  : "text-gray-800 hover:bg-gray-100 hover:text-indigo-600",
+                                "group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6"
+                              )}
+                            >
+                              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-300 bg-gray-100 text-[0.625rem] font-medium group-hover:text-indigo-600">
+                                {team.name.charAt(0).toUpperCase()}
+                              </span>
+                              <span className="truncate">{team.name}</span>
+                            </Link>
+                          </li>
+                        ))}
+                        {teamsUserBelongsTo?.map((team) => (
                           <li key={team._id}>
                             <Link
                               href={`/teams/${team._id}`}

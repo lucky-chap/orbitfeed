@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function Logo() {
   return (
-    <Link href={"/orbits"}>
+    <div>
       <span className="sr-only">Orbitfeed</span>
       <h3 className="flex items-center text-sm font-semibold text-gray-900">
         <svg
@@ -21,6 +21,6 @@ export default function Logo() {
         </svg>
         <span className="ml-2">Orbitfeed</span>
       </h3>
-    </Link>
+    </div>
   );
 }

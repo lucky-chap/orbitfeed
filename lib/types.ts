@@ -1,5 +1,17 @@
 import { Id } from "@/convex/_generated/dataModel";
 
+export interface IUser {
+  _id: Id<"users">;
+  _creationTime: number;
+  name?: string | undefined;
+  image?: string | undefined;
+  email?: string | undefined;
+  emailVerificationTime?: number | undefined;
+  phone?: string | undefined;
+  phoneVerificationTime?: number | undefined;
+  isAnonymous?: boolean | undefined;
+}
+
 export interface IOrbit {
   _id: Id<"orbits">;
   _creationTime: number;
@@ -38,5 +50,9 @@ export interface IMember {
   _creationTime: number;
   teamId: Id<"teams">;
   memberId: Id<"users">;
+  role: string;
+}
+
+export interface IParticipant extends IUser {
   role: string;
 }
