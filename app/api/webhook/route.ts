@@ -22,7 +22,7 @@ type METADATA = {
   email: string;
 };
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const user = await fetchQuery(api.v1.user.viewer);
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
 
@@ -75,6 +75,7 @@ export async function POST(request: Request) {
       const metadata = session.metadata as METADATA;
       let userUpdated = false;
       let emailSent = false;
+      let emailRes;
       console.log(`Payment successful for session ID: ${session.id}`);
 
       console.log("User id: ", metadata.userId);
@@ -96,6 +97,7 @@ export async function POST(request: Request) {
             subject: "Thank You!",
             react: ThankYouEmail({}),
           });
+          emailRes = res;
           if (res.data?.id !== undefined) {
             emailSent = true;
           } else {
@@ -120,6 +122,7 @@ export async function POST(request: Request) {
           message: emailSent
             ? "Email sent to user"
             : "Email could not be sent to user",
+          res: emailRes,
         },
       });
 
