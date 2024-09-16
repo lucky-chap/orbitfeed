@@ -51,7 +51,7 @@ export function FeedbackSettings({
   leader?: Id<"users"> | null | undefined;
   member?: IMember | null | undefined;
 }) {
-  const user = useQuery(api.user.viewer);
+  const user = useQuery(api.v1.user.viewer);
   const handleDownloadFile = async (
     feedbackId: Id<"feedback">,
     url: string
@@ -64,10 +64,10 @@ export function FeedbackSettings({
   };
 
   const updateFeedbackStatusMutation = useMutation(
-    api.app.feedback.updateFeedbackStatus
+    api.v1.feedback.updateFeedbackStatus
   );
 
-  const createActivityMutation = useMutation(api.app.activities.createActivity);
+  const createActivityMutation = useMutation(api.v1.activities.createActivity);
 
   const handleFeedbackStatus = async (status: string) => {
     const result = await updateFeedbackStatusMutation({

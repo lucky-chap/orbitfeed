@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
         email: email,
       },
       mode: "payment",
-      success_url: `${req.headers.get("origin")}/pro-activated?orb_ck1=${userId}`,
+      success_url: `${req.headers.get("origin")}/pro-activated?user_id=${userId}`,
       cancel_url: `${req.headers.get("origin")}/billing`,
     });
 

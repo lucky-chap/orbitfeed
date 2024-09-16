@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -34,52 +35,61 @@ export default function Invite() {
   console.log("Sender id: ", senderId);
   console.log("Team id: ", teamId);
 
-  const user = useQuery(api.user.viewer);
-  const sender = useQuery(api.user.getUser, {
+  const user = useQuery(api.v1.user.viewer);
+  const sender = useQuery(api.v1.user.getUser, {
     id: senderId as Id<"users">,
   });
-  const invite = useQuery(api.app.invites.getInvite, {
+  const invite = useQuery(api.v1.invites.getInvite, {
     recipientEmail: user?.email as string,
     senderEmail: sender?.email as string,
   });
-  const team = useQuery(api.app.teams.fetchSingleTeam, {
+  const team = useQuery(api.v1.teams.fetchSingleTeam, {
     id: teamId as Id<"teams">,
   });
   const isInviteExpired =
     invite && invite?._creationTime < Date.now() - 24 * 60 * 60 * 1000;
-  const addMemberMutation = useMutation(api.app.members.addMemberToTeam);
-  const removeInviteMutation = useMutation(api.app.invites.removeInvite);
+  const currentMember = useQuery(api.v1.members.getSingleMemberForTeam, {
+    memberId: user?._id as Id<"users">,
+    teamId: teamId as Id<"teams">,
+  });
+  const addMemberMutation = useMutation(api.v1.members.addMemberToTeam);
+  const removeInviteMutation = useMutation(api.v1.invites.removeInvite);
+
+  console.log("Current member: ", currentMember);
 
   const handleAcceptInvite = async () => {
     setLoading(true);
-    // Add user to team
-    const memberId = await addMemberMutation({
-      memberId: user?._id as Id<"users">,
-      memberName: user?.name as string,
-      memberEmail: user?.email as string,
-      memberImage: user?.image as string,
-      role: invite?.recipientRole as string,
-      teamId: team?._id as Id<"teams">,
-    });
-    if (memberId !== null) {
-      // Remove invite
-      const removed = await removeInviteMutation({
-        inviteId: invite?._id as Id<"invites">,
+    // check if member is part of team
+    if (currentMember === null) {
+      // Add user to team
+      const memberId = await addMemberMutation({
+        memberId: user?._id as Id<"users">,
+        memberName: user?.name as string,
+        memberEmail: user?.email as string,
+        memberImage: user?.image as string,
+        role: invite?.recipientRole as string,
+        teamId: team?._id as Id<"teams">,
       });
-      if (removed !== null) {
-        router.push("/orbits");
-        toast({
-          title: "Success",
-          description: `You were added to team ${team?.name}!`,
+      if (memberId !== null) {
+        // Remove invite
+        const removed = await removeInviteMutation({
+          inviteId: invite?._id as Id<"invites">,
         });
-      } else {
-        setLoading(false);
-        router.push("/orbits");
-        toast({
-          variant: "destructive",
-          title: "Failed to add you to team",
-          description: "Please try again later",
-        });
+        if (removed !== null) {
+          router.push("/orbits");
+          toast({
+            title: "Success",
+            description: `You were added to team ${team?.name}!`,
+          });
+        } else {
+          setLoading(false);
+          router.push("/orbits");
+          toast({
+            variant: "destructive",
+            title: "Failed to add you to team",
+            description: "Please try again later",
+          });
+        }
       }
     }
   };
@@ -101,6 +111,7 @@ export default function Invite() {
       {invite === undefined &&
         team === undefined &&
         sender === undefined &&
+        currentMember === undefined &&
         isInviteExpired === undefined && (
           <div className="flex min-h-screen items-center justify-center text-center">
             <Loader className="h-6 w-6 animate-spin text-zinc-400" />
@@ -132,36 +143,41 @@ export default function Invite() {
           </div>
         </div>
       )}
-      {invite !== null && invite !== undefined && isInviteExpired && (
-        <div className="">
-          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-              <div className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl shadow-black/5 ring-1 ring-zinc-200/50 transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-sm sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95">
-                <div>
-                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-                    <X aria-hidden="true" className="h-6 w-6 text-red-600" />
-                  </div>
-                  <div className="mt-3 text-center sm:mt-5">
-                    <h3 className="text-base font-semibold leading-6 text-gray-900">
-                      Invite expired
-                    </h3>
-                    <div className="mt-2">
-                      <p className="text-sm text-gray-500">
-                        The invite link has expired. Please ask the sender to
-                        send a new invite
-                      </p>
+      {invite !== null &&
+        invite !== undefined &&
+        currentMember !== undefined &&
+        isInviteExpired && (
+          <div className="">
+            <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+              <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl shadow-black/5 ring-1 ring-zinc-200/50 transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-sm sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95">
+                  <div>
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                      <X aria-hidden="true" className="h-6 w-6 text-red-600" />
+                    </div>
+                    <div className="mt-3 text-center sm:mt-5">
+                      <h3 className="text-base font-semibold leading-6 text-gray-900">
+                        Invite expired
+                      </h3>
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-500">
+                          The invite link has expired. Please ask the sender to
+                          send a new invite
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
       {invite !== null &&
         invite !== undefined &&
         team !== null &&
         team !== undefined &&
+        currentMember == null &&
+        currentMember !== undefined &&
         sender !== null &&
         sender !== undefined &&
         isInviteExpired == false && (
@@ -221,6 +237,53 @@ export default function Invite() {
             </div>
           </div>
         )}
+
+      {/* user is already part of team */}
+      {currentMember !== null && currentMember !== undefined && (
+        <div className="">
+          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+              <div className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl shadow-black/5 ring-1 ring-zinc-200/50 transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-sm sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95">
+                <div>
+                  <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                    <UsersIcon
+                      aria-hidden="true"
+                      className="h-6 w-6 text-green-600"
+                    />
+                  </div>
+                  <div className="mt-3 text-center sm:mt-5">
+                    <h3 className="text-base font-semibold leading-6 text-gray-900">
+                      Invite
+                    </h3>
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-500">
+                        You are already a member of this team
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-5 sm:mt-6">
+                  <Authenticated>
+                    <Link href={"/orbits"}>
+                      <Button className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                        Go to orbits
+                      </Button>
+                    </Link>
+                  </Authenticated>
+                  <Unauthenticated>
+                    <Button
+                      onClick={() => void signIn("github")}
+                      className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    >
+                      Lgoin to accept invite
+                    </Button>
+                  </Unauthenticated>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

@@ -14,20 +14,18 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as app_activities from "../app/activities.js";
-import type * as app_feedback from "../app/feedback.js";
-import type * as app_files from "../app/files.js";
-import type * as app_invites from "../app/invites.js";
-import type * as app_members from "../app/members.js";
-import type * as app_orbits from "../app/orbits.js";
-import type * as app_teams from "../app/teams.js";
 import type * as auth from "../auth.js";
-import type * as crons from "../crons.js";
-import type * as emails from "../emails.js";
 import type * as helpers from "../helpers.js";
 import type * as http from "../http.js";
-import type * as proUsers from "../proUsers.js";
-import type * as user from "../user.js";
+import type * as v1_activities from "../v1/activities.js";
+import type * as v1_feedback from "../v1/feedback.js";
+import type * as v1_files from "../v1/files.js";
+import type * as v1_invites from "../v1/invites.js";
+import type * as v1_members from "../v1/members.js";
+import type * as v1_orbits from "../v1/orbits.js";
+import type * as v1_proUsers from "../v1/proUsers.js";
+import type * as v1_teams from "../v1/teams.js";
+import type * as v1_user from "../v1/user.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -38,20 +36,18 @@ import type * as user from "../user.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  "app/activities": typeof app_activities;
-  "app/feedback": typeof app_feedback;
-  "app/files": typeof app_files;
-  "app/invites": typeof app_invites;
-  "app/members": typeof app_members;
-  "app/orbits": typeof app_orbits;
-  "app/teams": typeof app_teams;
   auth: typeof auth;
-  crons: typeof crons;
-  emails: typeof emails;
   helpers: typeof helpers;
   http: typeof http;
-  proUsers: typeof proUsers;
-  user: typeof user;
+  "v1/activities": typeof v1_activities;
+  "v1/feedback": typeof v1_feedback;
+  "v1/files": typeof v1_files;
+  "v1/invites": typeof v1_invites;
+  "v1/members": typeof v1_members;
+  "v1/orbits": typeof v1_orbits;
+  "v1/proUsers": typeof v1_proUsers;
+  "v1/teams": typeof v1_teams;
+  "v1/user": typeof v1_user;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

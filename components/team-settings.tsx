@@ -52,7 +52,7 @@ export default function TeamSettings({ team }: { team: ITeam }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const deleteTeamMutation = useMutation(api.app.teams.deleteTeam);
+  const deleteTeamMutation = useMutation(api.v1.teams.deleteTeam);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const handleDeleteTeam = async () => {
@@ -164,7 +164,7 @@ export default function TeamSettings({ team }: { team: ITeam }) {
 }
 
 function EditForm({ team }: { team: ITeam }) {
-  const user = useQuery(api.user.viewer);
+  const user = useQuery(api.v1.user.viewer);
   const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -173,7 +173,7 @@ function EditForm({ team }: { team: ITeam }) {
     },
   });
 
-  const updateTeamMutation = useMutation(api.app.teams.updateTeam);
+  const updateTeamMutation = useMutation(api.v1.teams.updateTeam);
 
   const handleUpdateTeam = async (data: z.infer<typeof FormSchema>) => {
     setLoading(true);

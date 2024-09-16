@@ -12,7 +12,7 @@ export const searchTeams = query({
     userId: v.any(),
   },
   handler: async (ctx, args) => {
-    await checkUserId(ctx);
+    // await checkUserId(ctx);
     const searchResults = await ctx.db
       .query("teams")
 
@@ -29,7 +29,7 @@ export const fetchTeams = query({
     user_email: v.any(),
   },
   handler: async (ctx, args) => {
-    await checkUserId(ctx);
+    // await checkUserId(ctx);
     const teams = await ctx.db
       .query("teams")
       .withIndex("leader", (q) => q.eq("leader", args.userId))

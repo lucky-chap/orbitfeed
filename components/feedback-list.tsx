@@ -10,6 +10,7 @@ import TimeAgo from "react-timeago";
 
 import { IDEA, ISSUE, OTHER, PRAISE, RESOLVED } from "@/lib/constants";
 import { IFeedback, IMember, IOrbit } from "@/lib/types";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { FeedbackSettings } from "./feedback-settings";
 import Idea from "./pills/idea";
@@ -29,12 +30,10 @@ export default function FeedbackList({
   leader?: Id<"users"> | null | undefined;
   member?: IMember | null | undefined;
 }) {
-  const user = useQuery(api.user.viewer);
-  const deleteFeedbackAction = useAction(
-    api.app.feedback.deleteFeedbackAndFile
-  );
+  const user = useQuery(api.v1.user.viewer);
+  const deleteFeedbackAction = useAction(api.v1.feedback.deleteFeedbackAndFile);
 
-  const createActivityMutation = useMutation(api.app.activities.createActivity);
+  const createActivityMutation = useMutation(api.v1.activities.createActivity);
 
   const [deleting, setDeleting] = useState(false);
 

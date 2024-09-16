@@ -3,8 +3,8 @@
 // ORIGINAL USER MODEL/TABLE CREATED BY THE AUTH PROVIDER
 import { v } from "convex/values";
 
-import { query } from "./_generated/server";
-import { auth } from "./auth";
+import { query } from "../_generated/server";
+import { auth } from "../auth";
 
 export const viewer = query({
   args: {},
@@ -25,23 +25,5 @@ export const getUser = query({
       .filter((q) => q.eq(q.field("_id"), args.id))
       .unique();
     return user;
-  },
-});
-
-export const account = query({
-  args: {
-    userId: v.id("users"),
-  },
-  handler: async (ctx, args) => {
-    const { userId } = args;
-    const account = await ctx.db
-      .query("authAccounts")
-      .filter((q) => q.eq(q.field("userId"), userId))
-      .unique();
-
-    // remember to paginate the results
-    // return both the account and the length
-
-    return account;
   },
 });

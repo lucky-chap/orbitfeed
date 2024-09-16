@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  // const user = await fetchQuery(api.user.viewer);
+  // const user = await fetchQuery(api.v1.user.viewer);
   // NB: For some weird reason, user appears to be null,
   // so i cannot retreive the id and the email.
   // A workaround is to have the client send it from its side,
@@ -36,13 +36,13 @@ export async function POST(request: NextRequest) {
     image_storage_id,
   } = data;
 
-  const proUser = await fetchQuery(api.proUsers.checkIfUserIsPro, {
+  const proUser = await fetchQuery(api.v1.proUsers.checkIfUserIsPro, {
     userId: userId as Id<"users">,
     email: userEmail as string,
   });
 
   // check if orbit exists before creating feedback
-  const orbit = await fetchQuery(api.app.orbits.fetchSingleOrbitNoAuth, {
+  const orbit = await fetchQuery(api.v1.orbits.fetchSingleOrbitNoAuth, {
     id: orbitId,
   });
 
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
   }
 
   // now we check if they have exceeded their limit
-  const res = await fetchQuery(api.app.feedback.fetchFeedbackForOrbitNoAuth, {
+  const res = await fetchQuery(api.v1.feedback.fetchFeedbackForOrbitNoAuth, {
     orbitId,
   });
 
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
   }
 
   const result = await fetchMutation(
-    api.app.feedback.createFeedbackForOrbitNoAuth,
+    api.v1.feedback.createFeedbackForOrbitNoAuth,
     {
       orbitId: orbitId,
       by: by as string,

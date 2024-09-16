@@ -23,7 +23,7 @@ type METADATA = {
 };
 
 export async function POST(request: Request) {
-  const user = await fetchQuery(api.user.viewer);
+  const user = await fetchQuery(api.v1.user.viewer);
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
 
   const text = await request.text();
@@ -82,21 +82,19 @@ export async function POST(request: Request) {
       try {
         if (metadata === null) return;
 
-        const update = await fetchMutation(api.proUsers.upgradeUserToPro, {
+        const update = await fetchMutation(api.v1.proUsers.upgradeUserToPro, {
           userId: metadata.userId,
           email: metadata.email,
         });
 
         if (update.success) {
           userUpdated = true;
-          // send email to user
-          // TODO: use an action to do this
+          // send email to user (you can also use /api/thank-you)
           const res = await resend.emails.send({
-            // change the "from" to custom domain
-            from: "Quirk <noreply@quirk.lol>",
+            from: process.env.EMAIL_FROM as string,
             to: metadata.email,
             subject: "Thank You!",
-            react: ThankYouEmail({ name: "Bam" }),
+            react: ThankYouEmail({}),
           });
           if (res.data?.id !== undefined) {
             emailSent = true;
@@ -133,10 +131,4 @@ export async function POST(request: Request) {
         message: `Unhandled event type: ${event.type}`,
       });
   }
-
-  return NextResponse.json({
-    status: 200,
-    message: "success",
-    userId: user?._id,
-  });
 }

@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Body,
   Button,
@@ -14,24 +12,22 @@ import {
   Text,
 } from "@react-email/components";
 
-interface ThankYouEmailProps {}
-
 const baseUrl = process.env.NEXT_PUBLIC_APP_URL
   ? `https://${process.env.NEXT_PUBLIC_APP_URL}`
   : "http://localhost:3000";
 
-const ThankYouEmail: React.FC<Readonly<ThankYouEmailProps>> = ({}) => (
+const ThankYouEmail = ({}) => (
   <Html>
     <Head />
-    <Preview>Thank you for joining our waitlist and for your patience</Preview>
+    <Preview>Thank you for upgrading to PRO!</Preview>
     <Tailwind>
       <Body style={main} className="bg-white text-black">
-        <Container style={container} className="max-w-xl">
+        <Container className="mx-auto max-w-xl px-3 pt-20">
           <Img
             src={`${baseUrl}/images/thank-you.png`}
             alt="Orbitfeed"
-            className="w-full"
-            style={thankYouBanner}
+            className="w-full rounded-md"
+            // style={thankYouBanner}
           />
           <Heading className="text-black">You went Pro! 🎉</Heading>
           <Text className="text-zinc-600">
@@ -77,10 +73,4 @@ const main = {
 const container = {
   margin: "auto",
   padding: "96px 20px 64px",
-};
-
-const thankYouBanner = {
-  borderRadius: 4,
-  width: 600,
-  height: 300,
 };

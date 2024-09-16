@@ -46,7 +46,7 @@ const FormSchema = z.object({
 });
 
 export default function Orbit() {
-  const user = useQuery(api.user.viewer);
+  const user = useQuery(api.v1.user.viewer);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -56,7 +56,7 @@ export default function Orbit() {
     loadMore,
     isLoading: paginatedLoading,
   } = usePaginatedQuery(
-    api.app.orbits.fetchOrbits,
+    api.v1.orbits.fetchOrbits,
     {
       userId: user?._id,
       user_email: user?.email,
@@ -73,7 +73,7 @@ export default function Orbit() {
     loadMore: searchLoadMore,
     isLoading: searchLoading,
   } = usePaginatedQuery(
-    api.app.orbits.searchOrbits,
+    api.v1.orbits.searchOrbits,
     {
       userId: user?._id,
       searchTerm: searchTerm,

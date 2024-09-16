@@ -25,7 +25,7 @@ export default function ActivityDrawer({ orbitId }: { orbitId: Id<"orbits"> }) {
   const [goal, setGoal] = React.useState(350);
 
   const { results, status, loadMore, isLoading } = usePaginatedQuery(
-    api.app.activities.getActivitiesForOrbit,
+    api.v1.activities.getActivitiesForOrbit,
     {
       orbitId: orbitId as Id<"orbits">,
     },
@@ -46,6 +46,9 @@ export default function ActivityDrawer({ orbitId }: { orbitId: Id<"orbits"> }) {
         <div className="h-full max-h-[90vh] w-full overflow-y-scroll">
           <DrawerHeader>
             <DrawerTitle>Activity Feed</DrawerTitle>
+            <DrawerDescription className="sr-only">
+              Set your daily activity goal.
+            </DrawerDescription>
           </DrawerHeader>
           <ul role="list" className="divide-y divide-white/5 p-4 pb-10">
             {results.map((item) => (

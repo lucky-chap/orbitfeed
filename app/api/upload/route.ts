@@ -6,7 +6,7 @@ import { fetchMutation, fetchQuery } from "convex/nextjs";
 const Response = NextResponse;
 
 export async function GET(request: NextRequest) {
-  const url = await fetchMutation(api.app.files.generateUploadUrl, {});
+  const url = await fetchMutation(api.v1.files.generateUploadUrl, {});
   if (url !== null) {
     return Response.json({
       status: "success",
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
   const data = await request.json();
   const { feedbackId, storageId } = data;
 
-  const uploadId = await fetchMutation(api.app.files.saveStorageId, {
+  const uploadId = await fetchMutation(api.v1.files.saveStorageId, {
     feedbackId: feedbackId as Id<"feedback">,
     storageId,
   });

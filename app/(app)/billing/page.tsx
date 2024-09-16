@@ -27,9 +27,9 @@ const paidFeatures = [
 ];
 
 export default function Billing() {
-  const user = useQuery(api.user.viewer);
+  const user = useQuery(api.v1.user.viewer);
 
-  const proUser = useQuery(api.proUsers.checkIfUserIsPro, {
+  const proUser = useQuery(api.v1.proUsers.checkIfUserIsPro, {
     userId: user?._id as Id<"users">,
     email: user?.email as string,
   });

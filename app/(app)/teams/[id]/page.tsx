@@ -11,8 +11,17 @@ import Avatar02 from "@/public/images/avatar-02.webp";
 import Avatar03 from "@/public/images/avatar-03.webp";
 import Avatar04 from "@/public/images/avatar-04.webp";
 import Avatar05 from "@/public/images/avatar-05.webp";
+import demo from "@/public/images/thank-you.png";
 import { useMutation, usePaginatedQuery, useQuery } from "convex/react";
-import { House, Loader, Loader2, Pencil, Plus, Settings } from "lucide-react";
+import {
+  House,
+  Loader,
+  Loader2,
+  Pencil,
+  Plus,
+  Settings,
+  TriangleAlert,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
@@ -23,27 +32,27 @@ import TeamSettings from "@/components/team-settings";
 
 export default function Team({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const user = useQuery(api.user.viewer);
+  const user = useQuery(api.v1.user.viewer);
   const [loading, setLoading] = useState(false);
-  const team = useQuery(api.app.teams.fetchSingleTeam, {
-    id: params.id as any,
+  const team = useQuery(api.v1.teams.fetchSingleTeam, {
+    id: params.id as Id<"teams">,
   });
 
-  const teams = useQuery(api.app.teams.fetchTeams, {
+  const teams = useQuery(api.v1.teams.fetchTeams, {
     userId: user?._id as Id<"users">,
     user_email: user?.email as string,
   });
 
-  const leaveTeamMutation = useMutation(api.app.members.removeMemberFromTeam);
+  const leaveTeamMutation = useMutation(api.v1.members.removeMemberFromTeam);
 
-  const participants = useQuery(api.app.members.getMembersForTeam, {
-    teamId: team?._id as Id<"teams">,
+  const participants = useQuery(api.v1.members.getMembersForTeam, {
+    teamId: params.id as Id<"teams">,
   });
 
   console.log("Members for this team: ", participants);
 
-  const teamOrbits = useQuery(api.app.orbits.fetchOrbitsForTeam, {
-    teamId: team?._id as Id<"teams">,
+  const teamOrbits = useQuery(api.v1.orbits.fetchOrbitsForTeam, {
+    teamId: params.id as Id<"teams">,
   });
 
   const handleLeaveTeam = async (memberId: Id<"users">) => {
@@ -71,37 +80,52 @@ export default function Team({ params }: { params: { id: string } }) {
     }
   };
 
+  console.log("Current team");
+
   return (
     <div>
-      {team == undefined ? (
+      {team === undefined && (
         <div className="mx-auto flex min-h-[10vh] max-w-sm flex-col justify-center px-3 pl-40">
           <Loader className="h-7 w-7 animate-spin text-zinc-400" />
         </div>
-      ) : (
-        <header className="flex items-center justify-between border-b border-black/5 px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center">
-            <h1 className="text-lg font-semibold leading-7">
-              Team {team.name}
-            </h1>
-            {team.leader === user?._id && <TeamSettings team={team} />}
-          </div>
-          <div className="flex items-center">
-            <MembersSheet participants={participants} team={team} />
-            {user?._id === team.leader && (
-              <InviteDialog team={team} participants={participants} />
-            )}
-            {user?._id !== team.leader && (
-              <Button
-                variant={"secondary"}
-                disabled={loading}
-                onClick={() => handleLeaveTeam(user?._id as Id<"users">)}
-              >
-                {loading ? "Leaving team..." : "Leave team"}
-              </Button>
-            )}
-          </div>
-        </header>
       )}
+      <header className="flex items-center justify-between border-b border-black/5 px-4 py-4 sm:px-6 lg:px-8">
+        <div className="flex items-center">
+          <h1 className="text-lg font-semibold leading-7">Team {team?.name}</h1>
+          {/* {team?.leader === user?._id && <TeamSettings team={team} />} */}
+        </div>
+        {team === null && (
+          <div className="flex items-center">
+            <TriangleAlert className="mr-1 h-6 w-6 text-amber-500" />
+            <p className="text-amber-500">Team does not exist anymore!</p>
+          </div>
+        )}
+        <div className="flex items-center">
+          <MembersSheet participants={participants} team={team} />
+          {user?._id === team?.leader && (
+            <InviteDialog team={team} participants={participants} />
+          )}
+          {user?._id !== team?.leader && team !== null && (
+            <Button
+              variant={"secondary"}
+              disabled={loading}
+              onClick={() => handleLeaveTeam(user?._id as Id<"users">)}
+            >
+              {loading ? "Leaving team..." : "Leave team"}
+            </Button>
+          )}
+        </div>
+      </header>
+
+      {/* <div className="">
+        <Image
+          src={demo}
+          alt="Banner"
+          width={900}
+          height={200}
+          className="h-52 w-full object-cover"
+        />
+      </div> */}
 
       {/* Orbit list */}
       <OrbitList

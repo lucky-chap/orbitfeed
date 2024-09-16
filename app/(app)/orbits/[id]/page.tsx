@@ -29,6 +29,7 @@ import {
   Search,
   Settings,
   Trash,
+  TriangleAlert,
 } from "lucide-react";
 import ReactCountryFlag from "react-country-flag";
 import TimeAgo from "react-timeago";
@@ -53,12 +54,12 @@ import Stopped from "@/components/pills/stopped";
 import { SettingsMenu } from "@/components/settings";
 
 export default function SingleOrbit({ params }: { params: { id: string } }) {
-  const orbit = useQuery(api.app.orbits.fetchSingleOrbit, {
+  const orbit = useQuery(api.v1.orbits.fetchSingleOrbit, {
     id: params.id as any,
   });
 
   const { results, status, loadMore, isLoading } = usePaginatedQuery(
-    api.app.feedback.fetchFeedbackForOrbit,
+    api.v1.feedback.fetchFeedbackForOrbit,
     {
       orbitId: params.id as any,
     },
@@ -75,9 +76,7 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
             </Button>
           </Link>
 
-          {orbit === undefined ? (
-            <div className="flex w-full items-center justify-between"></div>
-          ) : (
+          {orbit !== undefined && orbit !== null && (
             <SettingsMenu
               orbitId={orbit?._id}
               name={orbit?.name as string}
@@ -86,15 +85,17 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
               teamId={orbit?.teamId as string}
             />
           )}
+
           {/* <OrbitSheet /> */}
         </div>
         {/* header */}
         <div className="flex w-full justify-between py-16">
-          {orbit === undefined ? (
+          {orbit === undefined && (
             <div className="flex w-full items-center justify-center">
               <Loader className="h-7 w-7 animate-spin text-zinc-400" />
             </div>
-          ) : (
+          )}
+          {orbit !== undefined && orbit !== null && (
             <div className="flex w-full flex-col items-start md:flex-row md:justify-between">
               <div className="mb-2 md:mb-0">
                 <div className="flex flex-wrap items-center">
@@ -127,6 +128,12 @@ export default function SingleOrbit({ params }: { params: { id: string } }) {
                 </div>
               </div>
               <CodeDialog orbitId={orbit?._id as string} />
+            </div>
+          )}
+          {orbit === null && (
+            <div className="flex w-full items-center justify-center">
+              <TriangleAlert className="mr-1 h-6 w-6 text-amber-500" />
+              <p className="text-amber-500">Orbit does not exist anymore!</p>
             </div>
           )}
         </div>

@@ -39,8 +39,8 @@ export function InviteDialog({
   team: ITeam | undefined | null;
   participants: IMember[] | undefined;
 }) {
-  const user = useQuery(api.user.viewer);
-  const createInviteMutation = useMutation(api.app.invites.createInvite);
+  const user = useQuery(api.v1.user.viewer);
+  const createInviteMutation = useMutation(api.v1.invites.createInvite);
   const [loading, setLoading] = useState(false);
   const [recipientEmail, setRecipientEmail] = useState("");
   const [recipientRole, setRecipientRole] = useState("");

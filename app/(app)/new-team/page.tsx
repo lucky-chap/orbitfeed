@@ -30,19 +30,19 @@ const FormSchema = z.object({
 });
 
 export default function CreateOrbit() {
-  const user = useQuery(api.user.viewer);
+  const user = useQuery(api.v1.user.viewer);
 
-  const proUser = useQuery(api.proUsers.checkIfUserIsPro, {
+  const proUser = useQuery(api.v1.proUsers.checkIfUserIsPro, {
     userId: user?._id as Id<"users">,
     email: user?.email as string,
   });
 
-  const teams = useQuery(api.app.teams.fetchTeams, {
+  const teams = useQuery(api.v1.teams.fetchTeams, {
     userId: user?._id as Id<"users">,
     user_email: user?.email as string,
   });
 
-  const createNewTeam = useMutation(api.app.teams.createTeam);
+  const createNewTeam = useMutation(api.v1.teams.createTeam);
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -90,17 +90,7 @@ export default function CreateOrbit() {
 
   return (
     <div className="">
-      {proUser !== undefined && proUser == null && (
-        <Link
-          href={"/billing"}
-          className="flex w-full items-center justify-center bg-indigo-400 px-1 py-1 shadow shadow-purple-50/25"
-        >
-          <p className="text-xs text-white">
-            Upgrade to pro to create a new team
-          </p>
-        </Link>
-      )}
-      {teams !== undefined && teams?.length >= 6 && (
+      {teams !== undefined && teams?.length >= 8 && (
         <Link
           href={"/billing"}
           className="flex w-full items-center justify-center bg-indigo-400 px-1 py-1 shadow shadow-purple-50/25"
@@ -172,7 +162,7 @@ export default function CreateOrbit() {
               </Link>
               <Button
                 onClick={() => form.handleSubmit(onSubmit)}
-                disabled={loading || (teams?.length ?? 0) >= 6}
+                disabled={loading || (teams?.length ?? 0) >= 8}
                 className="w-full bg-blue-500 hover:bg-blue-600"
               >
                 {loading ? (

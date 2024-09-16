@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 
@@ -7,8 +6,6 @@ import "./globals.css";
 
 import { cn } from "@/lib/utils";
 import { Provider } from "@/components/provider";
-
-// const inter = Inter({ subsets: ["latin"] });
 
 const inter = localFont({
   variable: "--font-sans",

@@ -30,7 +30,9 @@ const schema = defineSchema({
     image: v.string(),
     image_storage_id: v.optional(v.id("_storage")),
     status: v.string(), // resolved or pending
-  }).index("orbit_id", ["orbitId"]),
+  })
+    .index("orbit_id", ["orbitId"])
+    .index("status", ["status"]),
   teams: defineTable({
     leader: v.id("users"),
     name: v.string(),

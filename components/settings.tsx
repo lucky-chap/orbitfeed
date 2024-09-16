@@ -91,7 +91,7 @@ export function SettingsMenu({
 }) {
   const [open, setOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const deleteOrbitMutation = useMutation(api.app.orbits.deleteOrbit);
+  const deleteOrbitMutation = useMutation(api.v1.orbits.deleteOrbit);
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const router = useRouter();
@@ -220,15 +220,18 @@ function ProfileForm({
   status: string;
   teamId?: string | undefined;
 }) {
-  const updateOrbitMutation = useMutation(api.app.orbits.updateOrbit);
+  const updateOrbitMutation = useMutation(api.v1.orbits.updateOrbit);
   const [loading, setLoading] = useState(false);
 
-  const user = useQuery(api.user.viewer);
-  const proUser = useQuery(api.proUsers.checkIfUserIsPro, {
+  const user = useQuery(api.v1.user.viewer);
+  const proUser = useQuery(api.v1.proUsers.checkIfUserIsPro, {
     userId: user?._id as Id<"users">,
     email: user?.email as string,
   });
-  const teams = useQuery(api.app.teams.fetchTeams, {
+  const currentOrbitTeam = useQuery(api.v1.teams.fetchSingleTeam, {
+    id: teamId as Id<"teams">,
+  });
+  const teams = useQuery(api.v1.teams.fetchTeams, {
     userId: user?._id as Id<"users">,
     user_email: user?.email as string,
   });
@@ -241,7 +244,7 @@ function ProfileForm({
       name: name,
       website: website,
       status: status,
-      team_id: undefined,
+      team_id: teamId,
     },
   });
 
@@ -429,6 +432,18 @@ function ProfileForm({
                 </FormItem>
               )}
             />
+            {currentOrbitTeam === undefined && (
+              <Loader className="animate-spin text-zinc-400 duration-700" />
+            )}
+            {currentOrbitTeam !== undefined && currentOrbitTeam !== null && (
+              <div className="grid gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-zinc-500">
+                    Orbit is in team {currentOrbitTeam.name}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

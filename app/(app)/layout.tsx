@@ -28,7 +28,9 @@ import { Loader } from "lucide-react";
 
 import { ITeam } from "@/lib/types";
 import { classNames } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import Logo from "@/components/logo";
+import ProfileDropdown from "@/components/profile-dropdown";
 
 const navigation = [
   { name: "Orbits", href: "/orbits", icon: FolderIcon, pathname: "orbits" },
@@ -50,28 +52,34 @@ const navigation = [
     icon: CurrencyDollarIcon,
     pathname: "billing",
   },
-  {
-    name: "Domains",
-    href: "/domains",
-    icon: GlobeAltIcon,
-    pathname: "domains",
-  },
-  {
-    name: "Settings",
-    href: "/settings",
-    icon: Cog6ToothIcon,
-    pathname: "settings",
-  },
+  // {
+  //   name: "Domains",
+  //   href: "/domains",
+  //   icon: GlobeAltIcon,
+  //   pathname: "domains",
+  // },
+  // {
+  //   name: "Settings",
+  //   href: "/settings",
+  //   icon: Cog6ToothIcon,
+  //   pathname: "settings",
+  // },
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const user = useQuery(api.user.viewer);
-  const teams = useQuery(api.app.teams.fetchTeams, {
+  const user = useQuery(api.v1.user.viewer);
+
+  const proUser = useQuery(api.v1.proUsers.checkIfUserIsPro, {
+    userId: user?._id as Id<"users">,
+    email: user?.email as string,
+  });
+
+  const teams = useQuery(api.v1.teams.fetchTeams, {
     userId: user?._id as Id<"users">,
     user_email: user?.email as string,
   });
 
-  const teamsUserBelongsTo = useQuery(api.app.members.getTeamsUserBelongsTo, {
+  const teamsUserBelongsTo = useQuery(api.v1.members.getTeamsUserBelongsTo, {
     memberId: user?._id as Id<"users">,
   });
 
@@ -124,12 +132,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </TransitionChild>
               {/* Sidebar component, swap this element with another sidebar if you like */}
               <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-50 px-6 ring-1 ring-black/10">
-                <Link
-                  href="/orbits"
-                  className="flex h-16 shrink-0 items-center"
-                >
-                  <Logo />
-                </Link>
+                <div className="flex items-center justify-between">
+                  <Link
+                    href="/orbits"
+                    className="flex h-16 shrink-0 items-center"
+                  >
+                    <Logo />
+                  </Link>
+                  <ProfileDropdown />
+                </div>
                 <nav className="flex flex-1 flex-col">
                   <ul role="list" className="flex flex-1 flex-col gap-y-7">
                     <li>
@@ -205,32 +216,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                             ))}
                           </ul>
                         </li>
-                        <li
-                          className="-mx-6 mt-auto cursor-pointer"
-                          onClick={() => {
-                            void signOut();
-                            router.push("/");
-                          }}
-                          onMouseEnter={() => setHovered(true)}
-                          onMouseLeave={() => setHovered(false)}
-                        >
-                          <span className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-800 hover:bg-gray-100">
-                            <Image
-                              src={
-                                user?.image ??
-                                "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                              }
-                              alt="profile"
-                              width={24}
-                              height={24}
-                              className="h-6 w-6 rounded-full bg-gray-50"
-                            />
-                            <span className="sr-only"> Your profile</span>
-                            <span aria-hidden="true">
-                              {hovered ? "Logout" : user?.name}
-                            </span>
-                          </span>
-                        </li>
+                        {proUser === null && (
+                          <Link
+                            href={"/billing"}
+                            className="mb-4 mt-auto w-full"
+                          >
+                            <Button variant={"outline"} className="w-full">
+                              Upgrade to PRO
+                            </Button>
+                          </Link>
+                        )}
                       </>
                     )}
                   </ul>
@@ -242,11 +237,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
         {/* Static sidebar for desktop */}
         <div className="hidden xl:fixed xl:inset-y-0 xl:z-50 xl:flex xl:w-72 xl:flex-col">
-          {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-50 px-6 ring-1 ring-black/5">
-            <Link href="/orbits" className="flex h-16 shrink-0 items-center">
-              <Logo />
-            </Link>
+            <div className="flex items-center justify-between">
+              <Link href="/orbits" className="flex h-16 shrink-0 items-center">
+                <Logo />
+              </Link>
+              <ProfileDropdown />
+            </div>
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
                 <li>
@@ -327,32 +324,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                         ))}
                       </ul>
                     </li>
-                    <li
-                      className="-mx-6 mt-auto cursor-pointer"
-                      onClick={() => {
-                        void signOut();
-                        router.push("/");
-                      }}
-                      onMouseEnter={() => setHovered(true)}
-                      onMouseLeave={() => setHovered(false)}
-                    >
-                      <span className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-800 hover:bg-gray-100">
-                        <Image
-                          src={
-                            user?.image ??
-                            "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                          }
-                          alt="profile"
-                          width={24}
-                          height={24}
-                          className="h-6 w-6 rounded-full bg-gray-50"
-                        />
-                        <span className="sr-only"> Your profile</span>
-                        <span aria-hidden="true">
-                          {hovered ? "Logout" : user?.name}
-                        </span>
-                      </span>
-                    </li>
+                    {proUser === null && (
+                      <Link href={"/billing"} className="mb-4 mt-auto w-full">
+                        <Button className="w-full bg-blue-500 shadow-xl shadow-blue-200 hover:bg-blue-600">
+                          Upgrade to PRO
+                        </Button>
+                      </Link>
+                    )}
                   </>
                 )}
               </ul>

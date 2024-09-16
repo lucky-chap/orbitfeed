@@ -32,9 +32,9 @@ const FormSchema = z.object({
 });
 
 export default function CreateOrbit() {
-  const user = useQuery(api.user.viewer);
+  const user = useQuery(api.v1.user.viewer);
 
-  const createNewOrbit = useMutation(api.app.orbits.createOrbit);
+  const createNewOrbit = useMutation(api.v1.orbits.createOrbit);
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({

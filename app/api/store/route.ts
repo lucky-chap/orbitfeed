@@ -7,7 +7,7 @@ import { fetchMutation, fetchQuery } from "convex/nextjs";
 export async function POST(request: NextRequest) {
   const data = await request.json();
   const { feedbackId, image } = data;
-  const result = await fetchMutation(api.app.feedback.updateFeedbackImage, {
+  const result = await fetchMutation(api.v1.feedback.updateFeedbackImage, {
     feedbackId: feedbackId as Id<"feedback">,
     image: image as string,
   });

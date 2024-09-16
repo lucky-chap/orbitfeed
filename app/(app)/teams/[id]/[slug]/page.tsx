@@ -6,35 +6,10 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useAuthActions } from "@convex-dev/auth/react";
-import {
-  Dialog,
-  DialogBackdrop,
-  DialogPanel,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
-  TransitionChild,
-} from "@headlessui/react";
-import { Bars3Icon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import {
-  ChartBarSquareIcon,
-  Cog6ToothIcon,
-  CurrencyDollarIcon,
-  FolderIcon,
-  GlobeAltIcon,
-  PlusCircleIcon,
-  ServerIcon,
-  SignalIcon,
-  UsersIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
 import { useMutation, usePaginatedQuery, useQuery } from "convex/react";
-import { ChevronRightIcon, Loader } from "lucide-react";
+import { Loader, TriangleAlert, Wand, WandSparkles } from "lucide-react";
 import TimeAgo from "react-timeago";
 
-import { classNames } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
@@ -46,23 +21,23 @@ export default function TeamOrbits({ params }: { params: { slug: string } }) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const [loading, setLoading] = useState(false);
-  const user = useQuery(api.user.viewer);
+  const user = useQuery(api.v1.user.viewer);
 
   const pathname = usePathname();
 
   // first path is the teamId
   const teamId = pathname.split("/")[2];
 
-  const member = useQuery(api.app.members.getSingleMemberForTeam, {
+  const member = useQuery(api.v1.members.getSingleMemberForTeam, {
     memberId: user?._id as Id<"users">,
     teamId: teamId as Id<"teams">,
   });
-  const team = useQuery(api.app.teams.fetchSingleTeam, {
+  const team = useQuery(api.v1.teams.fetchSingleTeam, {
     id: teamId as Id<"teams">,
   });
   const orbitId = params.slug;
 
-  const orbit = useQuery(api.app.orbits.fetchSingleOrbit, {
+  const orbit = useQuery(api.v1.orbits.fetchSingleOrbit, {
     id: orbitId as Id<"orbits">,
   });
 
@@ -72,7 +47,7 @@ export default function TeamOrbits({ params }: { params: { slug: string } }) {
     loadMore: loadMoreActivity,
     isLoading: isLoadingActivity,
   } = usePaginatedQuery(
-    api.app.activities.getActivitiesForOrbit,
+    api.v1.activities.getActivitiesForOrbit,
     {
       orbitId: orbitId as Id<"orbits">,
     },
@@ -80,14 +55,14 @@ export default function TeamOrbits({ params }: { params: { slug: string } }) {
   );
 
   const { results, status, loadMore, isLoading } = usePaginatedQuery(
-    api.app.feedback.fetchFeedbackForOrbit,
+    api.v1.feedback.fetchFeedbackForOrbit,
     {
       orbitId: orbitId as Id<"orbits">,
     },
     { initialNumItems: 10 }
   );
 
-  const updateOrbitMutation = useMutation(api.app.orbits.updateOrbit);
+  const updateOrbitMutation = useMutation(api.v1.orbits.updateOrbit);
 
   const handleRemoveOrbitFromTeam = async () => {
     const result = await updateOrbitMutation({
@@ -107,7 +82,7 @@ export default function TeamOrbits({ params }: { params: { slug: string } }) {
     }
   };
 
-  console.log("Activity items: ", activityResults);
+  console.log("Feedback for this orbit: ", orbit);
 
   return (
     <>
@@ -116,19 +91,38 @@ export default function TeamOrbits({ params }: { params: { slug: string } }) {
           <main className="lg:pr-96">
             <header className="flex flex-col flex-wrap justify-between border-b border-black/5 px-4 py-4 sm:flex-row sm:items-center sm:px-6 sm:py-6 lg:pr-8">
               <h1 className="text-base font-semibold leading-7 text-gray-700">
-                {orbit !== undefined && "Feedback for " + orbit?.name}
+                {orbit !== undefined &&
+                  orbit !== null &&
+                  "Feedback for " + orbit?.name}
                 {/* Feedback */}
               </h1>
+              {orbit === null && (
+                <div className="flex items-center">
+                  <TriangleAlert className="mr-1 h-6 w-6 text-amber-500" />
+                  <p className="text-amber-500">
+                    Orbit does not exist anymore!
+                  </p>
+                </div>
+              )}
               <div className="my-2 flex items-center justify-between sm:my-0">
-                {user?._id === orbit?.userId && (
-                  <Button
-                    variant={"secondary"}
-                    className="text-red-500 hover:text-red-500"
-                    disabled={loading}
-                    onClick={() => handleRemoveOrbitFromTeam()}
-                  >
-                    {loading ? "Removing orbit..." : "Remove orbit"}
-                  </Button>
+                {orbit !== undefined && user?._id === orbit?.userId && (
+                  <div className="flex items-center">
+                    {/* <Button
+                      className="mt-2 w-full bg-blue-500 hover:bg-blue-600 sm:mr-2 sm:mt-0"
+                      disabled={loading}
+                    >
+                      <WandSparkles size={16} className="mr-1" />
+                      {loading ? "Generating summary..." : "Generate summary"}
+                    </Button> */}
+                    <Button
+                      variant={"secondary"}
+                      className="text-red-500 hover:text-red-500"
+                      disabled={loading}
+                      onClick={() => handleRemoveOrbitFromTeam()}
+                    >
+                      {loading ? "Removing orbit..." : "Remove orbit"}
+                    </Button>
+                  </div>
                 )}
               </div>
               {!isDesktop && (

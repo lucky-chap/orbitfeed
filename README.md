@@ -35,9 +35,8 @@ In today's fast-paced, feedback-driven world, collecting and acting on user inpu
 ## Features ✨
 
 - **Real-time Feedback Collection:** Collect feedback from multiple users in real-time and see responses as they come in. This was made possible by Convex's robust realtime architectrue
-- **Categorization and Tagging:** Categorize feedback by type, making it easier to organize and analyze.
-- **Sentiment Analysis:** Leverage AI to assess the sentiment of the feedback, providing insights into user satisfaction and concerns
-- **Feedback Summarization:** Generate concise summaries of user feedback, highlighting the key points for quick decision-making
+- **Categorization:** Categorize feedback by status (pending or resolved), making it easier to organize and analyze.
+- **AI Feedback Summarization:** Generate concise summaries of user feedback, providing insights into user satisfaction and concerns & highlighting the key points for quick decision-making
 - **User-friendly Interface:** Built with Tailwind UI and Shadcn, the tool offers a clean and intuitive user interface that enhances the user experience.
 - **Collaborative Workflows:** Share feedback with your team and track progress in a collaborative environment.
 - **Email notifications:** Stay updated on new feedback and important actions

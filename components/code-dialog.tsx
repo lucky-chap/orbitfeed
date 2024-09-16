@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function CodeDialog({ orbitId }: { orbitId: string }) {
-  const user = useQuery(api.user.viewer);
+  const user = useQuery(api.v1.user.viewer);
 
   const [npmCopied, setNPMCopied] = useState(false);
   const [importCopied, setImportCopied] = useState(false);

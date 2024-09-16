@@ -210,33 +210,6 @@ export const updateFeedbackImage = mutation({
   },
 });
 
-// TODO: make this an internal mutation to be used
-// by other mutations
-// export const deleteFeedback = mutation({
-//   args: {
-//     feedbackId: v.id("feedback"),
-//     storageId: v.optional(v.id("_storage")),
-//   },
-//   handler: async (ctx, args) => {
-//     await checkUserId(ctx);
-//     const deletedFeedback = await ctx.db.delete(args.feedbackId);
-//     if (deletedFeedback !== null) {
-//       if (args.storageId !== undefined) {
-//         const deleted = await ctx.storage.delete(args.storageId);
-//         if (deleted !== null) {
-//           return "deleted";
-//         } else {
-//           return null;
-//         }
-//       }
-
-//       return "deleted";
-//     } else {
-//       return null;
-//     }
-//   },
-// });
-
 export const deleteFeedback = internalMutation({
   args: {
     feedbackId: v.id("feedback"),
@@ -259,7 +232,7 @@ export const deleteFeedbackAndFile = action({
   },
   handler: async (ctx, args) => {
     const deleteFeedbackResult = await ctx.runMutation(
-      internal.app.feedback.deleteFeedback,
+      internal.feedback.deleteFeedback,
       {
         feedbackId: args.feedbackId,
       }
@@ -267,7 +240,7 @@ export const deleteFeedbackAndFile = action({
     if (deleteFeedbackResult !== null) {
       if (args.storageId !== undefined) {
         const deletedFileResult = await ctx.runMutation(
-          internal.app.files.deleteFile,
+          internal.files.deleteFile,
           {
             storageId: args.storageId,
           }

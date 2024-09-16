@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   const data = await request.json();
   const { feedbackId } = data;
 
-  const url = await fetchMutation(api.app.files.serveFile, {
+  const url = await fetchMutation(api.v1.files.serveFile, {
     feedbackId: feedbackId as Id<"feedback">,
   });
 

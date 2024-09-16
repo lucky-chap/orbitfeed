@@ -40,14 +40,10 @@ export default function MembersSheet({
   participants: IMember[] | null | undefined;
   team: ITeam | null | undefined;
 }) {
-  const user = useQuery(api.user.viewer);
+  const user = useQuery(api.v1.user.viewer);
   const [loading, setLoading] = useState(false);
-  const updateMemberRoleMutation = useMutation(
-    api.app.members.updateMemberRole
-  );
-  const removeMemberMutation = useMutation(
-    api.app.members.removeMemberFromTeam
-  );
+  const updateMemberRoleMutation = useMutation(api.v1.members.updateMemberRole);
+  const removeMemberMutation = useMutation(api.v1.members.removeMemberFromTeam);
 
   const handleUpdateMemberRole = async (
     memberId: Id<"users">,
@@ -128,7 +124,7 @@ export default function MembersSheet({
           List of members
         </DialogDescription>
         {participants?.map((participant) => (
-          <>
+          <div key={participant._id}>
             <div className="my-3" key={participant._id}>
               <div className="flex flex-wrap items-center">
                 <Image
@@ -172,7 +168,7 @@ export default function MembersSheet({
                 </SelectContent>
               </Select>
             </div>
-          </>
+          </div>
         ))}
         <SheetFooter className="mt-20">
           <SheetClose asChild>

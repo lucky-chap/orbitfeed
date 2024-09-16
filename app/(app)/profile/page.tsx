@@ -15,8 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export default function Profile() {
-  const user = useQuery(api.user.viewer);
-  const account = useQuery(api.user.account, {
+  const user = useQuery(api.v1.user.viewer);
+  const account = useQuery(api.v1.user.account, {
     userId: user?._id as Id<"users">,
   });
 

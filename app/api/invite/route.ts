@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
 
   const res = await resend.emails.send({
     // todo: change the "from" to custom domain
-    from: "Orbitfeed <noreply@quirk.lol>",
+    from: process.env.EMAIL_FROM as string,
     to: recipientEmail,
     subject: "Team Invite",
     react: InviteUserToTeam({
