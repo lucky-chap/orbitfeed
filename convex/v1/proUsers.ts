@@ -28,8 +28,6 @@ export const upgradeUserToPro = mutation({
     email: v.string(),
   },
   handler: async (ctx, { userId, email }) => {
-    await checkUserId(ctx);
-
     const proUserId = await ctx.db.insert("proUsers", {
       userId,
       email,

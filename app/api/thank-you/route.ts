@@ -15,5 +15,7 @@ export async function POST(req: NextRequest) {
     react: ThankYouEmail({}),
   });
 
+  console.log("Email response on api route: ", res);
+
   return NextResponse.json({ res }, { status: 200 });
 }

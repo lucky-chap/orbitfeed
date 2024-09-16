@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import ThankYouEmail from "@/emails/thank-you";
 import { fetchMutation, fetchQuery } from "convex/nextjs";
-import { Resend } from "resend";
 import Stripe from "stripe";
 
-// import { renderSync } from "@react-email/render";
-
-const resend = new Resend(process.env.RESEND_API_KEY as string);
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL as string;
 
 const stripe = new Stripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string,
@@ -91,14 +87,22 @@ export async function POST(request: NextRequest) {
         if (update.success) {
           userUpdated = true;
           // send email to user (you can also use /api/thank-you)
-          const res = await resend.emails.send({
-            from: process.env.EMAIL_FROM as string,
-            to: metadata.email,
-            subject: "Thank You!",
-            react: ThankYouEmail({}),
+          // const res = await resend.emails.send({
+          //   from: process.env.EMAIL_FROM as string,
+          //   to: metadata.email,
+          //   subject: "Thank You!",
+          //   react: ThankYouEmail({}),
+          // });
+          // emailRes = res;
+          const result = await fetch(`${APP_URL}/api/thank-you`, {
+            method: "POST",
+            body: JSON.stringify({ email: metadata.email }),
           });
-          emailRes = res;
-          if (res.data?.id !== undefined) {
+          const emailResponse = await result.json();
+          emailRes = emailResponse;
+          // console.log("Res: ", res);
+          console.log("Email response: ", emailResponse);
+          if (emailResponse.data?.id !== undefined) {
             emailSent = true;
           } else {
             emailSent = false;
@@ -119,10 +123,10 @@ export async function POST(request: NextRequest) {
         email: {
           status: emailSent ? 200 : 500,
           success: emailSent,
+          res: emailRes,
           message: emailSent
             ? "Email sent to user"
             : "Email could not be sent to user",
-          res: emailRes,
         },
       });
 
