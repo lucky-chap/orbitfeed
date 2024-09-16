@@ -232,7 +232,7 @@ export const deleteFeedbackAndFile = action({
   },
   handler: async (ctx, args) => {
     const deleteFeedbackResult = await ctx.runMutation(
-      internal.feedback.deleteFeedback,
+      internal.v1.feedback.deleteFeedback,
       {
         feedbackId: args.feedbackId,
       }
@@ -240,7 +240,7 @@ export const deleteFeedbackAndFile = action({
     if (deleteFeedbackResult !== null) {
       if (args.storageId !== undefined) {
         const deletedFileResult = await ctx.runMutation(
-          internal.files.deleteFile,
+          internal.v1.files.deleteFile,
           {
             storageId: args.storageId,
           }
