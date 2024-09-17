@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="public/images/landing.png" alt="Next.js and TypeScript">
+  <img src="public/images/banner.png" alt="Next.js and TypeScript">
 </p>
 
 <p align="left">
@@ -34,15 +34,15 @@ In today's fast-paced, feedback-driven world, collecting and acting on user inpu
 - **[Prettier](https://prettier.io/)**
 - **[Jest](https://jestjs.io/)**
 
-<!-- ## Features ✨
+## Features ✨
 
 - **Real-time Feedback Collection:** Collect feedback from multiple users in real-time and see responses as they come in. This was made possible by Convex's robust realtime architectrue
-- **Statuses:** Chnage status of feedback (pending or resolved)
-- **AI Feedback Summarization:** Generate concise summaries of user feedback, providing insights into user satisfaction and concerns & highlighting the key points for quick decision-making
+- **Statuses:** Change status of feedback (pending or resolved)
+- **AI Feedback Analysis:** Generate concise summaries of user feedback, providing insights into user satisfaction and concerns & highlighting the key points for quick decision-making
 - **User-friendly Interface:** Built with Tailwind UI and Shadcn, the tool offers a clean and intuitive user interface that enhances the user experience.
-- **Collaborative Workflows:** Share feedback with your team and track progress in a collaborative environment.
-- **Email notifications:** Stay updated on new feedback and important actions
-- **Secure Data Management:** All feedback data is securely stored and managed, ensuring privacy and compliance with data protection regulations. -->
+- **Collaborative Workflows:** Share projects (orbits) with your team to take action on feedback.
+- **Emails:** Send and receive emails uisng React Email & Resend
+- **Secure Data Management:** All feedback data is securely stored and managed, ensuring privacy and compliance with data protection regulations.
 
 ## How to use 🖊️
 
@@ -52,6 +52,10 @@ In today's fast-paced, feedback-driven world, collecting and acting on user inpu
 - On the orbit page, click on the `code` button to configure your orbit
 - Follow the instructions from the above step to start collecting feedback on your website
 - Good luck!
+
+## Widget ⌨️
+
+The code for the widget can be found [here](https://github.com/lucky-chap/orbitfeed-widget)
 
 ## Local development 🧑‍💻
 
