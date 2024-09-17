@@ -161,6 +161,43 @@ export default function CodeDialog({ orbitId }: { orbitId: string }) {
               </Button>
             </div>
             <div className="flex items-end justify-between">
+              <Card className="mt-3 w-full border-none shadow-none">
+                <CardHeader className="p-0">
+                  <h2 className="text-sm font-medium">
+                    Import CSS styling at the top of your page
+                  </h2>
+                </CardHeader>
+                <CardContent className="mt-3 flex w-full items-center rounded-md bg-zinc-100 p-0 font-medium">
+                  <pre className="w-full rounded-md p-2 text-sm">
+                    <code className="flex items-center">
+                      <p className="text-purple-600">import </p>{" "}
+                      <p className="text-green-600">
+                        "orbitfeed/dist/index.css"
+                      </p>{" "}
+                    </code>
+                  </pre>
+                </CardContent>
+              </Card>
+              <Button
+                variant={"secondary"}
+                size="sm"
+                className="mb-1 ml-1 px-3"
+                onClick={handleImportCopy}
+              >
+                <span className="sr-only">Copy</span>
+                {importCopied ? (
+                  <span className="sr-only">Copied</span>
+                ) : (
+                  <span className="sr-only">Copy</span>
+                )}
+                {importCopied ? (
+                  <ClipboardCheck className="ml-1 h-4 w-4" />
+                ) : (
+                  <Copy className="ml-1 h-4 w-4" />
+                )}
+              </Button>
+            </div>
+            <div className="flex items-end justify-between">
               <Card className="mt-3 w-full rounded-md border-none shadow-none">
                 <CardHeader className="p-0">
                   <h2 className="text-sm font-medium">Use it like this</h2>
