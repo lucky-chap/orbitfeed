@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
           emailRes = emailResponse;
           // console.log("Res: ", res);
           console.log("Email response: ", emailResponse);
-          if (emailResponse.data?.id !== undefined) {
+          if (emailResponse.res.data?.id !== undefined) {
             emailSent = true;
           } else {
             emailSent = false;

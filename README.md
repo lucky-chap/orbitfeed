@@ -16,6 +16,8 @@
 
 Orbitfeed is a powerful, user-friendly platform designed to help teams gather, manage, and analyze feedback efficiently. Whether you're looking to improve a product, service, or process, this tool enables you to collect feedback from multiple users, categorize it, and derive actionable insights.
 
+**Read more [here]()**
+
 ## Inspiration 🔮
 
 In today's fast-paced, feedback-driven world, collecting and acting on user input is crucial for continuous improvement. However, existing tools often lack the collaboration features necessary to make feedback management a seamless experience for teams. Our inspiration was to create a tool that not only simplifies feedback collection but also fosters collaboration among team members, making the process more efficient and productive.
@@ -32,15 +34,15 @@ In today's fast-paced, feedback-driven world, collecting and acting on user inpu
 - **[Prettier](https://prettier.io/)**
 - **[Jest](https://jestjs.io/)**
 
-## Features ✨
+<!-- ## Features ✨
 
 - **Real-time Feedback Collection:** Collect feedback from multiple users in real-time and see responses as they come in. This was made possible by Convex's robust realtime architectrue
-- **Categorization:** Categorize feedback by status (pending or resolved), making it easier to organize and analyze.
+- **Statuses:** Chnage status of feedback (pending or resolved)
 - **AI Feedback Summarization:** Generate concise summaries of user feedback, providing insights into user satisfaction and concerns & highlighting the key points for quick decision-making
 - **User-friendly Interface:** Built with Tailwind UI and Shadcn, the tool offers a clean and intuitive user interface that enhances the user experience.
 - **Collaborative Workflows:** Share feedback with your team and track progress in a collaborative environment.
 - **Email notifications:** Stay updated on new feedback and important actions
-- **Secure Data Management:** All feedback data is securely stored and managed, ensuring privacy and compliance with data protection regulations.
+- **Secure Data Management:** All feedback data is securely stored and managed, ensuring privacy and compliance with data protection regulations. -->
 
 ## How to use 🖊️
 
@@ -89,6 +91,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🔗 Useful links
 
 - https://labs.convex.dev/auth/setup
+- https://labs.convex.dev/auth/production
 - https://labs.convex.dev/auth/config/email
 - https://authjs.dev/getting-started/providers/resend
 - https://labs.convex.dev/auth/authz/nextjs#preloading-and-loading-data

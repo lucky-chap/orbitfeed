@@ -133,7 +133,7 @@ export default function TeamOrbits({ params }: { params: { slug: string } }) {
             </header>
 
             {/* Feedback list */}
-            <div className="mx-auto max-w-6xl px-4">
+            <div className="mx-auto mt-4 max-w-6xl px-4">
               <FeedbackList
                 results={results}
                 orbitId={orbitId as Id<"orbits">}

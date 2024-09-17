@@ -11,6 +11,7 @@ const schema = defineSchema({
     website: v.string(),
     status: v.string(),
     teamId: v.optional(v.id("teams")),
+    lastAnalysed: v.optional(v.number()),
   })
     // https://docs.convex.dev/database/indexes/indexes-and-query-perf
     .index("creator", ["userEmail"])

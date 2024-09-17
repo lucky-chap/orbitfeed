@@ -85,37 +85,41 @@ export default function Team({ params }: { params: { id: string } }) {
   return (
     <div>
       {team === undefined && (
-        <div className="mx-auto flex min-h-[10vh] max-w-sm flex-col justify-center px-3 pl-40">
+        <div className="mx-auto mt-5 flex max-w-sm flex-col justify-center px-3 pl-40">
           <Loader className="h-7 w-7 animate-spin text-zinc-400" />
         </div>
       )}
-      <header className="flex items-center justify-between border-b border-black/5 px-4 py-4 sm:px-6 lg:px-8">
-        <div className="flex items-center">
-          <h1 className="text-lg font-semibold leading-7">Team {team?.name}</h1>
-          {/* {team?.leader === user?._id && <TeamSettings team={team} />} */}
-        </div>
-        {team === null && (
+      {team !== undefined && (
+        <header className="flex items-center justify-between border-b border-black/5 px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center">
-            <TriangleAlert className="mr-1 h-6 w-6 text-amber-500" />
-            <p className="text-amber-500">Team does not exist anymore!</p>
+            <h1 className="text-lg font-semibold leading-7">
+              Team {team?.name}
+            </h1>
+            {/* {team?.leader === user?._id && <TeamSettings team={team} />} */}
           </div>
-        )}
-        <div className="flex items-center">
-          <MembersSheet participants={participants} team={team} />
-          {user?._id === team?.leader && (
-            <InviteDialog team={team} participants={participants} />
+          {team === null && (
+            <div className="flex items-center">
+              <TriangleAlert className="mr-1 h-6 w-6 text-amber-500" />
+              <p className="text-amber-500">Team does not exist anymore!</p>
+            </div>
           )}
-          {user?._id !== team?.leader && team !== null && (
-            <Button
-              variant={"secondary"}
-              disabled={loading}
-              onClick={() => handleLeaveTeam(user?._id as Id<"users">)}
-            >
-              {loading ? "Leaving team..." : "Leave team"}
-            </Button>
-          )}
-        </div>
-      </header>
+          <div className="flex items-center">
+            <MembersSheet participants={participants} team={team} />
+            {user?._id === team?.leader && (
+              <InviteDialog team={team} participants={participants} />
+            )}
+            {user?._id !== team?.leader && team !== null && (
+              <Button
+                variant={"secondary"}
+                disabled={loading}
+                onClick={() => handleLeaveTeam(user?._id as Id<"users">)}
+              >
+                {loading ? "Leaving team..." : "Leave team"}
+              </Button>
+            )}
+          </div>
+        </header>
+      )}
 
       {/* <div className="">
         <Image
@@ -138,7 +142,14 @@ export default function Team({ params }: { params: { id: string } }) {
       {teamOrbits !== undefined && teamOrbits?.length === 0 && (
         <div className="mx-auto flex min-h-[70vh] max-w-2xl flex-col justify-center px-3 text-center">
           <h2 className="text-lg font-medium">No orbits for this team</h2>
-          <p className="text-zinc-500">Try moving an orbit to team</p>
+          {team?.leader === user?._id && (
+            <p className="text-zinc-500">Try moving an orbit to team</p>
+          )}
+          {team?.leader !== user?._id && (
+            <p className="text-zinc-500">
+              Orbits appear here when team leader moves them here
+            </p>
+          )}
         </div>
       )}
       {teamOrbits == undefined && (

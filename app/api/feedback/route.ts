@@ -15,12 +15,6 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  // const user = await fetchQuery(api.v1.user.viewer);
-  // NB: For some weird reason, user appears to be null,
-  // so i cannot retreive the id and the email.
-  // A workaround is to have the client send it from its side,
-  // making things easier over here: TODO: fix this weird error?
-
   const data = await request.json();
   const {
     userId,
@@ -48,7 +42,7 @@ export async function POST(request: NextRequest) {
 
   if (orbit == null) {
     return Response.json({
-      status: "error",
+      status: "no_such_orbit",
       message: "Orbit does not exist",
     });
   }

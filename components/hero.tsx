@@ -7,7 +7,7 @@ import Avatar02 from "@/public/images/avatar-02.webp";
 import Avatar03 from "@/public/images/avatar-03.webp";
 import Avatar04 from "@/public/images/avatar-04.webp";
 import Avatar05 from "@/public/images/avatar-05.webp";
-import home from "@/public/images/home.png";
+import home from "@/public/images/landing.png";
 import AOS from "aos";
 
 import "aos/dist/aos.css";

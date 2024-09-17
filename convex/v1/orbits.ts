@@ -156,3 +156,17 @@ export const deleteOrbit = mutation({
     }
   },
 });
+
+export const createAnalysisDate = mutation({
+  args: {
+    orbitId: v.id("orbits"),
+    date: v.number(),
+  },
+  handler: async (ctx, { orbitId, date }) => {
+    await checkUserId(ctx);
+    await ctx.db.patch(orbitId, {
+      lastAnalysed: date,
+    });
+    return "updated";
+  },
+});
