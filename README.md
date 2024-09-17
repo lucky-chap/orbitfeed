@@ -16,7 +16,7 @@
 
 Orbitfeed is a powerful, user-friendly platform designed to help teams gather, manage, and analyze feedback efficiently. Whether you're looking to improve a product, service, or process, this tool enables you to collect feedback from multiple users, categorize it, and derive actionable insights.
 
-**Read more [here]()**
+**Read more [here](https://devpost.com/software/orbitfeed-ioy981)**
 
 ## Inspiration 🔮
 
