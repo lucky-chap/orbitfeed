@@ -34,6 +34,10 @@ In today's fast-paced, feedback-driven world, collecting and acting on user inpu
 - **[Prettier](https://prettier.io/)**
 - **[Jest](https://jestjs.io/)**
 
+## Widget ⌨️
+
+The code for the widget can be found [here](https://github.com/lucky-chap/orbitfeed-widget)
+
 ## Features ✨
 
 - **Real-time Feedback Collection:** Collect feedback from multiple users in real-time and see responses as they come in. This was made possible by Convex's robust realtime architectrue
@@ -46,16 +50,12 @@ In today's fast-paced, feedback-driven world, collecting and acting on user inpu
 
 ## How to use 🖊️
 
-- Make sure you are [logged in](https://orbitfeed.lol/login).
-- After login, you will be redirected to the dashboard where you can [create](https://orbitfeed.lol/create) orbits (feedback projects)
-- After creating an orbit, you will be redirected to [/orbits](https://orbitfeed.lol/create) route where you can see your newly created orbit. Choose any one to get started
+- Make sure you are [logged in](https://orbitfeed.vercel.app/login).
+- After login, you will be redirected to the dashboard where you can [create](https://orbitfeed.vercel.app/create) orbits (feedback projects)
+- After creating an orbit, you will be redirected to [/orbits](https://orbitfeed.vercel.app/create) route where you can see your newly created orbit. Choose any one to get started
 - On the orbit page, click on the `code` button to configure your orbit
 - Follow the instructions from the above step to start collecting feedback on your website
 - Good luck!
-
-## Widget ⌨️
-
-The code for the widget can be found [here](https://github.com/lucky-chap/orbitfeed-widget)
 
 ## Local development 🧑‍💻
 
